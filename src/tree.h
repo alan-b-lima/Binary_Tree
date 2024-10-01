@@ -13,6 +13,20 @@ namespace Tree {
    } Node;
 
    bool insert(Node**, Record*);
+   
+   void print_tree(Tree::Node* node, uint64 depth = 0) {
+      if (!node) return;
+
+      for (size_t i = 0; i < depth; i++) {
+         std::cout.write("   ", 3);
+      }
+
+      print_record(node->content, ":[$0, $1, ");
+      std::cout << node->height << "]\n";
+
+      print_tree(node->left_child, depth + 1);
+      print_tree(node->rght_child, depth + 1);
+   }
 
    /* Deprecated, not necessary */
    void calculate_height(Node* node) {
@@ -38,9 +52,15 @@ namespace Tree {
 };
 
 namespace Tree::AVL {
+   
+   void smpl_left_rotation(Node**);
+   void smpl_rght_rotation(Node**);
+   void rght_left_rotation(Node**);
+   void left_rght_rotation(Node**);
 
    void left_rotation(Node**);
    void rght_rotation(Node**);
+
    bool insert(Node**, Record*);
 
 };

@@ -3,21 +3,6 @@
 #include <random>
 // #include "file.h"
 
-void print_tree(Tree::Node* node, uint64 depth = 0) {
-
-   if (!node) return;
-
-   for (size_t i = 0; i < depth; i++) {
-      std::cout.write("   ", 3);
-   }
-
-   print_record(node->content, ":[$0, $1, $2, ");
-   std::cout << node->height << "]\n";
-
-   print_tree(node->left_child, depth + 1);
-   print_tree(node->rght_child, depth + 1);
-}
-
 int main(int argc, char** argv) {
 
    srand(time(NULL));
@@ -47,10 +32,11 @@ int main(int argc, char** argv) {
       if (~helper & shift) { i--; continue; }
 
       rec[num].data = i;
-      (void)Tree::insert(&root, &rec[num]);
+      (void)Tree::AVL::insert(&root, &rec[num]);
       helper ^= shift;
    }
 
+   std::cout.put('\n');
    print_tree(root);
 
    return 0;
