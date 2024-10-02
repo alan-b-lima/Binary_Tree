@@ -8,22 +8,9 @@ bool Tree::insert(Tree::Node** node, Record* record) {
    Node* increment_path = *node;
    uint64 height = increment_path ? increment_path->height : 1;
 
-   while (true) {
+   while (*node) {
 
-      if (!*node) {
-
-         if (!height) while (increment_path) {
-            increment_path->height++;
-
-            increment_path = record->key < increment_path->content->key ?
-               increment_path->left_child : increment_path->rght_child;
-         }
-
-         *node = new_node;
-         return true;
-      }
-
-      if ((*node)->height + 1 != height)
+      if ((*node)->height + 1 < height)
          increment_path = *node;
 
       height = (*node)->height;
@@ -31,44 +18,34 @@ bool Tree::insert(Tree::Node** node, Record* record) {
          &(*node)->left_child : &(*node)->rght_child;
 
    }
-}
+   
+   if (!height) while (increment_path) {
+      increment_path->height++;
 
-void Tree::AVL::left_rotation(Tree::Node** node) {
-   Node* rght_subtree = (*node)->rght_child;
-   Node* midd_subtree = rght_subtree->left_child;
-
-   (*node)->rght_child = midd_subtree;
-   rght_subtree->left_child = *node;
-
-   /* height adjustment */
-   {
-      (*node)->height = midd_subtree ? 1 + midd_subtree->height : 1;
-
-      rght_subtree->height = 1 + (*node)->height;
-      if (rght_subtree->rght_child && rght_subtree->height <= rght_subtree->rght_child->height)
-         rght_subtree->height = 1 + (*node)->rght_child->height;
+      increment_path = record->key < increment_path->content->key ?
+         increment_path->left_child : increment_path->rght_child;
    }
 
-   *node = rght_subtree;
+   *node = new_node;
+   return true;
+
 }
 
-void Tree::AVL::rght_rotation(Tree::Node** node) {
-   Node* left_subtree = (*node)->left_child;
-   Node* midd_subtree = left_subtree->rght_child;
+Record* Tree::search(Tree::Node* node, key_t key) {
 
-   (*node)->left_child = midd_subtree;
-   left_subtree->rght_child = *node;
+   while (node) {
 
-   /* height adjustment */
-   {
-      (*node)->height = midd_subtree ? 1 + midd_subtree->height : 1;
+      if (key < node->content->key)
+         node = node->left_child;
 
-      left_subtree->height = 1 + (*node)->height;
-      if (left_subtree->left_child && left_subtree->height <= left_subtree->left_child->height)
-         left_subtree->height = 1 + (*node)->left_child->height;
+      if (key > node->content->key)
+         node = node->rght_child;
+
+      else /* key == node->content->key */
+         return node->content;
    }
 
-   *node = left_subtree;
+   return nullptr;
 }
 
 /* Simple Left Rotation
@@ -81,7 +58,7 @@ void Tree::AVL::rght_rotation(Tree::Node** node) {
  *         [2] [3]    [1] [2]
  *
  *    Height adjustment
- *       2 ≤ fb(A)
+ *       2 ≤ fbA)
  *       2 ≤ h[1] - h(B)
  *       h(B) + 2 ≤ h[1]
  *       max{h[2], h[3]} + 3 ≤ h[1]
@@ -100,14 +77,13 @@ void Tree::AVL::rght_rotation(Tree::Node** node) {
  *                = 1 + 1 + h[1]           , since h[3] + 2 < h[1] < h[1] + 3
  *                = 2 + h[1]                          => h[3] + 2 < h[1] + 3
  *                                                    => h[3] < h[1] + 1
- * 
+ *
  * Obs: when invoked by here implemented functions, [1] will always be defined
 */
-void Tree::AVL::smpl_left_rotation(Node** node) {
+void Tree::AVL::left_rotation(Node** node) {
+   
    Node* rght_subtree = (*node)->rght_child;
-   Node* midd_subtree = rght_subtree->left_child;
-
-   (*node)->rght_child = midd_subtree;
+   (*node)->rght_child = rght_subtree->left_child;
    rght_subtree->left_child = *node;
 
    (*node)->height = 1 + (*node)->left_child->height;
@@ -128,14 +104,12 @@ void Tree::AVL::smpl_left_rotation(Node** node) {
  *    Height adjustment happens similarly to previous
  *       h(A_new) = 1 + h[3]
  *       h(B_new) = 2 + h[3]
- * 
+ *
  * Obs: when invoked by here implemented functions, [3] will always be defined
 */
-void Tree::AVL::smpl_rght_rotation(Node** node) {
+void Tree::AVL::rght_rotation(Node** node) {
    Node* left_subtree = (*node)->left_child;
-   Node* midd_subtree = left_subtree->rght_child;
-
-   (*node)->left_child = midd_subtree;
+   (*node)->left_child = left_subtree->rght_child;
    left_subtree->rght_child = *node;
 
    (*node)->height = 1 + (*node)->rght_child->height;
@@ -143,9 +117,6 @@ void Tree::AVL::smpl_rght_rotation(Node** node) {
 
    *node = left_subtree;
 }
-
-void Tree::AVL::rght_left_rotation(Node** node) {}
-void Tree::AVL::left_rght_rotation(Node** node) {}
 
 bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
@@ -163,9 +134,6 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
       if ((*node)->height + 1 < height)
          increment_path = *node;
-      else {
-
-      }
 
       height = (*node)->height;
       side = record->key < (*node)->content->key;

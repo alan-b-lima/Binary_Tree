@@ -13,7 +13,8 @@ namespace Tree {
    } Node;
 
    bool insert(Node**, Record*);
-   
+   Record* Tree::search(Tree::Node*, key_t);
+
    void print_tree(Tree::Node* node, uint64 depth = 0) {
       if (!node) return;
 
@@ -52,11 +53,6 @@ namespace Tree {
 };
 
 namespace Tree::AVL {
-   
-   void smpl_left_rotation(Node**);
-   void smpl_rght_rotation(Node**);
-   void rght_left_rotation(Node**);
-   void left_rght_rotation(Node**);
 
    void left_rotation(Node**);
    void rght_rotation(Node**);
