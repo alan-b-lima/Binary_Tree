@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
       1, 0, "Ot\xA0vio",
       2, 0, "Vitor",
       3, 0, "Jo\x84o Pedro",
-      4, 0, "Miguel",
+      4, 0, "Mateus",
       5, 0, "Breno",
       6, 0, "Luan",
       7, 0, "Luiz Felipe",
@@ -41,7 +41,6 @@ int main(int argc, char** argv) {
       helper ^= shift;
    }
 
-   std::cout << "\nFinal:\n";
    print_tree(root);
    return 0;
 }
