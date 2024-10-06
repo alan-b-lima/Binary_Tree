@@ -2,7 +2,7 @@
 
 namespace Stack {
 
-   const uint64 PAGE_SIZE = 0x100;
+   const uint64_t PAGE_SIZE = 0x100;
 
    typedef struct Frame {
       Frame* prev_frame;
@@ -10,7 +10,7 @@ namespace Stack {
    } Frame;
 
    typedef struct Stack {
-      uint64 stack_pointer;
+      uint64_t stack_pointer;
       Frame* frame;
    } Stack;
 

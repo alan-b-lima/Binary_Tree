@@ -6,7 +6,7 @@ bool Tree::insert(Tree::Node** node, Record* record) {
    if (!new_node) return false;
 
    Node* increment_path = *node;
-   uint64 height = increment_path ? increment_path->height : 1;
+   int64_t height = increment_path ? increment_path->height : -1;
 
    while (*node) {
 
@@ -18,7 +18,7 @@ bool Tree::insert(Tree::Node** node, Record* record) {
          &(*node)->left_child : &(*node)->rght_child;
 
    }
-   
+
    if (!height) while (increment_path) {
       increment_path->height++;
 
@@ -28,7 +28,61 @@ bool Tree::insert(Tree::Node** node, Record* record) {
 
    *node = new_node;
    return true;
+}
 
+void Tree::print_tree(Tree::Node* node) {
+
+   if (!node) {
+      std::cout.write("{}", 2);
+      return;
+   }
+
+   Node** stack = (Node**)_malloca(node->height * sizeof(Node*));
+   int64_t top = 0;
+
+   stack[0] = node;
+
+   bool* branches = new bool[node->height];
+   for (int64_t i = 0; i < node->height; i++)
+      branches[i] = false;
+
+   int64_t depth = 0;
+
+   while (stack[0]) {
+
+      node = stack[top];
+      stack[top--] = nullptr;
+
+      if (!depth) std::cout.write(":\xC4\xC4\xC4", 4);
+      else std::cout.write("    ", 4);
+
+      for (int64_t i = 0; i < depth - 1; i++) {
+         std::cout.put(branches[i] ? '\xB3' : '\x20');
+         std::cout.write("   ", 3);
+      }
+
+      if (depth - 1 >= 0) {
+         std::cout.put(branches[depth - 1] ? '\xC3' : '\xC0');
+         std::cout.write("\xC4\xC4\xC4", 3);
+      }
+
+      print_record(node->content, "{$0, $1, $2, ");
+      std::cout << node->height << "\n";
+
+      if (node->left_child || node->rght_child) {
+         branches[depth] = node->left_child && node->rght_child;
+         depth++;
+      } else for (int64_t i = depth - 1; i >= 0; i--) {
+         if (branches[i]) { branches[i] = false; break; }
+         depth--;
+      }
+
+      if (node->rght_child) stack[++top] = node->rght_child;
+      if (node->left_child) stack[++top] = node->left_child;
+   }
+
+   delete branches;
+   _freea(stack);
 }
 
 Record* Tree::search(Tree::Node* node, key_t key) {
@@ -48,140 +102,90 @@ Record* Tree::search(Tree::Node* node, key_t key) {
    return nullptr;
 }
 
-/* Simple Left Rotation
- *    Occurs if fb(A) ≥ 2 and fb(B) ≥ 0
- *
- *          A              B
- *         / \            / \
- *       [1]  B    =>    A  [3]
- *           / \        / \
- *         [2] [3]    [1] [2]
- *
- *    Height adjustment
- *       2 ≤ fbA)
- *       2 ≤ h[1] - h(B)
- *       h(B) + 2 ≤ h[1]
- *       max{h[2], h[3]} + 3 ≤ h[1]
- *       h[3] + 3 ≤ h[1]           , since fb(B) ≥ 0 <=> h[3] - h[2] ≥ 0
- *       h[3] + 2 < h[1]                             <=> h[3] ≥ h[2]
- *
- *    After rotation, the new heights will be
- *       h(A_new) = 1 + max{h[1], h[2]}
- *                = 1 + h[1]               , since h[2] ≤ h[3] and h[3] + 2 < h[1]
- *                                                    => h[2] + 2 ≤ h[3] + 2 and h[3] + 2 < h[1] < h[1] + 2
- *                                                    => h[2] + 2 < h[1] + 2
- *                                                    => h[2] < h[1]
- *
- *       h(B_new) = 1 + max{h(A_new), h[3]}
- *                = 1 + max{1 + h[1], h[3]}
- *                = 1 + 1 + h[1]           , since h[3] + 2 < h[1] < h[1] + 3
- *                = 2 + h[1]                          => h[3] + 2 < h[1] + 3
- *                                                    => h[3] < h[1] + 1
- *
- * Obs: when invoked by here implemented functions, [1] will always be defined
-*/
 void Tree::AVL::left_rotation(Node** node) {
-   
    Node* rght_subtree = (*node)->rght_child;
-   (*node)->rght_child = rght_subtree->left_child;
-   rght_subtree->left_child = *node;
 
-   (*node)->height = 1 + (*node)->left_child->height;
+   (*node)->height = rght_subtree->rght_child->height;
    rght_subtree->height = 1 + (*node)->height;
 
+   (*node)->rght_child = rght_subtree->left_child;
+   rght_subtree->left_child = *node;
    *node = rght_subtree;
 }
 
-/* Simple Right Rotation
- *    Occurs if fb(A) ≤ -2 and fb(B) ≤ 0
- *
- *            A          B
- *           / \        / \
- *          B  [3] => [1]  A
- *         / \            / \
- *       [1] [2]        [2] [3]
- *
- *    Height adjustment happens similarly to previous
- *       h(A_new) = 1 + h[3]
- *       h(B_new) = 2 + h[3]
- *
- * Obs: when invoked by here implemented functions, [3] will always be defined
-*/
 void Tree::AVL::rght_rotation(Node** node) {
    Node* left_subtree = (*node)->left_child;
-   (*node)->left_child = left_subtree->rght_child;
-   left_subtree->rght_child = *node;
 
-   (*node)->height = 1 + (*node)->rght_child->height;
+   (*node)->height = left_subtree->left_child->height;
    left_subtree->height = 1 + (*node)->height;
 
+   (*node)->left_child = left_subtree->rght_child;
+   left_subtree->rght_child = *node;
    *node = left_subtree;
 }
 
 bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
-   Node* root = *node;
+   Node** root = node;
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return false;
 
-   Node* increment_path = *node;
-   uint64 height = increment_path ? increment_path->height : 0;
-   Node** balance_node = nullptr;
-   bool side = 0;
+   Node** increment_path = node;
+   bool balance = false;
+   bool side;
 
    while (*node) {
 
-      if ((*node)->height + 1 < height)
-         increment_path = *node;
+      if (record->key < (*node)->content->key) {
 
-      height = (*node)->height;
-      side = record->key < (*node)->content->key;
-      node = side ? &(*node)->left_child : &(*node)->rght_child;
-
-   }
-
-   if (!height) while (increment_path) {
-      increment_path->height++;
-
-      int64 balancing_factor = 0;
-      if (increment_path->rght_child)
-         balancing_factor += increment_path->rght_child->height;
-      if (increment_path->left_child)
-         balancing_factor -= increment_path->left_child->height;
-
-      if (record->key < increment_path->content->key) {
-
-         if (balancing_factor < 1) /* balancing_factor - 2 < -1 */ {
-            balance_node = &increment_path;
-            side = false;
-         }
-
-         increment_path = increment_path->left_child;
-      }
-      else {
-         if (balancing_factor > -1) /* balancing_factor + 2 < 1 */ {
-            balance_node = &increment_path;
+         int64_t balancing_factor = (*node)->height - ((*node)->rght_child ? (*node)->rght_child->height : -1);
+         
+         if (!(balance || balancing_factor) || balancing_factor > 1) {
+            balance = balancing_factor > 1;
+            increment_path = node;
             side = true;
          }
 
-         increment_path = increment_path->rght_child;
+         node = &(*node)->left_child;
+
+      } else {
+
+         int64_t balancing_factor = (*node)->height - ((*node)->left_child ? (*node)->left_child->height : -1);
+
+         if (!(balance || balancing_factor) || balancing_factor > 1) {
+            balance = balancing_factor > 1;
+            (*increment_path) = *node;
+            side = false;
+         }
+
+         node = &(*node)->rght_child;
       }
    }
+
+   print_record(record, "\n$0, ");
+   std::cout << balance << side;
+
+   if (*increment_path) print_record((*increment_path)->content, ", $0]\n");
+   else std::cout << ", {}]\n";
+
+   print_tree(*root);
 
    *node = new_node;
-   return true;
 
-   if (*balance_node) {
+   if (balance) {
       if (side) {
-         if (record->key < (*balance_node)->content->key)
-            rght_rotation(&(*balance_node)->left_child);
-         left_rotation(balance_node);
-      }
-      else {
-         if (record->key > (*balance_node)->content->key)
-            left_rotation(&(*balance_node)->rght_child);
-         rght_rotation(balance_node);
+         if (record->key < (*increment_path)->left_child->content->key)
+            rght_rotation(&(*increment_path)->left_child);
+         left_rotation(increment_path);
+      } else {
+         if (record->key > (*increment_path)->rght_child->content->key)
+            left_rotation(&(*increment_path)->rght_child);
+         rght_rotation(increment_path);
       }
    }
+
+   calculate_height(*root);
+
+   return true;
 }

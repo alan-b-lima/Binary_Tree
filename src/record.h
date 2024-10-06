@@ -1,8 +1,8 @@
 #include <iostream>
 #include "base.h"
 
-typedef int32 key_t;
-static const uint64 NAME_SIZE = 100;
+typedef int32_t key_t;
+static const uint64_t NAME_SIZE = 100;
 
 typedef struct Record {
    key_t key;
@@ -12,7 +12,7 @@ typedef struct Record {
 
 void write_record(Record* record, int data, const char* name) {
 
-   for (uint64 i = 0; name[i]; i++) {
+   for (uint64_t i = 0; name[i]; i++) {
 
       if (i >= NAME_SIZE) {
          record->name[i] = '\0';
@@ -23,7 +23,6 @@ void write_record(Record* record, int data, const char* name) {
    }
 
    record->data = data;
-
 }
 
 void print_record(Record* record, const char* format = "{$0, $1, $2}") {

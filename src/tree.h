@@ -9,25 +9,13 @@ namespace Tree {
       Record* content;
       Node* left_child;
       Node* rght_child;
-      uint64 height;
+      int64_t height;
    } Node;
 
    bool insert(Node**, Record*);
-   Record* Tree::search(Tree::Node*, key_t);
+   Record* search(Node*, key_t);
 
-   void print_tree(Tree::Node* node, uint64 depth = 0) {
-      if (!node) return;
-
-      for (size_t i = 0; i < depth; i++) {
-         std::cout.write("   ", 3);
-      }
-
-      print_record(node->content, ":[$0, $1, ");
-      std::cout << node->height << "]\n";
-
-      print_tree(node->left_child, depth + 1);
-      print_tree(node->rght_child, depth + 1);
-   }
+   void print_tree(Tree::Node*);
 
    /* Deprecated, not necessary */
    void calculate_height(Node* node) {
@@ -38,7 +26,7 @@ namespace Tree {
          return;
       }
 
-      uint64 lheight = 0, rheight = 0;
+      int64_t lheight = 0, rheight = 0;
       if (node->left_child) {
          calculate_height(node->left_child);
          lheight = node->left_child->height;

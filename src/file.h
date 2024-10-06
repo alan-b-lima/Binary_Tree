@@ -8,7 +8,7 @@ namespace FileHandling {
    typedef struct file_handler {
       FILE* file;
       void* page;
-      uint64 size;
+      uint64_t size;
    } file_handler;
 
    enum {

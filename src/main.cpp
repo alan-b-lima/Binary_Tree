@@ -21,9 +21,7 @@ int main(int argc, char** argv) {
    };
 
    Tree::Node* root = nullptr;
-
    word helper = 0b11'1111'1111;
-   uint64 height = 0;
 
    for (size_t i = 0; i < 10; i++) {
       word num = rand() % 10;
@@ -36,8 +34,6 @@ int main(int argc, char** argv) {
       helper ^= shift;
    }
 
-   std::cout.put('\n');
    print_tree(root);
-
    return 0;
 }
