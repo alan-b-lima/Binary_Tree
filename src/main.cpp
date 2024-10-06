@@ -1,23 +1,30 @@
 #include "base.h"
 #include "tree.h"
+
+#include <iostream>
 #include <random>
 // #include "file.h"
 
 int main(int argc, char** argv) {
 
-   srand(time(NULL));
+   time_t seed;
+   if (argc > 1) seed = atoi(argv[1]);
+   else seed = time(NULL);
+
+   std::cout << seed;
+   srand(seed);
 
    Record rec[] = {
       0, 0, "Alan",
-      1, 0, "Juan",
+      1, 0, "Ot\xA0vio",
       2, 0, "Vitor",
       3, 0, "Jo\x84o Pedro",
-      4, 0, "Juan",
+      4, 0, "Miguel",
       5, 0, "Breno",
       6, 0, "Luan",
       7, 0, "Luiz Felipe",
-      8, 0, "Juan",
-      9, 0, "32313",
+      8, 0, "Juan Pablo",
+      9, 0, "Davi",
    };
 
    Tree::Node* root = nullptr;
@@ -34,6 +41,7 @@ int main(int argc, char** argv) {
       helper ^= shift;
    }
 
+   std::cout << "\nFinal:\n";
    print_tree(root);
    return 0;
 }

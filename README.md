@@ -281,7 +281,7 @@ Nomeada por seus criadores Georgy Maximovich **A**delson-**V**elsky e Evgenii Mi
 
 ### Definição 4A: Fator de Balanceamento
 
-Dado um nó $T$ qualquer, seu fator de balanceamento é dado, $fb(T) = h(T_D) - h(T_E)$, uma versão analoga, definida $fb(T) = h(T_E) - h(T_D)$, também é válida e apenas inverteria o sinal de tudo a respeito do fator de balanceamento. Aqui, será usado:
+Dado um nó $T$ qualquer, seu fator de balanceamento é dado, $fb(T) = h(T_D) - h(T_E)$, uma versão analoga, definida $fb(T) = h(T_E) - h(T_D)$, também é válida e apenas inverteria o sinal a respeito do fator de balanceamento. Aqui, será usado:
 
 $$fb(T) = h(T_D) - h(T_E)$$
 
