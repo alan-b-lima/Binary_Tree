@@ -39,6 +39,8 @@ namespace Tree {
 
       node->height = 1 + (lheight >= rheight ? lheight : rheight);
    }
+
+   void destruct(Node**, void(*)(Record*) = nullptr);
 };
 
 namespace Tree::AVL {

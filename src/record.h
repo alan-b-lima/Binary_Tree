@@ -1,4 +1,5 @@
-#include <iostream>
+#pragma once
+
 #include "base.h"
 
 typedef int32_t key_t;
@@ -9,6 +10,9 @@ typedef struct Record {
    int   data;
    char  name[NAME_SIZE + 1];
 } Record;
+
+void write_record(Record* record, int data, const char* name);
+void print_record(Record* record, const char* format = "{$0, $1, $2}");
 
 void write_record(Record* record, int data, const char* name) {
 
@@ -25,7 +29,7 @@ void write_record(Record* record, int data, const char* name) {
    record->data = data;
 }
 
-void print_record(Record* record, const char* format = "{$0, $1, $2}") {
+void print_record(Record* record, const char* format) {
 
    while (*format) {
 

@@ -46,7 +46,7 @@ void Tree::print_tree(Tree::Node* node) {
 
    for (branches_size -= 1; branches_size >= 0; branches_size--)
       branches[branches_size] = 0;
-      
+
    int64_t depth = 0;
 
    while (stack[0]) {
@@ -109,6 +109,19 @@ Record* Tree::search(Tree::Node* node, key_t key) {
    return nullptr;
 }
 
+void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
+   if (!*node) return;
+
+   destruct(&(*node)->left_child, record_handler);
+   destruct(&(*node)->rght_child, record_handler);
+
+   if (record_handler)
+      record_handler((*node)->content);
+
+   delete* node;
+   *node = nullptr;
+}
+
 void Tree::AVL::left_rotation(Node** node) {
    Node* rght_subtree = (*node)->rght_child;
 
@@ -144,9 +157,11 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
    while (*node) {
 
+      int64_t balancing_factor = (*node)->height;
+
       if (record->key < (*node)->content->key) {
 
-         int64_t balancing_factor = (*node)->height - ((*node)->rght_child ? (*node)->rght_child->height : -1);
+         balancing_factor -= ((*node)->rght_child ? (*node)->rght_child->height : -1);
 
          if (balancing_factor > 1 || (!balance && balancing_factor > 0)) {
             balance = balancing_factor > 1;
@@ -158,7 +173,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
       } else {
 
-         int64_t balancing_factor = (*node)->height - ((*node)->left_child ? (*node)->left_child->height : -1);
+         balancing_factor -= ((*node)->left_child ? (*node)->left_child->height : -1);
 
          if (balancing_factor > 1 || (!balance && balancing_factor > 0)) {
             balance = balancing_factor > 1;

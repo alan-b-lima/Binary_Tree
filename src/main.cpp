@@ -1,46 +1,35 @@
 #include "base.h"
 #include "tree.h"
-
-#include <iostream>
-#include <random>
+#include "generator.h"
 // #include "file.h"
+
+/* Planning the interface
+ *
+ * Some commands:
+ *    generate records
+ *    get/set seed
+ *    print tree
+ *    test speed and stuff (actual shit)
+ *    help
+ *    about
+ *    exit codes
+*/
 
 int main(int argc, char** argv) {
 
    time_t seed;
-   if (argc > 1) seed = atoi(argv[1]);
+   if (argc == 1) seed = atoi(argv[1]);
    else seed = time(NULL);
 
-   std::cout << seed;
+   // std::cout << seed << std::endl;
    srand(seed);
 
-   Record rec[] = {
-      0, 0, "Alan",
-      1, 0, "Ot\xA0vio",
-      2, 0, "Vitor",
-      3, 0, "Jo\x84o Pedro",
-      4, 0, "Mateus",
-      5, 0, "Breno",
-      6, 0, "Luan",
-      7, 0, "Luiz Felipe",
-      8, 0, "Juan Pablo",
-      9, 0, "Davi",
-   };
+   Record rec;
 
-   Tree::Node* root = nullptr;
-   word helper = 0b11'1111'1111;
-
-   for (size_t i = 0; i < 10; i++) {
-      word num = rand() % 10;
-      word shift = 1 << num;
-
-      if (~helper & shift) { i--; continue; }
-
-      rec[num].data = i;
-      (void)Tree::AVL::insert(&root, &rec[num]);
-      helper ^= shift;
+   for (size_t i = 0; i < (size_t)atoi(argv[2]); i++) {
+      Generator::populate_record_randomly(rec);
+      print_record(&rec, "$2\n");
    }
 
-   print_tree(root);
    return 0;
 }

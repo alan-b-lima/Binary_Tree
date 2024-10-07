@@ -1,8 +1,9 @@
+#pragma once
 #include "base.h"
 
 namespace Stack {
 
-   const uint64_t PAGE_SIZE = 0x100;
+   const uint64_t PAGE_SIZE = 0x1000;
 
    typedef struct Frame {
       Frame* prev_frame;
