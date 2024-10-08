@@ -19,25 +19,14 @@ namespace Tree {
    void print_tree(Tree::Node*);
 
    /* Deprecated, not necessary */
-   void calculate_height(Node* node) {
+   int64_t calculate_height(Node* node) {
+      if (!node) return -1;
+      
+      int64_t lheight = calculate_height(node->left_child);
+      int64_t rheight = calculate_height(node->rght_child);
 
-      if (!node) return;
-      if (!node->left_child && !node->rght_child) {
-         node->height = 0;
-         return;
-      }
-
-      int64_t lheight = 0, rheight = 0;
-      if (node->left_child) {
-         calculate_height(node->left_child);
-         lheight = node->left_child->height;
-      }
-      if (node->rght_child) {
-         calculate_height(node->rght_child);
-         rheight = node->rght_child->height;
-      }
-
-      node->height = 1 + (lheight >= rheight ? lheight : rheight);
+      node->height = 1 + (lheight > rheight ? lheight : rheight);
+      return node->height;
    }
 
    void destruct(Node**, void(*)(Record*) = nullptr);

@@ -12,7 +12,7 @@ namespace Generator {
       record.data = rand();
 
       char* cursor = record.name;
-      uint64_t remaining_space = NAME_SIZE - 1;
+      uint64_t remaining_space = NAME_SIZE;
 
       byte params = rand() & 0b111;
       uint64_t random;
@@ -21,11 +21,11 @@ namespace Generator {
       random = rand() % NAME_LIST_SIZE;
 
       for (uint64_t i = 0; NAME_LIST[random][i]; i++) {
-         if (!remaining_space) goto exit;
          *cursor++ = NAME_LIST[random][i];
-         remaining_space--;
+         if (!(--remaining_space)) goto exit;
       }
 
+      if (!(--remaining_space)) goto exit;
       *cursor++ = ' ';
 
       if (params & 0b100) { params ^= 0b100; goto name; }
@@ -34,14 +34,15 @@ namespace Generator {
       random = rand() % SURNAME_LIST_SIZE;
 
       for (uint64_t i = 0; SURNAME_LIST[random][i]; i++) {
-         if (!remaining_space) goto exit;
          *cursor++ = SURNAME_LIST[random][i];
-         remaining_space--;
+         if (!(--remaining_space)) goto exit;
       }
 
+      if (!(--remaining_space)) goto exit;
       *cursor++ = ' ';
 
       if (params) { params--; goto surname; }
+      cursor--;
 
    exit:
       *cursor = '\0';

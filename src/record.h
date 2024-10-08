@@ -3,7 +3,7 @@
 #include "base.h"
 
 typedef int32_t key_t;
-static const uint64_t NAME_SIZE = 100;
+static const uint64_t NAME_SIZE = 1000;
 
 typedef struct Record {
    key_t key;
@@ -11,8 +11,8 @@ typedef struct Record {
    char  name[NAME_SIZE + 1];
 } Record;
 
-void write_record(Record* record, int data, const char* name);
-void print_record(Record* record, const char* format = "{$0, $1, $2}");
+void write_record(Record*, int, const char*);
+void print_record(Record*, const char* = "{$0, $1, $2}");
 
 void write_record(Record* record, int data, const char* name) {
 
@@ -47,9 +47,12 @@ void print_record(Record* record, const char* format) {
                break;
          }
 
-      }
-      else std::cout.put(*format);
-
+      } else std::cout.put(*format);
       format++;
    }
+}
+
+void destruct_record(Record* record) {
+   delete record;
+   record = nullptr;
 }

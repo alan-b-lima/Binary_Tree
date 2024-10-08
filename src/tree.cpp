@@ -37,22 +37,20 @@ void Tree::print_tree(Tree::Node* node) {
       return;
    }
 
-   int64_t branches_size = (node->height + 7) >> 3;
-   byte* branches = new byte[branches_size + node->height * sizeof(Node*)];
+   BitTools::bool_array branches = BitTools::construct(node->height);
+   Node** stack = new (std::nothrow) Node * [node->height];
 
-   Node** stack = (Node**)(branches + branches_size);
-   int64_t top = 0;
-   stack[0] = node;
+   if (!branches || !stack) {
+      std::cerr << "Failed to print tree!";
+      return;
+   }
 
-   for (branches_size -= 1; branches_size >= 0; branches_size--)
-      branches[branches_size] = 0;
+   stack[0] = nullptr;
 
    int64_t depth = 0;
+   int64_t top = -1;
 
-   while (stack[0]) {
-
-      node = stack[top];
-      stack[top--] = nullptr;
+   while (true) {
 
       if (!depth) std::cout.write(":\xC4\xC4\xC4", 4);
       else std::cout.write("    ", 4);
@@ -77,32 +75,38 @@ void Tree::print_tree(Tree::Node* node) {
 
       } else for (int64_t i = depth - 1; i >= 0; i--) {
 
-         if (BitTools::getbit(branches, i)) {
-            BitTools::flipbit(branches, i);
-            break;
-         }
-
+         if (BitTools::setbit_0(branches, i)) break;
          depth--;
+
       }
 
       if (node->rght_child) stack[++top] = node->rght_child;
       if (node->left_child) stack[++top] = node->left_child;
+
+      if (top < 0) break;
+      node = stack[top];
+
+      if (!node) break;
+      stack[top--] = nullptr;
    }
 
-   delete[] branches;
+   BitTools::destruct(branches);
+   delete[] stack;
 }
 
 Record* Tree::search(Tree::Node* node, key_t key) {
 
    while (node) {
 
-      if (key < node->content->key)
+      if (false);
+
+      else if (key < node->content->key)
          node = node->left_child;
 
-      if (key > node->content->key)
+      else if (key > node->content->key)
          node = node->rght_child;
 
-      else /* key == node->content->key */
+      else /* (key == node->content->key) */
          return node->content;
    }
 
@@ -112,14 +116,29 @@ Record* Tree::search(Tree::Node* node, key_t key) {
 void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
    if (!*node) return;
 
-   destruct(&(*node)->left_child, record_handler);
-   destruct(&(*node)->rght_child, record_handler);
+   //new (std::nothrow) Node * *[(*node)->height + 1];
+   
+   Node*** stack = (Node***)Stack::alloc((*node)->height); 
+   if (!stack) return;
 
-   if (record_handler)
-      record_handler((*node)->content);
+   int64_t top = -1;
 
-   delete* node;
-   *node = nullptr;
+   while (true) {
+
+      if ((*node)->left_child) stack[++top] = &(*node)->left_child;
+      if ((*node)->rght_child) stack[++top] = &(*node)->rght_child;
+
+      if (record_handler)
+         record_handler((*node)->content);
+
+      delete* node;
+      *node = nullptr;
+
+      if (top < 0) break;
+      node = stack[top--];
+   }
+
+   Stack::free((Stack::raw_ptr*)stack);
 }
 
 void Tree::AVL::left_rotation(Node** node) {
@@ -153,7 +172,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
    Node** increment_path = node;
    bool balance = false;
-   bool side;
+   bool side = false;
 
    while (*node) {
 
@@ -186,7 +205,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
    }
 
    *node = new_node;
-   // Node* temp = *increment_path;
+   Node* temp = *increment_path;
 
    if (balance) {
 
@@ -201,14 +220,14 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
       }
    }
 
-   // print_record(record, "\n$0, ");
-   // std::cout << balance << side;
+   print_record(record, "\n$0, ");
+   std::cout << balance << side;
 
-   // if (temp) print_record(temp->content, ", $0]\n");
-   // else std::cout << ", {}]\n";
-
-   // print_tree(*root);
+   if (temp) print_record(temp->content, ", $0]\n");
+   else std::cout << ", {}]\n";
 
    calculate_height(*root);
+   print_tree(*root);
+
    return true;
 }

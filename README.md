@@ -12,6 +12,47 @@
 
 Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITMOS E ESTRUTURAS DE DADOS III, com o uso da linguagem de programação C++, do Curso de Graduação em Sistemas de Informação da Universidade Federal dos Vales do Jequitinhonha e Mucuri, sob comando da Professora Luciana de Assis.
 
+# Sumário
+
+<strong>Como Usar</strong>
+
+<strong>Árvores Binárias</strong>
+
+- [1 Definições Básicas](#1-definições-básicas)
+   - [Definição 1A: Árvore Binária](#definição-1a-árvore-binária)
+   - [Definição 1B: Relações entre nós](#definição-1b-relações-entre-nós)
+      - [i) Nós Filhos](#i-nós-filhos)
+      - [ii) Nó Pai](#ii-nó-pai)
+      - [iii) Nó Irmão](#iii-nó-irmão)
+      - [iv) Nós Folha](#iv-nós-folha)
+      - [v) Nó Raiz](#v-nó-raiz)
+   - [Definição 1C: Registro](#definição-1c-registro)
+   - [Definição 1D: Árvore Binária de Busca](#definição-1d-árvore-binária-de-busca)
+   - [Definição 1E: Altura de Árvores Binárias](#definição-1e-altura-de-árvores-binárias)
+   - [Teorema 1F: A computação da altura de uma árvore tem a complexidade do pior caso $O(n)$](#ar)
+- [2 Implementação de Funcionalidades para os Registros](#2-implementação-de-funcionalidades-para-os-registros)
+- [3 Implementação da Árvore Binária de Busca](#3-implementação-da-árvore-binária-de-busca)
+   - Implementação 3A: Algoritmo de Busca
+   - Análise de Complexidade:
+   - Implementação 3B: Algoritmo de inserção
+   - Análise de Complexidade
+- 4 Árvore Binária AVL
+   - Definição 4A: Fator de Balanceamento
+   - Definição 4B: Árvore Binária Balanceada
+   - [Definição e Implementação 4C: Rotações](#definição-e-implementação-4c-rotações)
+      - [i) Rotação Esquerda](#i-rotação-esquerda)
+      - [ii) Rotação Direita](#ii-rotação-direita)
+      - [iii) Rotação Direita-Esquerda](#iii-rotação-direita-esquerda)
+      - [iv) Rotação Esquerda-Direita](#iv-rotação-esquerda-direita)
+   - [Análise de Complexidade](#análise-de-complexidade-2)
+   - [Teorema 4D: Uma operação de rotação, quando executada propriamente, retorna um nó menor que o nó de entrada](#definição-4b-árvore-binária-balanceada)
+   - [Corolário 4E: Uma operação de rotação sempre é suficiente para restaurar o balanceamento perdido após a inserção de um único nó](#corolário-4e-uma-operação-de-rotação-sempre-é-suficiente-para-restaurar-o-balanceamento-perdido-após-a-inserção-de-um-único-nó)
+   - [Implementação 4F: Inserção em Árvore AVL](#implementação-4f-inserção-em-árvore-avl)
+
+<strong>[Referências](#referências)</strong>
+
+# Como Usar
+
 # Árvores Binárias
 
 ## 1 Definições Básicas
@@ -401,7 +442,6 @@ Para a rotaçõa dupla direita-esquerda, seja $T$ o nó desbalanceado, $h(R_D(T_
 Seguindo do resultado anterior, uma operação de rotação sempre diminui a altura de alguma subárvore, tal subárvore que teve a altura incrementada pela inserção de um novo nó, ou seja, a altura é preservada acima do nó mais baixo que passou por balanceamento. Logo, o corolário é verdadeiro.
 
 ### Implementação 4F: Inserção em Árvore AVL
-
 
 
 # Referências

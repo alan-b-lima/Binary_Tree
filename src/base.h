@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <random>
 
+#include "stack.h"
+
 enum EXIT_CODE {
    FINE,
    BAD_ALLOCATION,

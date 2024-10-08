@@ -1,7 +1,6 @@
 #include "base.h"
 #include "tree.h"
 #include "generator.h"
-// #include "file.h"
 
 /* Planning the interface
  *
@@ -18,18 +17,44 @@
 int main(int argc, char** argv) {
 
    time_t seed;
-   if (argc == 1) seed = atoi(argv[1]);
-   else seed = time(NULL);
+   size_t n_of_records = 100;
+   switch (argc) {
+      case 3:
+         n_of_records = atoi(argv[2]);
 
-   // std::cout << seed << std::endl;
-   srand(seed);
+      case 2:
+         seed = atoi(argv[1]);
+         if (seed) break;
 
-   Record rec;
+      case 1:
+         seed = time(NULL);
+         break;
 
-   for (size_t i = 0; i < (size_t)atoi(argv[2]); i++) {
-      Generator::populate_record_randomly(rec);
-      print_record(&rec, "$2\n");
+      default:
+         return 1;
    }
 
+   std::cout << seed << std::endl;
+   srand(seed);
+
+   Record* rec = new Record[n_of_records];
+
+   Tree::Node* root = nullptr;
+
+   for (size_t i = 0; i < n_of_records; i++) {
+      Generator::populate_record_randomly(rec[i]);
+      //rec[i].key = rec[i].data;
+      //rec[i].data = i;
+
+      rec[i].key = i;
+
+      (void)Tree::insert(&root, &rec[i]);
+   }
+
+   Tree::print_tree(root);
+
+   Tree::destruct(&root);
+   delete[] rec;
+   
    return 0;
 }
