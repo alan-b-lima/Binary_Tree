@@ -2,7 +2,6 @@
 
 #include "base.h"
 #include "record.h"
-#include "bittools.h"
 
 namespace Tree {
 

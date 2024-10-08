@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <random>
 
-#include "stack.h"
+#include "./lib/bittools.h"
+#include "./lib/stack.h"
 
 enum EXIT_CODE {
    FINE,

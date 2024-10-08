@@ -118,7 +118,7 @@ void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
 
    //new (std::nothrow) Node * *[(*node)->height + 1];
    
-   Node*** stack = (Node***)Stack::alloc((*node)->height); 
+   Node*** stack = (Node***)Stack::allocate((*node)->height); 
    if (!stack) return;
 
    int64_t top = -1;
@@ -138,7 +138,7 @@ void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
       node = stack[top--];
    }
 
-   Stack::free((Stack::raw_ptr*)stack);
+   Stack::release(stack);
 }
 
 void Tree::AVL::left_rotation(Node** node) {

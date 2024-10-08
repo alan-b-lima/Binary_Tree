@@ -1,3 +1,2 @@
 @echo off
-g++ ./src/main.cpp -o main
-main
+g++ .\src\main.cpp -O2 -Wall -o main
