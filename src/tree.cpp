@@ -37,15 +37,23 @@ void Tree::print_tree(Tree::Node* node) {
       return;
    }
 
-   BitTools::bool_array branches = BitTools::construct(node->height);
-   Node** stack = new (std::nothrow) Node * [node->height];
+   BitTools::bool_array branches;
+   Node** stack;
 
-   if (!branches || !stack) {
-      std::cerr << "Failed to print tree!";
-      return;
+   if (node->height) {
+      BitTools::bool_array branches = Stack::allocate<byte>((node->height + 7) >> 3);
+      if (!branches) {
+         std::cerr << "Failed to print tree!\n";
+         return;
+      }
+
+      Node** stack = Stack::allocate<Node*>(node->height);
+      if (!stack) {
+         Stack::release(branches);
+         std::cerr << "Failed to print tree!\n";
+         return;
+      }
    }
-
-   stack[0] = nullptr;
 
    int64_t depth = 0;
    int64_t top = -1;
@@ -84,14 +92,11 @@ void Tree::print_tree(Tree::Node* node) {
       if (node->left_child) stack[++top] = node->left_child;
 
       if (top < 0) break;
-      node = stack[top];
-
-      if (!node) break;
-      stack[top--] = nullptr;
+      node = stack[top--];
    }
 
-   BitTools::destruct(branches);
-   delete[] stack;
+   Stack::release(stack);
+   Stack::release(branches);
 }
 
 Record* Tree::search(Tree::Node* node, key_t key) {
@@ -116,28 +121,30 @@ Record* Tree::search(Tree::Node* node, key_t key) {
 void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
    if (!*node) return;
 
-   //new (std::nothrow) Node * *[(*node)->height + 1];
-   
-   Node*** stack = (Node***)Stack::allocate((*node)->height); 
-   if (!stack) return;
+   Node** stack;
+   if ((*node)->height) {
+      stack = Stack::allocate<Node*>((*node)->height);
+      if (!stack) return;
+   }
 
+   Node* current = *node;
    int64_t top = -1;
 
    while (true) {
 
-      if ((*node)->left_child) stack[++top] = &(*node)->left_child;
-      if ((*node)->rght_child) stack[++top] = &(*node)->rght_child;
+      if (current->left_child) stack[++top] = current->left_child;
+      if (current->rght_child) stack[++top] = current->rght_child;
 
       if (record_handler)
-         record_handler((*node)->content);
+         record_handler(current->content);
 
-      delete* node;
-      *node = nullptr;
+      delete current;
 
       if (top < 0) break;
-      node = stack[top--];
+      current = stack[top--];
    }
 
+   *node = nullptr;
    Stack::release(stack);
 }
 

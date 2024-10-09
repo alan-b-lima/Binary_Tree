@@ -1,18 +1,19 @@
 #pragma once
 
-/**************************************************************
+/*
+***************************************************************
 * Author                                                      *
-*    Alan Lima @AlanLima287 (https://github.com/AlanLima287/) *
+*    Alan Lima (https://github.com/AlanLima287/)              *
 *                                                             *
 * BitTools                                                    *
 *    It's a not precompiled C++ library with wrapper function *
 *    for especific assembly instructions (BT, BTC, BTR, BTS)  *
 *    and a implementation of a boolean array structure        *
-**************************************************************/
+***************************************************************
+*/
 
 #ifndef __BIT_TOOLS_
 #define __BIT_TOOLS_
-
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -46,5 +47,7 @@ namespace BitTools {
    // Print the bits
    void print_bits(bool_array, uint32_t);
 };
+
+#include "bittools.cpp"
 
 #endif /* #ifndef __BIT_TOOLS_ */

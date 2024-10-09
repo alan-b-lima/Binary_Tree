@@ -1,6 +1,6 @@
 #include "bittools.h"
 
-BitTools::bool_array BitTools::construct(uint32_t size, byte set = 0) {
+BitTools::bool_array BitTools::construct(uint32_t size, byte set) {
    size = (size + 7) >> 3;
 
    bool_array arr = new (std::nothrow) byte[size];
@@ -27,7 +27,7 @@ void BitTools::print_bits(bool_array arr, uint32_t size) {
    while (size--);
 }
 
-#ifdef __INTRIN_H_ && _VCRT_COMPILER_PREPROCESSOR && !defined(__midl)
+#if defined(__INTRIN_H_) && defined(_VCRT_COMPILER_PREPROCESSOR) && !defined(__midl)
 
 inline bool BitTools::getbit(bool_array base, uint32_t pos) { return _bittest((long*)base, pos); }
 inline bool BitTools::flipbit(bool_array base, uint32_t pos) { return _bittestandcomplement((long*)base, pos); }
@@ -58,4 +58,4 @@ inline bool BitTools::setbit_1(bool_array base, uint32_t pos) {
    return bit;
 }
 
-#endif
+#endif /* #if defined(__INTRIN_H_) && defined(_VCRT_COMPILER_PREPROCESSOR) && !defined(__midl) */

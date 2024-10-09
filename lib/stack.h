@@ -1,35 +1,62 @@
 #pragma once
 
+/*
+*****************************************************************
+* Author                                                        *
+*    Alan Lima (https://github.com/AlanLima287/)                *
+*                                                               *
+* Stack                                                         *
+*    It's a not precompiled C++ library that implements a       *
+*    stack structure for dynamic allocation with less overhead. *
+*    It has a static array of size 4KiB, in which the           *
+*    allocations are done                                       *
+*****************************************************************
+*/
+
+#ifndef __STACK_AL_
+#define __STACK_AL_
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <malloc.h>
 
 namespace Stack {
 
-   const uint64_t FRAME_SIZE = 0x200;
+   const uint64_t FRAME_SIZE = 0x1000; // 4KiB
+   const uint64_t _ALIGNMENT = 8;
 
    typedef struct Stack {
       uint64_t allocated;
-      uint8_t frame[FRAME_SIZE];
+      alignas(_ALIGNMENT) uint8_t frame[FRAME_SIZE];
    } Stack;
 
    static Stack __stack = { 0 };
 
-   void* allocate(uint64_t size, Stack& stack = __stack) {
+   template <typename type_t>
+   type_t* allocate(uint64_t size, Stack& stack = __stack) {
       if (size == 0) return nullptr;
-      if (FRAME_SIZE >= stack.allocated + size) {
-         void* prt = (void*)(stack.frame + stack.allocated);
-         stack.allocated += size;
-         return prt;
+
+      uint64_t alignment = sizeof(type_t) < _ALIGNMENT ? sizeof(type_t) : _ALIGNMENT;
+      type_t* pointer = (type_t*)((uint64_t(stack.frame) + stack.allocated + alignment - 1) & ~(alignment - 1));
+
+      if (uint64_t(uintptr_t(pointer) - uintptr_t(stack.frame)) > FRAME_SIZE) {
+         return new (std::nothrow) type_t[size];
       }
 
-      return malloc(size);
+      stack.allocated = uint64_t(uintptr_t(pointer) - uintptr_t(stack.frame)) + size * sizeof(type_t);
+      return pointer;
    }
 
-   void release(void* ptr, Stack& stack = __stack) {
-      if (uint64_t(stack.frame) > uint64_t(ptr) || uint64_t(ptr) >= uint64_t(stack.frame + FRAME_SIZE))
-         free(ptr);
-      else
-         stack.allocated = uint64_t(ptr) - uint64_t(stack.frame);
+   template <typename type_t>
+   void release(type_t* pointer, Stack& stack = __stack) {
+      if (uintptr_t(stack.frame) > uintptr_t(pointer) || uintptr_t(pointer) >= uintptr_t(stack.frame + FRAME_SIZE)) {
+         delete[] pointer;
+         return;
+      }
+
+      uint64_t to_release = uint64_t(uintptr_t(pointer) - uintptr_t(stack.frame));
+      if (to_release < stack.allocated) stack.allocated = to_release;
    }
 }
+
+#endif /* #ifndef __STACK_AL_ */
