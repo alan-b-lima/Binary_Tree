@@ -49,6 +49,8 @@ namespace Stack {
 
    template <typename type_t>
    void release(type_t* pointer, Stack& stack = __stack) {
+      if (pointer == nullptr) return;
+
       if (uintptr_t(stack.frame) > uintptr_t(pointer) || uintptr_t(pointer) >= uintptr_t(stack.frame + FRAME_SIZE)) {
          delete[] pointer;
          return;

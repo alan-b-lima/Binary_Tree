@@ -43,10 +43,10 @@ int main(int argc, char** argv) {
 
    for (size_t i = 0; i < n_of_records; i++) {
       Generator::populate_record_randomly(rec[i]);
-      //rec[i].key = rec[i].data;
-      //rec[i].data = i;
+      rec[i].key = rec[i].data;
+      rec[i].data = i;
 
-      rec[i].key = i;
+      // rec[i].key = i;
 
       (void)Tree::insert(&root, &rec[i]);
    }

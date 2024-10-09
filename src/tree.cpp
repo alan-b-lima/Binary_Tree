@@ -41,13 +41,13 @@ void Tree::print_tree(Tree::Node* node) {
    Node** stack;
 
    if (node->height) {
-      BitTools::bool_array branches = Stack::allocate<byte>((node->height + 7) >> 3);
+      branches = Stack::allocate<byte>((node->height + 7) >> 3);
       if (!branches) {
          std::cerr << "Failed to print tree!\n";
          return;
       }
 
-      Node** stack = Stack::allocate<Node*>(node->height);
+      stack = Stack::allocate<Node*>(node->height);
       if (!stack) {
          Stack::release(branches);
          std::cerr << "Failed to print tree!\n";
@@ -73,12 +73,12 @@ void Tree::print_tree(Tree::Node* node) {
 
       if (node->left_child && node->rght_child) {
 
-         BitTools::setbit_1(branches, depth);
+         (void)BitTools::setbit_1(branches, depth);
          depth++;
 
       } else if (node->left_child || node->rght_child) {
 
-         BitTools::setbit_0(branches, depth);
+         (void)BitTools::setbit_0(branches, depth);
          depth++;
 
       } else for (int64_t i = depth - 1; i >= 0; i--) {
@@ -174,7 +174,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
    Node** root = node;
 
-   Node* new_node = new Node{ record, nullptr, nullptr, 0 };
+   Node* new_node = new Node{ record, nullptr, nullptr, -1 };
    if (!new_node) return false;
 
    Node** increment_path = node;
@@ -187,7 +187,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
       if (record->key < (*node)->content->key) {
 
-         balancing_factor -= ((*node)->rght_child ? (*node)->rght_child->height : -1);
+         balancing_factor -= (*node)->rght_child ? (*node)->rght_child->height : -1;
 
          if (balancing_factor > 1 || (!balance && balancing_factor > 0)) {
             balance = balancing_factor > 1;
@@ -199,7 +199,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
       } else {
 
-         balancing_factor -= ((*node)->left_child ? (*node)->left_child->height : -1);
+         balancing_factor -= (*node)->left_child ? (*node)->left_child->height : -1;
 
          if (balancing_factor > 1 || (!balance && balancing_factor > 0)) {
             balance = balancing_factor > 1;
@@ -225,7 +225,8 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
             left_rotation(&(*increment_path)->left_child);
          rght_rotation(increment_path);
       }
-   }
+
+   } else (*root)->height++;
 
    print_record(record, "\n$0, ");
    std::cout << balance << side;
@@ -233,8 +234,8 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
    if (temp) print_record(temp->content, ", $0]\n");
    else std::cout << ", {}]\n";
 
-   calculate_height(*root);
    print_tree(*root);
+   calculate_height(*root);
 
    return true;
 }

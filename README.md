@@ -32,13 +32,13 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
    - [Teorema 1F: A computação da altura de uma árvore tem a complexidade do pior caso $O(n)$](#ar)
 - [2 Implementação de Funcionalidades para os Registros](#2-implementação-de-funcionalidades-para-os-registros)
 - [3 Implementação da Árvore Binária de Busca](#3-implementação-da-árvore-binária-de-busca)
-   - Implementação 3A: Algoritmo de Busca
-   - Análise de Complexidade:
-   - Implementação 3B: Algoritmo de inserção
-   - Análise de Complexidade
-- 4 Árvore Binária AVL
-   - Definição 4A: Fator de Balanceamento
-   - Definição 4B: Árvore Binária Balanceada
+   - [Implementação 3A: Algoritmo de Busca](#implementação-3a-algoritmo-de-busca)
+   - [Análise de Complexidade:](#análise-de-complexidade)
+   - [Implementação 3B: Algoritmo de inserção](#implementação-3b-algoritmo-de-inserção)
+   - [Análise de Complexidade](#análise-de-complexidade-1)
+- [4 Árvore Binária AVL](#4-árvore-binária-avl)
+   - [Definição 4A: Fator de Balanceamento](#definição-4a-fator-de-balanceamento)
+   - [Definição 4B: Árvore Binária Balanceada](#definição-4b-árvore-binária-balanceada)
    - [Definição e Implementação 4C: Rotações](#definição-e-implementação-4c-rotações)
       - [i) Rotação Esquerda](#i-rotação-esquerda)
       - [ii) Rotação Direita](#ii-rotação-direita)
@@ -194,9 +194,7 @@ void print_record(Record* record, const char* format = "{$0, $1, $2}") {
                break;
          }
 
-      }
-      else std::cout.put(*format);
-
+      } else std::cout.put(*format);
       format++;
    }
 }
@@ -237,7 +235,7 @@ Record* Tree::search(Tree::Node* node, key_t key) {
 
 Analogo à função $S$, que é indefinida se a chave não existir na árvore, a função `Tree::search` retorna um ponteiro nulo nesse caso.
 
-#### Análise de Complexidade:
+#### Análise de Complexidade
 
 A natureza de divisão e conquista, mascarada pela iteratividade, mas ainda presente, pode indicar erroneamente a complexidade de `Tree::search` como $O(\log n)$, entretando, no pior caso, uma árvore pode ser configurada como uma _lista encadeada_, como por exemplo
 
