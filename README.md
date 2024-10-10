@@ -137,7 +137,7 @@ A altura de uma árvore binária é dada pela quantidade de nós no caminho do r
 
 $$ h(T) = \begin{cases}
    -1 & \text{| } T = \emptyset\\
-   1 + \max \left{ h(T_E), h(T_D) \right} & \text{| caso contrário}.
+   1 + \max \lbrace h(T_E), h(T_D) \rbrace & \text{| caso contrário}.
 \end{cases} $$
 
 ### Teorema 1F: A computação da altura de uma árvore tem a complexidade do pior caso $O(n)$
@@ -275,7 +275,7 @@ bool Tree::insert(Tree::Node** node, Record* record) {
 
 Entretanto, se é recordado, em código, a estrutura das árvores, `Node`, possuem um campo de altura, `height`, motivado pela complexidade de $h$. Após a inserção de um nó, a altura dessa árvore pode precisar ser atualizada. Note que o único _caminho_ que pode ter sua altura aumentada é aquele pelo qual o nó "passou", desde a raiz até a ponta onde foi inserido, esse caminho é chamado _caminho de incremento_. Ademais, se nó irmão de algum nó no caminho de incremento for mais alto, então, daquele nó para raiz a altura se manterá inalterada. 
 
-Como o nó irmão não é sempre garantido ser definido, uma verificação teria que ser feita, entretando, a altura do nó pai, com filhos, é definida $1 + max\{ h(T_E), h(T_D) \}$ e, como basta identificar se o irmão é mais alto, a negação disso é o nó no caminho de incremento ter a altura do pai menos 1. Assim, em código, a altura do pai é armazenada e comparada à do filho para definir o novo começo do caminho de incremento, e, para evitar underflow, 1 é somado à altura do filho, ao invés de subtraído da altura do pai. Dessa forma, em C++:
+Como o nó irmão não é sempre garantido ser definido, uma verificação teria que ser feita, entretando, a altura do nó pai, com filhos, é definida $1 + \max \lbrace h(T_E), h(T_D)  \rbrace $ e, como basta identificar se o irmão é mais alto, a negação disso é o nó no caminho de incremento ter a altura do pai menos 1. Assim, em código, a altura do pai é armazenada e comparada à do filho para definir o novo começo do caminho de incremento, e, para evitar underflow, 1 é somado à altura do filho, ao invés de subtraído da altura do pai. Dessa forma, em C++:
 
 ```C++
 bool Tree::insert(Tree::Node** node, Record* record) {
@@ -326,9 +326,9 @@ $$fb(T) = h(T_D) - h(T_E)$$
 
 ### Definição 4B: Árvore Binária Balanceada
 
-Uma árvore binária balanceada é uma árvore binária de busca que todo nó $T$ tem fator de balancemanto $fb(T) \in \{-1, 0, 1\}$
+Uma árvore binária balanceada é uma árvore binária de busca que todo nó $T$ tem fator de balancemanto $fb(T) \in  \lbrace-1, 0, 1 \rbrace $
 
-Quando uma árvore AVL possui algum nó com fator de balanceamento fora do conjunto $\{-1, 0, 1\}$, um balanceamento do nó tem que ser feito. Balanceamentos são feito das folhas para a raiz, isto é, nós mais baixos desbalanceados são balenceados primeiro. O balanceamento é dado por meio das chamadas _rotações_ nesses nós.
+Quando uma árvore AVL possui algum nó com fator de balanceamento fora do conjunto $ \lbrace-1, 0, 1 \rbrace $, um balanceamento do nó tem que ser feito. Balanceamentos são feito das folhas para a raiz, isto é, nós mais baixos desbalanceados são balenceados primeiro. O balanceamento é dado por meio das chamadas _rotações_ nesses nós.
 
 ### Definição e Implementação 4C: Rotações
 
@@ -352,30 +352,30 @@ Seja a árvore $A = \langle v, T_0, B \rangle$, $B = \langle u, T_1, T_2 \rangle
    T1 T2                                 T0 T1
 ```
 
-É notável que o nó $T_2$ subiu um nível na árvore e o nó $T_0$ desceu um nível, como $A$ é nó desbalanceado antes da rotação, $fb(A) = 2$. O nó $B$ deve ser balanceado, pois balanceamentos ocorrem das folhas para a raiz, se $T_1$ fosse o nó mais alto, por ele manter sua influência de altura, fazendo o nó $R_E(A)$ ser desbalanceado, assim, $h(T_1) \le h(T_2)$, entretanto, se $T_1$ precisa ter modificado a altura da árvore $A$, ou seja, $ h(T_1) \lt h(T_2) \implies 0 \lt h(T_2) - h(T_1) = fb(B)$ é uma condição para a aplicação de uma rotação direita. No total, a configuração das alturas antes da rotação é:
+É notável que o nó $T_2$ subiu um nível na árvore e o nó $T_0$ desceu um nível, como $A$ é nó desbalanceado antes da rotação, $fb(A) = 2$. O nó $B$ deve ser balanceado, pois balanceamentos ocorrem das folhas para a raiz, se $T_1$ fosse o nó mais alto, por ele manter sua influência de altura, fazendo o nó $R_E(A)$ ser desbalanceado, assim, $h(T_1) \le h(T_2)$, entretanto, se $T_1$ precisa ter modificado a altura da árvore $A$, ou seja, $ h(T_1) \lt h(T_2) \implies 0 \lt h(T_2) - h(T_1) = fb(B) $ é uma condição para a aplicação de uma rotação direita. No total, a configuração das alturas antes da rotação é:
 
 Fixa-se $h(T_2)$ como base após a inserção que gerou desbalanceamento.
 
-Como $ 0 \lt fb(B)$ e $fb(B) \in \{-1, 0, 1\}$, tem-se $fb(B) = h(T_2) - h(T_1) = 1$.<br>
-Logo, $h(T_1) = h(T_2) - 1$;
+Como $ 0 < fb(B)$ e $fb(B) \in \lbrace -1, 0, 1 \rbrace $, tem-se $fb(B) = h(T_2) - h(T_1) = 1 $. <br>
+Logo, $ h(T_1) = h(T_2) - 1 $;
 
-Como $ h(B) = 1 + \max\{h(T_1), h(T_2)\} = 1 + \max\{h(T_2) - 1, h(T_2)\}$.<br>
-Assim, $h(B) = h(T_2) + 1$;
+Como $ h(B) = 1 + \max \lbrace h(T_1), h(T_2) \rbrace  = 1 + \max \lbrace h(T_2) - 1, h(T_2) \rbrace $.<br>
+Assim, $ h(B) = h(T_2) + 1 $;
 
 Como $ fb(A) = 2 = h(B) - h(T_0) = h(T_2) + 1 - h(T_0)$.<br>
-Dessa forma $h(T_0) = h(T_2) - 1$;
+Dessa forma $ h(T_0) = h(T_2) - 1 $;
 
-Assim $h(A) = 1 + \max\{h(T_0), h(B)\} = 1 + \max\{h(T_2) - 1, h(T_2) + 1\} $,<br>
-$h(A) = h(T_2) + 2$.
+Assim $h(A) = 1 + \max \lbrace h(T_0), h(B) \rbrace = 1 + \max \lbrace h(T_2) - 1, h(T_2) + 1 \rbrace  $,<br>
+$ h(A) = h(T_2) + 2 $.
 
 Após a rotação, tem-se:
 
-* $h(A \unlhd R_E(A)) = 1 + \max\{h(T_0), h(T_1)\} = 1 + h(T_2) - 1 = h(T_2)$;
-* $h(B \unlhd R_E(A)) = 1 + \max\{h(A \unlhd R_E(A)), h(T_2)\} = 1 + h(T_2)$.
+* $ h(A \unlhd R_E(A)) = 1 + \max \lbrace h(T_0), h(T_1) \rbrace  = 1 + h(T_2) - 1 = h(T_2) $;
+* $ h(B \unlhd R_E(A)) = 1 + \max \lbrace h(A \unlhd R_E(A)), h(T_2) \rbrace  = 1 + h(T_2) $.
 
 Note que a altura das subárvores $T_0$, $T_1$ e $T_2$ não são modificadas pela rotação. 
 
-Assim, como $T_2 = $ `(*node)->rght_child->rght_child`, o código da rotação é dado:
+Assim, como $ T_2 = $ `(*node)->rght_child->rght_child`, o código da rotação é dado:
 
 ```C++
 void Tree::AVL::left_rotation(Node** node) {
@@ -433,7 +433,7 @@ Com operação de rotação, entende-se dizer qualquer uma dentre $R_D$, $R_E$, 
 
 Para as rotações simples, esquerda e direita, a altura de um $T$ desbalanceada é $2 + h(T_{DD})$ e $2 + h(T_{EE})$, respectivamente, já a altura de $R_E(T)$ e $R_D(T)$ são, respectivamente, $1 + h(T_{DD})$ e $1 + h(T_{EE})$. Logo, a altura diminui uma unidade.
 
-Para a rotaçõa dupla direita-esquerda, seja $T$ o nó desbalanceado, $h(R_D(T_D)) = 1 + h(T_{DEE})$, $h(T_D) = 2 + h(T_{DEE})$ e $h(T_E) \lt h(T_D)$, ou seja, a altura final, também, diminui por uma unidade. Analogamente, o mesmo se dá para a rotação dupla esquerda-direita.
+Para a rotaçõa dupla direita-esquerda, seja $T$ o nó desbalanceado, $h(R_D(T_D)) = 1 + h(T_{DEE})$, $h(T_D) = 2 + h(T_{DEE})$ e $h(T_E) < h(T_D)$, ou seja, a altura final, também, diminui por uma unidade. Analogamente, o mesmo se dá para a rotação dupla esquerda-direita.
 
 ### Corolário 4E: Uma operação de rotação sempre é suficiente para restaurar o balanceamento perdido após a inserção de um único nó
 
