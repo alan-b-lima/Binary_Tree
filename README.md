@@ -259,7 +259,7 @@ A natureza de divisão e conquista, mascarada pela iteratividade, mas ainda pres
 T = \langle v_0, \emptyset, \langle v_1, \emptyset, \langle  v_2, \emptyset, \langle  v_3, \emptyset, \emptyset \rangle \rangle \rangle \rangle
 ```
 
-tem 4 nós sempre arranjandos à sub-árvore direta, a busca de nó ausente maior que $v_3$ tomaria ao menos 4 interações do laço. Assim a complexidade de `Tree::search` é $O(n)$. A complexidade de espaço é contante, $O(1)$, pois a quantidade de variáveis usadas não muda com base na entrada.
+tem 4 nós sempre arranjandos à sub-árvore direita, a busca de nó ausente maior que $v_3$ tomaria ao menos 4 interações do laço. Assim a complexidade de `Tree::search` é $O(n)$. A complexidade de espaço é contante, $O(1)$, pois a quantidade de variáveis usadas não muda com base na entrada.
 
 ### Implementação 3B: Algoritmo de inserção
 

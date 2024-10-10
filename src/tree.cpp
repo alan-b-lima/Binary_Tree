@@ -37,23 +37,25 @@ void Tree::print_tree(Tree::Node* node) {
       return;
    }
 
-   BitTools::bool_array branches;
-   Node** stack;
+   BitTools::bool_array branches = nullptr;
+   Node** stack = nullptr;
 
-   if (node->height) {
-      branches = Stack::allocate<byte>((node->height + 7) >> 3);
-      if (!branches) {
-         std::cerr << "Failed to print tree!\n";
-         return;
-      }
-
-      stack = Stack::allocate<Node*>(node->height);
-      if (!stack) {
-         Stack::release(branches);
-         std::cerr << "Failed to print tree!\n";
-         return;
-      }
+   //if (node->height) {
+   branches = Stack::allocate<byte>(8);
+   if (!branches) {
+      std::cerr << "Failed to print tree!\n";
+      return;
    }
+
+   stack = Stack::allocate<Node*>(64);
+   if (!stack) {
+      Stack::release(branches);
+      std::cerr << "Failed to print tree!\n";
+      return;
+   }
+
+   BitTools::fill(branches, 0, 64);
+   //}
 
    int64_t depth = 0;
    int64_t top = -1;
@@ -151,7 +153,7 @@ void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
 void Tree::AVL::left_rotation(Node** node) {
    Node* rght_subtree = (*node)->rght_child;
 
-   (*node)->height = rght_subtree->rght_child ? rght_subtree->rght_child->height : 0;
+   (*node)->height = 1 + (rght_subtree->rght_child ? rght_subtree->rght_child->height : 0);
    rght_subtree->height = 1 + (*node)->height;
 
    (*node)->rght_child = rght_subtree->left_child;
@@ -162,7 +164,7 @@ void Tree::AVL::left_rotation(Node** node) {
 void Tree::AVL::rght_rotation(Node** node) {
    Node* left_subtree = (*node)->left_child;
 
-   (*node)->height = left_subtree->left_child ? left_subtree->left_child->height : 0;
+   (*node)->height = 1 + (left_subtree->left_child ? left_subtree->left_child->height : 0);
    left_subtree->height = 1 + (*node)->height;
 
    (*node)->left_child = left_subtree->rght_child;
@@ -179,7 +181,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
    Node** increment_path = node;
    bool balance = false;
-   bool side = false;
+   bool side;
 
    while (*node) {
 
@@ -225,8 +227,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
             left_rotation(&(*increment_path)->left_child);
          rght_rotation(increment_path);
       }
-
-   } else (*root)->height++;
+   }
 
    print_record(record, "\n$0, ");
    std::cout << balance << side;

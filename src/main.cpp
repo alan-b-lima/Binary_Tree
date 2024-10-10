@@ -40,21 +40,31 @@ int main(int argc, char** argv) {
    Record* rec = new Record[n_of_records];
 
    Tree::Node* root = nullptr;
+   // BitTools::bool_array helper = Stack::allocate<byte>((n_of_records + 7) >> 3);
+   // BitTools::fill(helper, 0x0, (n_of_records + 7) >> 3);
 
    for (size_t i = 0; i < n_of_records; i++) {
+      // uint32_t num = rand() % n_of_records;
+
+      // if (BitTools::getbit(helper, num)) { i--; continue; }
+      
+      // (void)BitTools::flipbit(helper, num);
       Generator::populate_record_randomly(rec[i]);
       rec[i].key = rec[i].data;
       rec[i].data = i;
 
-      // rec[i].key = i;
+      //rec[i].key = i;
 
       (void)Tree::insert(&root, &rec[i]);
    }
 
+   //Stack::release(helper);
+   
+   std::cout << "\nFinal:\n";
    Tree::print_tree(root);
 
    Tree::destruct(&root);
    delete[] rec;
-   
+
    return 0;
 }
