@@ -137,7 +137,7 @@ A altura de uma árvore binária é dada pela quantidade de nós no caminho do r
 
 $$ h(T) = \begin{cases}
    -1 & \text{| } T = \emptyset\\
-   1 + \max\{ h(T_E), h(T_D) \} & \text{| caso contrário}.
+   1 + \max \left{ h(T_E), h(T_D) \right} & \text{| caso contrário}.
 \end{cases} $$
 
 ### Teorema 1F: A computação da altura de uma árvore tem a complexidade do pior caso $O(n)$
