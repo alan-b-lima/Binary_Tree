@@ -40,22 +40,22 @@ void Tree::print_tree(Tree::Node* node) {
    BitTools::bool_array branches = nullptr;
    Node** stack = nullptr;
 
-   //if (node->height) {
-   branches = Stack::allocate<byte>(8);
-   if (!branches) {
-      std::cerr << "Failed to print tree!\n";
-      return;
-   }
+   if (node->height) {
+      branches = Stack::allocate<byte>((node->height + 7) >> 3);
+      if (!branches) {
+         std::cerr << "Failed to print tree!\n";
+         return;
+      }
 
-   stack = Stack::allocate<Node*>(64);
-   if (!stack) {
-      Stack::release(branches);
-      std::cerr << "Failed to print tree!\n";
-      return;
-   }
+      stack = Stack::allocate<Node*>(node->height);
+      if (!stack) {
+         Stack::release(branches);
+         std::cerr << "Failed to print tree!\n";
+         return;
+      }
 
-   BitTools::fill(branches, 0, 64);
-   //}
+      BitTools::fill(branches, 0, node->height);
+   }
 
    int64_t depth = 0;
    int64_t top = -1;
