@@ -377,6 +377,7 @@ Note que a altura das subárvores $T_0$, $T_1$ e $T_2$ não são modificadas pel
 
 Assim, como $ T_2 = $ `(*node)->rght_child->rght_child`, o código da rotação é dado:
 
+
 ```C++
 void Tree::AVL::left_rotation(Node** node) {
    Node* rght_subtree = (*node)->rght_child;
@@ -392,7 +393,7 @@ void Tree::AVL::left_rotation(Node** node) {
 
 #### ii) Rotação Direita
 
-A rotação esquerda, denotada pela função $R_D$ é dada:
+A rotação esquerda, denotada pela função $`R_D`$ é dada:
 
 $$R_E(\langle v_A, \langle v_B, T_0, T_1 \rangle, T_2 \rangle) = \langle v_B, T_0, \langle v_A, T_1, T_2 \rangle \rangle$$
 
