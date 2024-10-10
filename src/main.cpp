@@ -40,8 +40,8 @@ int main(int argc, char** argv) {
    Record* rec = new Record[n_of_records];
 
    Tree::Node* root = nullptr;
-   // BitTools::bool_array helper = Stack::allocate<byte>((n_of_records + 7) >> 3);
-   // BitTools::fill(helper, 0x0, (n_of_records + 7) >> 3);
+   byte* helper = Stack::allocate<byte>((n_of_records + 7) >> 3);
+   BitTools::initialize(helper, n_of_records);
 
    for (size_t i = 0; i < n_of_records; i++) {
       // uint32_t num = rand() % n_of_records;

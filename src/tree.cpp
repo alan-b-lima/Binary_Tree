@@ -37,7 +37,7 @@ void Tree::print_tree(Tree::Node* node) {
       return;
    }
 
-   BitTools::bool_array branches = nullptr;
+   byte* branches = nullptr;
    Node** stack = nullptr;
 
    if (node->height) {
@@ -54,7 +54,7 @@ void Tree::print_tree(Tree::Node* node) {
          return;
       }
 
-      BitTools::fill(branches, 0, node->height);
+      BitTools::initialize(branches, node->height);
    }
 
    int64_t depth = 0;
@@ -123,7 +123,7 @@ Record* Tree::search(Tree::Node* node, key_t key) {
 void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
    if (!*node) return;
 
-   Node** stack;
+   Node** stack = nullptr;
    if ((*node)->height) {
       stack = Stack::allocate<Node*>((*node)->height);
       if (!stack) return;
@@ -181,7 +181,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
    Node** increment_path = node;
    bool balance = false;
-   bool side;
+   bool side = false; // Compiler wouldn't shut up, didn't need to be initialized
 
    while (*node) {
 
