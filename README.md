@@ -370,9 +370,9 @@ $ h(A) = h(T_2) + 2 $.
 
 Após a rotação, tem-se:
 
-* $` h(A \unlhd R_E(A)) = 1 + \max \lbrace h(T_0), h(T_1) \rbrace  = 1 + h(T_2) - 1 = h(T_2) `$;
+* $ h(A \unlhd R_E(A)) = 1 + \max \lbrace h(T_0), h(T_1) \rbrace  = 1 + h(T_2) - 1 = h(T_2) $
 
-$ h(B \unlhd R_E(A)) = 1 + \max \lbrace h(A \unlhd R_E(A)), h(T_2) \rbrace  = 1 + h(T_2) $.
+$ h(B \unlhd R_E(A)) = 1 + \max \lbrace h(A \unlhd R_E(A)), h(T_2) \rbrace  = 1 + h(T_2) $
 
 Note que a altura das subárvores $T_0$, $T_1$ e $T_2$ não são modificadas pela rotação. 
 
