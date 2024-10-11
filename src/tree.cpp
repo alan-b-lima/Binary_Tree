@@ -37,11 +37,11 @@ void Tree::print_tree(Tree::Node* node) {
       return;
    }
 
-   byte* branches = nullptr;
+   BitTools::mword* branches = nullptr;
    Node** stack = nullptr;
 
    if (node->height) {
-      branches = Stack::allocate<byte>((node->height + 7) >> 3);
+      branches = Stack::allocate<BitTools::mword>(BitTools::size(node->height));
       if (!branches) {
          std::cerr << "Failed to print tree!\n";
          return;

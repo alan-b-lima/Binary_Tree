@@ -22,30 +22,34 @@
 #include <intrin.h>
 #endif
 
-typedef unsigned char byte;
-
 namespace BitTools {
 
-   byte* construct(uint32_t, byte = 0);
-   inline void destruct(byte*);
+   typedef unsigned long mword;
+
+   const mword SHIFT = sizeof(mword) >= 4 ? (sizeof(mword) == 4 ? 5 : 6) : (sizeof(mword) + 2);
+   const mword MASK = (1 << SHIFT) - 1;
+
+   mword* construct(uint64_t, mword = 0);
+   inline void destruct(mword*);
 
    // BT (Bit Test)
-   inline bool getbit(byte*, uint32_t);
+   inline bool getbit(mword*, uint64_t);
 
    // BTC (Bit Test and Complement)
-   inline bool flipbit(byte*, uint32_t);
+   inline bool flipbit(mword*, uint64_t);
 
    // BTR (Bit Test and Reset)
-   inline bool setbit_0(byte*, uint32_t);
+   inline bool setbit_0(mword*, uint64_t);
 
    // BTD (Bit Test and Set)
-   inline bool setbit_1(byte*, uint32_t);
+   inline bool setbit_1(mword*, uint64_t);
 
-   // Fills the boolean array with a bytewise pattern
-   byte* initialize(byte*, uint32_t, byte = 0);
+   // Fills the boolean array with a pattern
+   mword* initialize(mword*, uint64_t, mword = 0);
+   uint64_t size(uint64_t size) { return (size + MASK) >> SHIFT; }
 
    // Print the bits
-   void print_bits(byte*, uint32_t);
+   void print_bits(mword*, uint64_t);
 };
 
 #include "bittools.cpp"
