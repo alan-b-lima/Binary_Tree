@@ -62,13 +62,13 @@ void Tree::print_tree(Tree::Node* node) {
 
    while (true) {
 
-      if (!depth) std::cout.write(":\xC4\xC4\xC4", 4);
+      if (!depth) std::cout << TREE_BRANCHES[0];
       else std::cout.write("    ", 4);
 
       for (int64_t i = 0; i < depth - 1; i++)
-         std::cout.write(BitTools::getbit(branches, i) ? "\xB3   " : "\x20   ", 4);
+         std::cout << (BitTools::getbit(branches, i) ? TREE_BRANCHES[1] : TREE_BRANCHES[2]);
       if (depth)
-         std::cout.write(BitTools::getbit(branches, depth - 1) ? "\xC3\xC4\xC4\xC4" : "\xC0\xC4\xC4\xC4", 4);
+         std::cout << (BitTools::getbit(branches, depth - 1) ? TREE_BRANCHES[3] : TREE_BRANCHES[4]);
 
       print_record(node->content, "{$0, $1, $2, ");
       std::cout << node->height << "\n";

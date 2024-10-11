@@ -40,4 +40,30 @@ namespace Tree::AVL {
 
 };
 
+#if defined(_WIN32) || defined(_WIN64)
+
+char TREE_BRANCHES[][5] = {
+   "\x3A\xC4\xC4\xC4",
+   
+   "\xB3   ",
+   "\x20   ",
+
+   "\xC3\xC4\xC4\xC4",
+   "\xC0\xC4\xC4\xC4",
+};
+
+#else
+
+char TREE_BRANCHES[][13] = {
+   "\u003A\u2500\u2500\u2500",
+   
+   "\u2502\u0020\u0020\u0020",
+   "\u0020\u0020\u0020\u0020",
+
+   "\u251C\u2500\u2500\u2500",
+   "\u2514\u2500\u2500\u2500",
+};
+
+#endif
+
 #include "tree.cpp"

@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <new>
 
-#if defined(_MSC_VER) && __has_include("intrin.h")
+#if __has_include("intrin.h") && (defined(_WIN32) || defined(_WIN64))
 #include <intrin.h>
 #endif
 
