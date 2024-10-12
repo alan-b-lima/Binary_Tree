@@ -13,13 +13,14 @@
 #ifndef __BIT_TOOLS_
 #define __BIT_TOOLS_
 
-#include <stdint.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <new>
 
 #if __has_include("intrin.h") && (defined(_WIN32) || defined(_WIN64))
-#include <intrin.h>
+   #define __HAS__INTRINSICS____ 1
+   #include <intrin.h>
 #endif
 
 namespace BitTools {
@@ -46,12 +47,17 @@ namespace BitTools {
 
    // Fills the boolean array with a pattern
    mword* initialize(mword*, uint64_t, mword = 0);
-   uint64_t size(uint64_t size) { return (size + MASK) >> SHIFT; }
+   
+   inline uint64_t size(uint64_t size) { return (size + MASK) >> SHIFT; }
 
    // Print the bits
-   void print_bits(mword*, uint64_t);
+   void print(mword*, uint64_t);
 };
 
 #include "bittools.cpp"
+
+#ifdef __HAS__INTRINSICS____
+   #undef __HAS__INTRINSICS____
+#endif
 
 #endif /* __BIT_TOOLS_ */

@@ -25,17 +25,18 @@ inline void BitTools::destruct(mword* arr) {
    delete[] arr;
 }
 
-void BitTools::print_bits(mword* arr, uint64_t size) {
+void BitTools::print(mword* arr, uint64_t size) {
+   size--;
    do putchar(getbit(arr, size) ? '1' : '0');
    while (size--);
 }
 
-#if defined(__INTRIN_H_) && defined(_VCRT_COMPILER_PREPROCESSOR) && !defined(__midl)
+#if defined(__INTRIN_H_) && __HAS__INTRINSICS____
 
-inline bool BitTools::getbit(mword* base, uint64_t pos) { return _bittest((const long*)base, pos); }
-inline bool BitTools::flipbit(mword* base, uint64_t pos) { return _bittestandcomplement((long*)base, pos); }
-inline bool BitTools::setbit_0(mword* base, uint64_t pos) { return _bittestandreset((long*)base, pos); }
-inline bool BitTools::setbit_1(mword* base, uint64_t pos) { return _bittestandset((long*)base, pos); }
+inline bool BitTools::getbit(mword* base, uint64_t pos) { return _bittest64((const long long*)(base + (pos >> SHIFT)), pos & MASK); }
+inline bool BitTools::flipbit(mword* base, uint64_t pos) { return _bittestandcomplement64((long long*)(base + (pos >> SHIFT)), pos & MASK); }
+inline bool BitTools::setbit_0(mword* base, uint64_t pos) { return _bittestandreset64((long long*)(base + (pos >> SHIFT)), pos & MASK); }
+inline bool BitTools::setbit_1(mword* base, uint64_t pos) { return _bittestandset64((long long*)(base + (pos >> SHIFT)), pos & MASK); }
 
 #else
 
@@ -44,20 +45,32 @@ inline bool BitTools::getbit(mword* base, uint64_t pos) {
 }
 
 inline bool BitTools::flipbit(mword* base, uint64_t pos) {
-   bool bit = getbit(base, pos);
-   base[pos >> SHIFT] ^= 1 << (pos & MASK);
+   mword* word = base + (pos >> SHIFT);
+   int64_t offset = 1 << (pos & MASK);
+
+   bool bit = *word & offset;
+   *word ^= offset;
+
    return bit;
 }
 
 inline bool BitTools::setbit_0(mword* base, uint64_t pos) {
-   bool bit = getbit(base, pos);
-   base[pos >> SHIFT] &= ~(1 << (pos & MASK));
+   mword* word = base + (pos >> SHIFT);
+   int64_t offset = 1 << (pos & MASK);
+
+   bool bit = *word & offset;
+   *word &= ~offset;
+
    return bit;
 }
 
 inline bool BitTools::setbit_1(mword* base, uint64_t pos) {
-   bool bit = getbit(base, pos);
-   base[pos >> SHIFT] |= 1 << (pos & MASK);
+   mword* word = base + (pos >> SHIFT);
+   int64_t offset = 1 << (pos & MASK);
+
+   bool bit = *word & offset;
+   *word |= offset;
+
    return bit;
 }
 

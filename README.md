@@ -293,9 +293,11 @@ bool Tree::insert(Tree::Node** node, Record* record) {
 }
 ```
 
-Entretanto, se é recordado, em código, a estrutura das árvores, `Node`, possuem um campo de altura, `height`, motivado pela complexidade de $h$. Após a inserção de um nó, a altura dessa árvore pode precisar ser atualizada. Note que o único _caminho_ que pode ter sua altura aumentada é aquele pelo qual o nó "passou", desde a raiz até a ponta onde foi inserido, esse caminho é chamado _caminho de incremento_. Ademais, se nó irmão de algum nó no caminho de incremento for mais alto, então, daquele nó para raiz a altura se manterá inalterada. 
+Entretanto, se é recordado, em código, a estrutura das árvores, `Node`, possuem um campo de altura, `height`, motivado pela complexidade de $h$. Após a inserção de um nó, a altura dessa árvore pode precisar ser atualizada. Note que o único _caminho_ que pode ter sua altura aumentada é aquele pelo qual o nó "passou", desde a raiz até a ponta onde foi inserido, esse caminho é chamado _caminho de incremento_. Ademais, se nó irmão de algum nó no caminho de incremento for mais alto, então, daquele nó para raiz a altura se manterá inalterada.
 
-Como o nó irmão não é sempre garantido ser definido, uma verificação teria que ser feita, entretando, a altura do nó pai, com filhos, é definida $`1 + \max \lbrace h(T_E), h(T_D)  \rbrace `$ e, como basta identificar se o irmão é mais alto, a negação disso é o nó no caminho de incremento ter a altura do pai menos 1. Assim, em código, a altura do pai é armazenada e comparada à do filho para definir o novo começo do caminho de incremento, e, para evitar underflow, 1 é somado à altura do filho, ao invés de subtraído da altura do pai. Dessa forma, em C++:
+Seja $`T`$ o nó no caminho de incremento, $`T_I`$ seu irmão e $`P`$ seu pai. Sabe-se que $`T`$ se tornará a nova origem do caminho de incremento se, e somente se $`h(T_I) \gt h(T)`$. Como o nó irmão não é sempre garantido ser definido, uma verificação teria que ser feita, entretando, a altura do nó pai é definida $`1 + \max \lbrace h(T), h(T_I) \rbrace `$. Assim, tem-se informação suficiente para dizer que $`h(P) = 1 + h(T_I) \implies h(P) - 1 = h(T_I)`$, substituindo, tem-se $`h(P) - 1 \gt h(T) \implies h(P) \gt h(T) + 1`$. Logo, a nova origem é determinada quando $`h(T) + 1 < h(P)`$ tenha interpretação verdadeira.
+
+Dessa forma, em C++:
 
 ```C++
 bool Tree::insert(Tree::Node** node, Record* record) {
@@ -304,19 +306,20 @@ bool Tree::insert(Tree::Node** node, Record* record) {
    if (!new_node) return false;
 
    Node* increment_path = *node;
-   int64 height = increment_path ? increment_path->height : -1;
+   int64 parent_height = increment_path ? increment_path->height : -1;
 
    while (*node) {
 
-      if ((*node)->height + 1 < height)
+      if ((*node)->height + 1 < parent_height)
          increment_path = *node;
 
+      parent_height = (*node)->height;
       node = record->key < (*node)->content->key ?
          &(*node)->left_child : &(*node)->rght_child;
 
    }
    
-   if (!height) while (increment_path) {
+   if (!parent_height) while (increment_path) {
       increment_path->height++;
 
       increment_path = record->key < increment_path->content->key ?
@@ -348,9 +351,9 @@ fb(T) = h(T_D) - h(T_E)
 
 ### Definição 4B: Árvore Binária Balanceada
 
-Uma árvore binária balanceada é uma árvore binária de busca que todo nó $`T`$ tem fator de balancemanto $`fb(T) \in  \lbrace-1, 0, 1 \rbrace`$
+Uma árvore binária balanceada é uma árvore binária de busca que todo nó $`T`$ tem fator de balancemanto $`fb(T) \in \lbrace -1, 0, 1 \rbrace`$
 
-Quando uma árvore AVL possui algum nó com fator de balanceamento fora do conjunto $` \lbrace-1, 0, 1 \rbrace `$, um balanceamento do nó tem que ser feito. Balanceamentos são feito das folhas para a raiz, isto é, nós mais baixos desbalanceados são balenceados primeiro. O balanceamento é dado por meio das chamadas _rotações_ nesses nós.
+Quando uma árvore AVL possui algum nó com fator de balanceamento fora do conjunto $`\lbrace -1, 0, 1 \rbrace`$, um balanceamento do nó tem que ser feito. Balanceamentos são feito das folhas para a raiz, isto é, nós mais baixos desbalanceados são balenceados primeiro. O balanceamento é dado por meio das chamadas _rotações_ nesses nós.
 
 ### Definição e Implementação 4C: Rotações
 
@@ -401,13 +404,13 @@ Após a rotação, tem-se:
 
 Note que a altura das subárvores $`T_0`$, $`T_1`$ e $`T_2`$ não são modificadas pela rotação. 
 
-Assim, como $` T_2 = `$`(*node)->rght_child->rght_child`, o código da rotação é dado:
+Assim, como $`T_2 =`$`(*node)->rght_child->rght_child`, o código da rotação é dado:
 
 ```C++
 void Tree::AVL::left_rotation(Node** node) {
    Node* rght_subtree = (*node)->rght_child;
 
-   (*node)->height = rght_subtree->rght_child->height;
+   (*node)->height = 1 + (rght_subtree->rght_child ? rght_subtree->rght_child->height : 0);
    rght_subtree->height = 1 + (*node)->height;
 
    (*node)->rght_child = rght_subtree->left_child;
@@ -421,16 +424,16 @@ void Tree::AVL::left_rotation(Node** node) {
 A rotação esquerda, denotada pela função $`R_D`$ é dada:
 
 ```math
-R_E(\langle v_A, \langle v_B, T_0, T_1 \rangle, T_2 \rangle) = \langle v_B, T_0, \langle v_A, T_1, T_2 \rangle \rangle
+R_D(\langle v_A, \langle v_B, T_0, T_1 \rangle, T_2 \rangle) = \langle v_B, T_0, \langle v_A, T_1, T_2 \rangle \rangle
 ```
 
-Nota-se que $`R_D`$ é indefinido para um nó $`T`$ se $`T_E = \emptyset`$. Ademais, $`R_D`$ é a função inversa de $`R_E`$. Assim, de forma analoga, uma rotação direita deve ser feita quando um nó $`T`$ tem $`fb(T) = -2`$ e $`fb(T_E) =n -1`$. O código é dado:
+Nota-se que $`R_D`$ é indefinido para um nó $`T`$ se $`T_E = \emptyset`$. Ademais, $`R_D`$ é a função inversa de $`R_E`$. Assim, de forma analoga, uma rotação direita deve ser feita quando um nó $`T`$ tem $`fb(T) = -2`$ e $`fb(T_E) = -1`$. O código é dado:
 
 ```C++
 void Tree::AVL::rght_rotation(Node** node) {
    Node* left_subtree = (*node)->left_child;
 
-   (*node)->height = left_subtree->left_child->height;
+   (*node)->height = left_subtree->left_child ? left_subtree->left_child->height : 0;
    left_subtree->height = 1 + (*node)->height;
 
    (*node)->left_child = left_subtree->rght_child;

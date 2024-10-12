@@ -8,10 +8,10 @@ namespace Generator {
 
    // const uint64_t PAGE_SIZE = 0x1000;
 
-   void populate_record_randomly(Record& record) {
-      record.data = rand();
+   void populate_record_randomly(Record* record) {
+      record->data = rand();
 
-      char* cursor = record.name;
+      char* cursor = record->name;
       uint64_t remaining_space = NAME_SIZE;
 
       byte params = rand() & 0b111;
