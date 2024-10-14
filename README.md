@@ -383,7 +383,7 @@ Rotação simples à esquerda
 
 É notável que o nó $`T_2`$ subiu um nível na árvore e o nó $`T_0`$ desceu um nível, como $`A`$ é nó desbalanceado antes da rotação, $`fb(A) = 2`$. O nó $`B`$ deve ser balanceado, pois balanceamentos ocorrem das folhas para a raiz, se $`T_1`$ fosse o nó mais alto, por ele manter sua influência de altura, fazendo o nó $`R_E(A)`$ ser desbalanceado, assim, $` h(T_1) \le h(T_2) `$, entretanto, se $`T_1`$ precisa ter modificado a altura da árvore $`A`$, ou seja, $` h(T_1) < h(T_2) \implies 0 < h(T_2) - h(T_1) = fb(B) `$ é uma condição para a aplicação de uma rotação direita. No total, a configuração das alturas antes da rotação é:
 
-Fixa-se $h(T_2)$ como base após a inserção que gerou desbalanceamento.
+Fixa-se $`h(T_2)`$ como base após a inserção que gerou desbalanceamento.
 
 Como $` 0 \lt fb(B) `$ e $` fb(B) \in \lbrace -1, 0, 1 \rbrace `$, tem-se $`fb(B) = h(T_2) - h(T_1) = 1 `$. <br>
 Logo, $` h(T_1) = h(T_2) - 1 `$;

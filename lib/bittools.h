@@ -15,7 +15,6 @@
 
 #include <stdlib.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <new>
 
 #if __has_include("intrin.h") && (defined(_WIN32) || defined(_WIN64))
@@ -25,9 +24,9 @@
 
 namespace BitTools {
 
-   typedef unsigned long mword;
+   typedef unsigned long long mword;
 
-   const mword SHIFT = sizeof(mword) >= 4 ? (sizeof(mword) == 4 ? 5 : 6) : (sizeof(mword) + 2);
+   const mword SHIFT = sizeof(mword) >= 4 ? ((sizeof(mword) >> 2) + 4) : (sizeof(mword) + 2);
    const mword MASK = (1 << SHIFT) - 1;
 
    mword* construct(uint64_t, mword = 0);
@@ -42,12 +41,12 @@ namespace BitTools {
    // BTR (Bit Test and Reset)
    inline bool setbit_0(mword*, uint64_t);
 
-   // BTD (Bit Test and Set)
+   // BTS (Bit Test and Set)
    inline bool setbit_1(mword*, uint64_t);
 
    // Fills the boolean array with a pattern
    mword* initialize(mword*, uint64_t, mword = 0);
-   
+
    inline uint64_t size(uint64_t size) { return (size + MASK) >> SHIFT; }
 
    // Print the bits

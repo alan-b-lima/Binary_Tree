@@ -14,7 +14,7 @@ BitTools::mword* BitTools::construct(uint64_t size, mword set) {
 
 BitTools::mword* BitTools::initialize(mword* arr, uint64_t size, mword set) {
    size = (size + 7) >> 3;
-   
+
    for (uint64_t i = 0; i < size; i++)
       arr[i] = set;
 
@@ -26,9 +26,10 @@ inline void BitTools::destruct(mword* arr) {
 }
 
 void BitTools::print(mword* arr, uint64_t size) {
-   size--;
-   do putchar(getbit(arr, size) ? '1' : '0');
-   while (size--);
+   if (size--) {
+      do std::cout.put(getbit(arr, size) ? '1' : '0');
+      while (size--);
+   }
 }
 
 #if defined(__INTRIN_H_) && __HAS__INTRINSICS____

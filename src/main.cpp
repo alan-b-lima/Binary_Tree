@@ -15,7 +15,7 @@
 */
 
 int main(int argc, char** argv) {
-// int main() { int argc = 3; char argv[][11] = { "", "0", "14" };
+   // int main() { int argc = 3; char argv[][11] = { "", "0", "14" };
 
    time_t seed;
    size_t n_of_records = 16;
@@ -45,18 +45,20 @@ int main(int argc, char** argv) {
    );
 
    for (uint64_t i = 0; i < n_of_records; i++) {
-      int32_t num = rand() % n_of_records;
+      uint64_t num = rand() % n_of_records;
 
-      if (BitTools::getbit(helper, num)) { i--; continue; }
+      while (BitTools::getbit(helper, num))
+         if (++num >= n_of_records) num = 0;
 
       (void)BitTools::flipbit(helper, num);
-      Record* record = new Record{ num };
+      Record* record = new Record{ key_t(num & 0xFFFF) };
       Generator::populate_record_randomly(record);
+      record->data = i;
 
       (void)Tree::AVL::insert(&root, record);
    }
 
-   //Stack::release(helper);
+   Stack::release(helper);
 
    std::cout << "\nFinal:\n";
    Tree::print(root);

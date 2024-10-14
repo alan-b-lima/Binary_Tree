@@ -1,7 +1,7 @@
 #include "tree.h"
 #include <fstream>
 
-bool Tree::insert(Tree::Node** node, Record* record) {
+bool Tree::insert(Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return false;
@@ -31,74 +31,157 @@ bool Tree::insert(Tree::Node** node, Record* record) {
    return true;
 }
 
-void Tree::print(Tree::Node* node, int64_t height) {
-
-   // std::ostream& ostream = std::cout;
-   std::fstream ostream("tree.txt", std::ios::binary | std::ios::out);
+void Tree::print(Node* node) {
 
    if (!node) {
-      ostream.write("{}\n", 2);
+      std::cout.write("{}\n", 2);
       return;
    }
 
    BitTools::mword* branches = nullptr;
    Node** stack = nullptr;
 
-   if (height == -1)
-      height = node->height;
-
-   if (height > 0) {
-      branches = Stack::allocate<BitTools::mword>(BitTools::size(height));
+   if (node->height) {
+      branches = Stack::allocate<BitTools::mword>(BitTools::size(node->height));
       if (!branches) {
          std::cerr << "Failed to print tree!\n";
          return;
       }
 
-      stack = Stack::allocate<Node*>(height);
+      stack = Stack::allocate<Node*>(node->height);
       if (!stack) {
          Stack::release(branches);
          std::cerr << "Failed to print tree!\n";
          return;
       }
 
-      BitTools::initialize(branches, height);
+      BitTools::initialize(branches, node->height);
    }
 
-   int64_t depth = 0;
+   int64_t depth = -1;
    int64_t top = -1;
 
    while (true) {
 
-      if (!depth) ostream.write(BRANCH_ROOT, sizeof(BRANCH_ROOT) - 1);
-      else ostream.write(NO_BRANCH, sizeof(NO_BRANCH) - 1);
+      if (node->left_child) {
+         stack[++top] = node;
+         node = node->left_child;
+         depth++;
 
-      for (int64_t i = 0; i < depth - 1; i++) {
-         if (BitTools::getbit(branches, i)) ostream.write(BRANCH_DOWN, sizeof(BRANCH_DOWN) - 1);
-         else ostream.write(NO_BRANCH, sizeof(NO_BRANCH) - 1);
+         continue;
       }
 
-      if (depth) {
-         if (BitTools::getbit(branches, depth - 1)) ostream.write(BRANCH_DOWN_SIDE, sizeof(BRANCH_DOWN_SIDE) - 1);
-         else ostream.write(BRANCH_SIDE, sizeof(BRANCH_SIDE) - 1);
+      if (depth > -1)
+         (void)BitTools::flipbit(branches, depth);
+
+      while (true) {
+
+         if (depth < 0)
+            std::cout.write(BRANCH_ROOT, sizeof(BRANCH_ROOT) - 1);
+         else
+            std::cout.write(NO_BRANCH, sizeof(NO_BRANCH) - 1);
+
+         for (int64_t i = 0; i < depth; i++) {
+            if (BitTools::getbit(branches, i))
+               std::cout.write(BRANCH_DOWN, sizeof(BRANCH_DOWN) - 1);
+            else
+               std::cout.write(NO_BRANCH, sizeof(NO_BRANCH) - 1);
+         }
+
+         if (depth > -1) {
+            if (BitTools::getbit(branches, depth))
+               std::cout.write(BRANCH_UP_SIDE, sizeof(BRANCH_UP_SIDE) - 1);
+            else
+               std::cout.write(BRANCH_DOWN_SIDE, sizeof(BRANCH_DOWN_SIDE) - 1);
+         }
+
+         print_record(node->content, "{$0, $1, $2, ");
+         std::cout << node->height << '\n';
+
+         if (node->rght_child) {
+            node = node->rght_child;
+
+            depth++;
+            (void)BitTools::setbit_1(branches, depth);
+
+            break;
+         }
+
+         if (top < 0) goto exit;
+         node = stack[top--];
+
+         for (int64_t i = depth; i >= 0; i--) {
+            depth--;
+            if (BitTools::setbit_0(branches, i)) break;
+         }
+
+         if (depth > -1)
+            (void)BitTools::flipbit(branches, depth);
+      }
+   }
+
+exit:
+   Stack::release(stack);
+   Stack::release(branches);
+}
+
+void Tree::print_old(Node* node) {
+
+   if (!node) {
+      std::cout.write("{}\n", 2);
+      return;
+   }
+
+   BitTools::mword* branches = nullptr;
+   Node** stack = nullptr;
+
+   if (node->height) {
+      branches = Stack::allocate<BitTools::mword>(BitTools::size(node->height));
+      if (!branches) {
+         std::cerr << "Failed to print tree!\n";
+         return;
       }
 
-      // print_record(node->content, "{$0, $1, $2, ");
+      stack = Stack::allocate<Node*>(node->height);
+      if (!stack) {
+         Stack::release(branches);
+         std::cerr << "Failed to print tree!\n";
+         return;
+      }
+   }
 
-      ostream
-         << '{' << node->content->key
-         << ", " << node->height << "}\n";
+   int64_t depth = -1;
+   int64_t top = -1;
+
+   while (true) {
+
+      if (depth < 0) std::cout.write(BRANCH_ROOT, sizeof(BRANCH_ROOT) - 1);
+      else std::cout.write(NO_BRANCH, sizeof(NO_BRANCH) - 1);
+
+      for (int64_t i = 0; i < depth; i++) {
+         if (BitTools::getbit(branches, i)) std::cout.write(BRANCH_DOWN, sizeof(BRANCH_DOWN) - 1);
+         else std::cout.write(NO_BRANCH, sizeof(NO_BRANCH) - 1);
+      }
+
+      if (depth > -1) {
+         if (BitTools::getbit(branches, depth)) std::cout.write(BRANCH_SIDE, sizeof(BRANCH_SIDE) - 1);
+         else std::cout.write(BRANCH_DOWN_SIDE, sizeof(BRANCH_DOWN_SIDE) - 1);
+      }
+
+      print_record(node->content, "{$0, $1, $2, ");
+      std::cout << node->height << "}\n";
 
       if (node->left_child && node->rght_child) {
 
-         (void)BitTools::setbit_1(branches, depth);
          depth++;
+         (void)BitTools::setbit_1(branches, depth);
 
       } else if (node->left_child || node->rght_child) {
 
-         (void)BitTools::setbit_0(branches, depth);
          depth++;
+         (void)BitTools::setbit_0(branches, depth);
 
-      } else for (int64_t i = depth - 1; i >= 0; i--) {
+      } else for (int64_t i = depth; i >= 0; i--) {
 
          if (BitTools::setbit_0(branches, i)) break;
          depth--;
@@ -111,8 +194,6 @@ void Tree::print(Tree::Node* node, int64_t height) {
       if (top < 0) break;
       node = stack[top--];
    }
-
-   ostream.close();
 
    Stack::release(stack);
    Stack::release(branches);
@@ -167,26 +248,68 @@ void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
    Stack::release(stack);
 }
 
-void Tree::AVL::left_rotation(Node** node) {
+void Tree::AVL::smpl_left_rotation(Node** node) {
    Node* rght_subtree = (*node)->rght_child;
 
-   (*node)->height = 1 + (rght_subtree->rght_child ? rght_subtree->rght_child->height : 0);
+   // Height adjustment
+   (*node)->height = rght_subtree->rght_child->height;
    rght_subtree->height = 1 + (*node)->height;
 
+   // Pointer jugling
    (*node)->rght_child = rght_subtree->left_child;
    rght_subtree->left_child = *node;
    *node = rght_subtree;
 }
 
-void Tree::AVL::rght_rotation(Node** node) {
+void Tree::AVL::smpl_rght_rotation(Node** node) {
    Node* left_subtree = (*node)->left_child;
 
-   (*node)->height = 1 + (left_subtree->left_child ? left_subtree->left_child->height : 0);
+   // Height adjustment
+   (*node)->height = left_subtree->left_child->height;
    left_subtree->height = 1 + (*node)->height;
 
+   // Pointer jugling
    (*node)->left_child = left_subtree->rght_child;
    left_subtree->rght_child = *node;
    *node = left_subtree;
+}
+
+void Tree::AVL::left_rght_rotation(Node** node) {
+   Node* midd_subtree = (*node)->left_child->rght_child;
+
+   // Pointer jugling on the left subtree
+   (*node)->left_child->rght_child = midd_subtree->left_child;
+   midd_subtree->left_child = (*node)->left_child;
+
+   // Pointer jugling on the origin
+   (*node)->left_child = midd_subtree->rght_child;
+   midd_subtree->rght_child = *node;
+
+   // Height adjustment
+   midd_subtree->left_child->height = midd_subtree->height;
+   midd_subtree->rght_child->height = midd_subtree->height;
+   midd_subtree->height++;
+
+   *node = midd_subtree;
+}
+
+void Tree::AVL::rght_left_rotation(Node** node) {
+   Node* midd_subtree = (*node)->rght_child->left_child;
+
+   // Pointer jugling on the right subtree
+   (*node)->rght_child->left_child = midd_subtree->rght_child;
+   midd_subtree->rght_child = (*node)->rght_child;
+
+   // Pointer jugling on the origin
+   (*node)->rght_child = midd_subtree->left_child;
+   midd_subtree->left_child = *node;
+
+   // Height adjustment
+   midd_subtree->left_child->height = midd_subtree->height;
+   midd_subtree->rght_child->height = midd_subtree->height;
+   midd_subtree->height++;
+
+   *node = midd_subtree;
 }
 
 int64_t height(Tree::Node* node) {
@@ -211,110 +334,83 @@ bool is_balanced(Tree::Node* node) {
    return true;
 }
 
-#define height_s(node) ((node) ? (node)->height : -1)
-
 bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
-   Node** root = node;
-
-   Node* new_node = new Node{ record, nullptr, nullptr, -1 };
+   Node* new_node = new Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return false;
 
    Node** balance_path = node;
    Node** increment_path = node;
 
-   int64_t parent_height = height_s(*node);
+   int64_t parent_height = *node ? (*node)->height : -1;
 
    bool balance = false;
    bool side = false; // Compiler wouldn't shut up, didn't need to be initialized
 
-   print(*root, height(*root));
-
    while (*node) {
 
-      if ((*node)->height + 1 < parent_height)
+      if ((*node)->height + 1 < parent_height) {
          increment_path = node;
+         balance = false;
+      }
 
       parent_height = (*node)->height;
       if (record->key < (*node)->content->key) {
 
-         if (height_s((*node)->left_child) > height_s((*node)->rght_child)) {
+         if (parent_height > 1 + ((*node)->rght_child ? (*node)->rght_child->height : -1)) {
             balance = true;
             balance_path = node;
             side = true;
          }
 
-         // parent = node;
          node = &(*node)->left_child;
 
       } else {
 
-         if (height_s((*node)->rght_child) > height_s((*node)->left_child)) {
+         if (parent_height > 1 + ((*node)->left_child ? (*node)->left_child->height : -1)) {
             balance = true;
             balance_path = node;
             side = false;
          }
 
-         // parent = node;
          node = &(*node)->rght_child;
       }
    }
 
-   *node = new_node;
-
-   // if (!parent_height) while (increment_path) {
-   //    increment_path->height++;
-
-   //    increment_path = record->key < increment_path->content->key ?
-   //       increment_path->left_child : increment_path->rght_child;
-   // }
-
-   print(*root, height(*root));
-
-   bool is_not_balanced = !is_balanced(*root);
-
-   if (is_not_balanced != balance) {
-      std::cout << (is_not_balanced ? "\nNeeds, " : "\nGood, ");
-      std::cout << record->key << ", ";
-
-      std::cout << (!parent_height && height_s(*increment_path) > height_s(*balance_path)) << ", ";
-
-      if (*increment_path) std::cout << (*increment_path)->content->key << ", ";
-      else std::cout << "{}, ";
-
-      std::cout << (balance ?
-         (side ?
-            (record->key > (*balance_path)->left_child->content->key ? "right-left" : "left") :
-            (record->key < (*balance_path)->rght_child->content->key ? "left-right" : "right")
-            ) : "none") << ", ";
-
-      if (*balance_path) std::cout << (*balance_path)->content->key << "]\n";
-      else std::cout << "{}]\n";
-
-      // std::cout.write("*\n", 2);
-
-      std::cin.get();
+   if (parent_height) {
+      *node = new_node;
+      return true;
    }
 
-   if (is_not_balanced) {
+   if (balance)
+      increment_path = balance_path;
+
+   while (*increment_path) {
+      (*increment_path)->height++;
+
+      increment_path = record->key < (*increment_path)->content->key ?
+         &(*increment_path)->left_child : &(*increment_path)->rght_child;
+   }
+
+   *node = new_node;
+
+   if (balance) {
 
       if (side) {
+
          if (record->key > (*balance_path)->left_child->content->key)
-            left_rotation(&(*balance_path)->left_child);
-         rght_rotation(balance_path);
+            left_rght_rotation(balance_path);
+         else
+            smpl_rght_rotation(balance_path);
+
       } else {
+
          if (record->key < (*balance_path)->rght_child->content->key)
-            rght_rotation(&(*balance_path)->rght_child);
-         left_rotation(balance_path);
+            rght_left_rotation(balance_path);
+         else
+            smpl_left_rotation(balance_path);
       }
    }
 
-   print(*root, height(*root));
-
-   if (!is_balanced(*root)) {
-      std::cout.write("**\n", 2);
-   }
-
-   calculate_height(*root);
    return true;
 }
