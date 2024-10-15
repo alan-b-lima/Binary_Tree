@@ -8,8 +8,8 @@
 *    It's a not precompiled C++ library that implements a
 *    stack structure for dynamic allocation with less overhead.
 *    It has a static array of size 4KiB, in which the allocations
-*    are done. Does not support object, to use objects, constructors
-*    and destructors must be called manually.
+*    are done. Does not offer native support for object, to use them,
+*    constructors and destructors must be called manually.
 */
 
 #ifndef __STACK_AL_
@@ -33,7 +33,7 @@ namespace Stack {
 
    template <typename type_t>
    type_t* allocate(uint64_t size, Stack& stack = __stack) {
-      if (size == 0) return nullptr;
+      if (!size) return nullptr;
       
       size *= sizeof(type_t);
 
@@ -50,10 +50,10 @@ namespace Stack {
 
    template <typename type_t>
    void release(type_t* pointer, Stack& stack = __stack) {
-      if (pointer == nullptr) return;
+      if (!pointer) return;
 
       if (uintptr_t(stack.frame) > uintptr_t(pointer) || uintptr_t(pointer) >= uintptr_t(stack.frame + FRAME_SIZE)) {
-         delete[] pointer;
+         free(pointer);
          return;
       }
 

@@ -476,6 +476,7 @@ Seguindo do resultado anterior, uma operação de rotação sempre diminui a alt
 
 ### Implementação 4F: Inserção em Árvore AVL
 
+Diferentemente das implementações 
 
 # Referências
 

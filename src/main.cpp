@@ -1,13 +1,11 @@
 #include "base.h"
 #include "tree.h"
-#include "generator.h"
 
 /* Planning the interface
  *
  * Some commands:
- *    generate records
+ *    modify records
  *    get/set seed
- *    print tree
  *    test speed and stuff (actual shit)
  *    help
  *    about
@@ -16,9 +14,11 @@
 
 int main(int argc, char** argv) {
    // int main() { int argc = 3; char argv[][11] = { "", "0", "14" };
+   system_specifics_setup();
 
    time_t seed;
    size_t n_of_records = 16;
+
    switch (argc) {
       case 3:
          n_of_records = atoi(argv[2]);
@@ -52,15 +52,13 @@ int main(int argc, char** argv) {
 
       (void)BitTools::flipbit(helper, num);
       Record* record = new Record{ key_t(num & 0xFFFF) };
-      Generator::populate_record_randomly(record);
+      populate_record_randomly(record);
       record->data = i;
 
       (void)Tree::AVL::insert(&root, record);
    }
 
    Stack::release(helper);
-
-   std::cout << "\nFinal:\n";
    Tree::print(root);
 
    Tree::destruct(&root, destruct_record);

@@ -1,5 +1,4 @@
 #include "tree.h"
-#include <fstream>
 
 bool Tree::insert(Node** node, Record* record) {
 
@@ -121,80 +120,6 @@ void Tree::print(Node* node) {
    }
 
 exit:
-   Stack::release(stack);
-   Stack::release(branches);
-}
-
-void Tree::print_old(Node* node) {
-
-   if (!node) {
-      std::cout.write("{}\n", 2);
-      return;
-   }
-
-   BitTools::mword* branches = nullptr;
-   Node** stack = nullptr;
-
-   if (node->height) {
-      branches = Stack::allocate<BitTools::mword>(BitTools::size(node->height));
-      if (!branches) {
-         std::cerr << "Failed to print tree!\n";
-         return;
-      }
-
-      stack = Stack::allocate<Node*>(node->height);
-      if (!stack) {
-         Stack::release(branches);
-         std::cerr << "Failed to print tree!\n";
-         return;
-      }
-   }
-
-   int64_t depth = -1;
-   int64_t top = -1;
-
-   while (true) {
-
-      if (depth < 0) std::cout.write(BRANCH_ROOT, sizeof(BRANCH_ROOT) - 1);
-      else std::cout.write(NO_BRANCH, sizeof(NO_BRANCH) - 1);
-
-      for (int64_t i = 0; i < depth; i++) {
-         if (BitTools::getbit(branches, i)) std::cout.write(BRANCH_DOWN, sizeof(BRANCH_DOWN) - 1);
-         else std::cout.write(NO_BRANCH, sizeof(NO_BRANCH) - 1);
-      }
-
-      if (depth > -1) {
-         if (BitTools::getbit(branches, depth)) std::cout.write(BRANCH_SIDE, sizeof(BRANCH_SIDE) - 1);
-         else std::cout.write(BRANCH_DOWN_SIDE, sizeof(BRANCH_DOWN_SIDE) - 1);
-      }
-
-      print_record(node->content, "{$0, $1, $2, ");
-      std::cout << node->height << "}\n";
-
-      if (node->left_child && node->rght_child) {
-
-         depth++;
-         (void)BitTools::setbit_1(branches, depth);
-
-      } else if (node->left_child || node->rght_child) {
-
-         depth++;
-         (void)BitTools::setbit_0(branches, depth);
-
-      } else for (int64_t i = depth; i >= 0; i--) {
-
-         if (BitTools::setbit_0(branches, i)) break;
-         depth--;
-
-      }
-
-      if (node->rght_child) stack[++top] = node->rght_child;
-      if (node->left_child) stack[++top] = node->left_child;
-
-      if (top < 0) break;
-      node = stack[top--];
-   }
-
    Stack::release(stack);
    Stack::release(branches);
 }
@@ -345,7 +270,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
    int64_t parent_height = *node ? (*node)->height : -1;
 
    bool balance = false;
-   bool side = false; // Compiler wouldn't shut up, didn't need to be initialized
+   bool side = false;
 
    while (*node) {
 
@@ -400,15 +325,13 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
          if (record->key > (*balance_path)->left_child->content->key)
             left_rght_rotation(balance_path);
-         else
-            smpl_rght_rotation(balance_path);
+         else smpl_rght_rotation(balance_path);
 
       } else {
-
+         
          if (record->key < (*balance_path)->rght_child->content->key)
             rght_left_rotation(balance_path);
-         else
-            smpl_left_rotation(balance_path);
+         else smpl_left_rotation(balance_path);
       }
    }
 
