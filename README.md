@@ -14,9 +14,9 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 
 # Sumário
 
-<strong>Como Usar</strong>
+<strong>[Como Usar](#como-usar)</strong>
 
-<strong>Árvores Binárias</strong>
+<strong>[Árvores Binárias](#árvores-binárias)</strong>
 
 - [1 Definições Básicas](#1-definições-básicas)
    - [Definição 1A: Árvore Binária](#definição-1a-árvore-binária)
@@ -29,7 +29,7 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
    - [Definição 1C: Registro](#definição-1c-registro)
    - [Definição 1D: Árvore Binária de Busca](#definição-1d-árvore-binária-de-busca)
    - [Definição 1E: Altura de Árvores Binárias](#definição-1e-altura-de-árvores-binárias)
-   - [Teorema 1F: A computação da altura de uma árvore tem a complexidade do pior caso $O(n)$](#ar)
+   - [Teorema 1F: A computação da altura de uma árvore tem a complexidade do pior caso $`O(n)`$](#teorema-1f-a-computação-da-altura-de-uma-árvore-tem-a-complexidade-do-pior-caso)
 - [2 Implementação de Funcionalidades para os Registros](#2-implementação-de-funcionalidades-para-os-registros)
 - [3 Implementação da Árvore Binária de Busca](#3-implementação-da-árvore-binária-de-busca)
    - [Implementação 3A: Algoritmo de Busca](#implementação-3a-algoritmo-de-busca)
@@ -49,6 +49,8 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
    - [Corolário 4E: Uma operação de rotação sempre é suficiente para restaurar o balanceamento perdido após a inserção de um único nó](#corolário-4e-uma-operação-de-rotação-sempre-é-suficiente-para-restaurar-o-balanceamento-perdido-após-a-inserção-de-um-único-nó)
    - [Implementação 4F: Inserção em Árvore AVL](#implementação-4f-inserção-em-árvore-avl)
 
+<strong>[Estrutura das dependências](#estrutura-das-dependências)</strong>
+
 <strong>[Referências](#referências)</strong>
 
 # Como Usar
@@ -58,13 +60,15 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 ## 1 Definições Básicas
 
 ### Definição 1A: Árvore Binária
-Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou uma tripla ordenada $`T = \langle v, E, D \rangle`$, onde $E$ e $D$ são árvores, $`E`$ é chamada _sub-árvore esquerda_ e $`D`$ é chamada _sub-árvore direita_, e $`v`$ uma variável de conjunto totalmente ordenado. Formalmente:<br>
+Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou uma tripla ordenada $`T = \langle v, E, D \rangle`$, onde $`E`$ e $`D`$ são árvores, $`E`$ é chamada _sub-árvore esquerda_ e $`D`$ é chamada _sub-árvore direita_, e $`v`$ uma variável de conjunto totalmente ordenado[^1]. Formalmente:<br>
+
+[^1]: Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ no conjunto $`\R`$.
 
 ```math
 Tree(T) \iff T = \emptyset \vee \left(T = \langle v, E, D \rangle \wedge Tree(D) \wedge Tree(E) \right)
 ```
 
-Para simplificação, seja $`T = \langle v, E, D \rangle`$, $`T_E`$ denota a sub-árvore esquerda, $T_D$ denota a sub-àrvore direita e $`v[T]`$ denota a variável $`v`$ contida em $`T`$.
+Para simplificação, seja $`T = \langle v, E, D \rangle`$, $`T_E`$ denota a sub-árvore esquerda, $`T_D`$ denota a sub-àrvore direita e $`v[T]`$ denota a variável $`v`$ contida em $`T`$.
 
 Em C++, a estrutura de um nó de uma árvore binária é definida:
 
@@ -81,11 +85,10 @@ typedef struct Node {
 
 A relação de descendência $`\lhd`$ entre nós ($`T \lhd S`$ lê-se "$`T`$ é descendente de $`S`$") tem intrepretação verdadeira se, e somente se, para $`T \lhd S`$, $`T`$ é filho de $`S`$, ou é filho de um filho de $`S`$ e assim por diante. Recusivamente, isto é:
 
-```math
-T \lhd S \iff S \ne \emptyset \wedge (T = S_D \vee T = S_E \vee T \lhd S_D \vee T \lhd S_E)
-```
+* $`T \lhd \emptyset \iff False`$;<br>
+* $`T \lhd S \iff v[T] = v[S_D] \vee v[T] = v[S_E] \vee T \lhd S_D \vee T \lhd S_E`$, para $`S \ne \emptyset`$.
 
-Ademais, a relação $\unlhd$ é definida como descendência ou igualdade, definida da seguinte maneira:
+Nota-se que o $`\emptyset`$ é descendente de todo nó que não seja $`\emptyset`$. Ademais, a relação $`\unlhd`$ é definida como descendência ou igualdade, definida da seguinte maneira:
 
 ```math
 T \unlhd S \iff T = S \vee T \lhd S
@@ -97,7 +100,7 @@ Seguindo da definição de descendência, alguma nomenclatura é definida:
 Nós filhos são nós imediatamente descendêntes de uma outro nó, por exemplo, $`T_E`$ e $`T_D`$ são _nós filhos_ de um nó $`T`$.
 
 #### ii) Nó Pai
-Analogamente, um nó é pai de algum outro nó se o segundo é descendente imediato do primeiro, em outras palavras o primeiro é _ascendente_ imediato do segundo, por exemplo, $T$ é referido como _nó pai_ dos nós $`T_E`$ e $`T_D`$.
+Analogamente, um nó é pai de algum outro nó se o segundo é descendente imediato do primeiro, em outras palavras o primeiro é _ascendente_ imediato do segundo, por exemplo, $`T`$ é referido como _nó pai_ dos nós $`T_E`$ e $`T_D`$.
 
 #### iii) Nó Irmão
 Um _nó irmão_ é o nó complementar àquele mencionado, $`T_D`$ é nó irmão de $`T_E`$ e vice-versa. Um nó não é irmão de si mesmo.
@@ -146,10 +149,10 @@ STree(T) \iff T = \emptyset \vee \left(( T_E = \emptyset \vee v[T_E] < v[T] ) \w
 A altura de uma árvore binária é dada pela quantidade de nós no caminho do raiz até o nó folha mais distante. A altura de uma árvore $`T`$ é denotada $`h(T)`$, definida formalmente:
 
 ```math
- h(T) = \begin{cases}
+h(T) = \begin{cases}
    -1 & \text{| } T = \emptyset\\
    1 + \max \lbrace h(T_E), h(T_D) \rbrace & \text{| caso contrário}.
-\end{cases} 
+\end{cases}
 ```
 
 ### Teorema 1F: A computação da altura de uma árvore tem a complexidade do pior caso $`O(n)`$
@@ -259,17 +262,17 @@ A natureza de divisão e conquista, mascarada pela iteratividade, mas ainda pres
 T = \langle v_0, \emptyset, \langle v_1, \emptyset, \langle  v_2, \emptyset, \langle  v_3, \emptyset, \emptyset \rangle \rangle \rangle \rangle
 ```
 
-tem 4 nós sempre arranjandos à sub-árvore direita, a busca de nó ausente maior que $v_3$ tomaria ao menos 4 interações do laço. Assim a complexidade de `Tree::search` é $O(n)$. A complexidade de espaço é contante, $O(1)$, pois a quantidade de variáveis usadas não muda com base na entrada.
+tem 4 nós sempre arranjandos à sub-árvore direita, a busca de nó ausente maior que $`v_3`$ tomaria ao menos 4 interações do laço. Assim a complexidade de `Tree::search` é $`O(n)`$. A complexidade de espaço é contante, $`O(1)`$, pois a quantidade de variáveis usadas não muda com base na entrada.
 
 ### Implementação 3B: Algoritmo de inserção
 
-Para inserir um novo nó numa árvore binária de busca, é realizada uma busca tradicional e, quando se encotrar um nó nulo, esse nó é posto nessa posição. Seja $+$ a função de inserção, $T$ uma árvore e $N$ o novo registro:
+Para inserir um novo nó numa árvore binária de busca, é realizada uma busca tradicional e, quando se encotrar um nó nulo, esse nó é posto nessa posição. Seja $`+`$ a função de inserção, $`T`$ uma árvore e $`N`$ o novo registro:
 
 ```math
  +(T, N) = \begin{cases}
-   \langle  v, +(E, N), D \rangle & \text{| } T = \langle v, E, D \rangle \wedge N < v \\
-   \langle  v, E, +(D, N) \rangle & \text{| } T = \langle v, E, D \rangle \wedge N > v \\
-   \langle  v, \emptyset, \emptyset \rangle & \text{| } T = \emptyset
+   \langle v, +(E, N), D \rangle & \text{| } T = \langle v, E, D \rangle \wedge N < v \\
+   \langle v, E, +(D, N) \rangle & \text{| } T = \langle v, E, D \rangle \wedge N > v \\
+   \langle v, \emptyset, \emptyset \rangle & \text{| } T = \emptyset
 \end{cases} 
 ```
 
@@ -293,7 +296,7 @@ bool Tree::insert(Tree::Node** node, Record* record) {
 }
 ```
 
-Entretanto, se é recordado, em código, a estrutura das árvores, `Node`, possuem um campo de altura, `height`, motivado pela complexidade de $h$. Após a inserção de um nó, a altura dessa árvore pode precisar ser atualizada. Note que o único _caminho_ que pode ter sua altura aumentada é aquele pelo qual o nó "passou", desde a raiz até a ponta onde foi inserido, esse caminho é chamado _caminho de incremento_. Ademais, se nó irmão de algum nó no caminho de incremento for mais alto, então, daquele nó para raiz a altura se manterá inalterada.
+Entretanto, se é recordado, em código, a estrutura das árvores, `Node`, possuem um campo de altura, `height`, motivado pela complexidade de $`h`$. Após a inserção de um nó, a altura dessa árvore pode precisar ser atualizada. Note que o único _caminho_ que pode ter sua altura aumentada é aquele pelo qual o nó "passou", desde a raiz até a ponta onde foi inserido, esse caminho é chamado _caminho de incremento_. Ademais, se nó irmão de algum nó no caminho de incremento for mais alto, então, daquele nó para raiz a altura se manterá inalterada.
 
 Seja $`T`$ o nó no caminho de incremento, $`T_I`$ seu irmão e $`P`$ seu pai. Sabe-se que $`T`$ se tornará a nova origem do caminho de incremento se, e somente se $`h(T_I) \gt h(T)`$. Como o nó irmão não é sempre garantido ser definido, uma verificação teria que ser feita, entretando, a altura do nó pai é definida $`1 + \max \lbrace h(T), h(T_I) \rbrace `$. Assim, tem-se informação suficiente para dizer que $`h(P) = 1 + h(T_I) \implies h(P) - 1 = h(T_I)`$, substituindo, tem-se $`h(P) - 1 \gt h(T) \implies h(P) \gt h(T) + 1`$. Logo, a nova origem é determinada quando $`h(T) + 1 < h(P)`$ tenha interpretação verdadeira.
 
@@ -478,6 +481,103 @@ Seguindo do resultado anterior, uma operação de rotação sempre diminui a alt
 
 Diferentemente das implementações 
 
+# Estrutura das Dependências
+
+```mermaid
+flowchart BT;
+   
+   subgraph syslibs[*Bibliotecas de Sistema*]
+      subgraph Windows
+         Windows.h
+         intrin.h
+      end
+   end
+   
+   subgraph stdlibs[*Bibliotecas Padronizadas*]
+      bittools_incl[
+         stdlib.h
+         stdint.h
+         new
+      ]
+      stack_incl[
+         stdlib.h
+         stdint.h
+         malloc.h
+      ]
+      base_incl[
+         stdint.h
+         stdlib.h
+         stdio.h
+         iostream
+         random
+      ]
+   end
+
+   subgraph usrlibs[*Bibliotecas Implementadas*]
+      stack.h
+      bittools.h
+   end
+
+   bittools.h[
+      bittools.h
+      bittools.cpp
+   ]
+
+   file.h[
+      file.h
+      file.cpp
+   ]
+
+   linked_list.h[
+      linked_list.h
+      linked_list.cpp
+   ]
+
+   record.h[
+      record.h
+      record.cpp
+   ]
+
+   tree.h[
+      tree.h
+      tree.cpp
+   ]
+
+   base.h --> base_incl
+
+   system.h -- "se Windows" --> Windows.h
+      
+   stack.h --> stack_incl
+
+   bittools.h --> bittools_incl
+   bittools.h -- "se Windows" --> intrin.h
+
+   record.h --> base.h
+   
+   file.h --> base.h
+   file.h --> record.h
+   
+   linked_list.h --> record.h
+   linked_list.h --> base.h
+   linked_list.h ---> system.h
+   
+   tree.h --> record.h
+   tree.h --> base.h
+   tree.h ---> system.h
+   tree.h ---> stack.h
+   tree.h ---> bittools.h
+
+   main.cpp --> base.h
+   main.cpp --> file.h
+   main.cpp --> linked_list.h
+   main.cpp --> tree.h
+   
+   style syslibs fill:#0000, stroke-dasharray: 5
+   style stdlibs fill:#0000, stroke-dasharray: 5
+   style usrlibs fill:#0000, stroke-dasharray: 5
+```
+
 # Referências
 
 https://pages.cs.wisc.edu/~ealexand/cs367/NOTES/AVL-Trees/index.html
+https://docs.ufpr.br/~hoefel/ensino/CM304_CompleMat_PE3/livros/Enderton_Elements%20of%20set%20theory_%281977%29.pdf
