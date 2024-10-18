@@ -48,8 +48,8 @@ void populate_record_randomly(Record* record) {
    byte params = rand() & 0b111;
    uint64_t random;
 
-
    /* name */
+
    while (true) {
       random = rand() % NAME_LIST_SIZE;
 
@@ -86,7 +86,7 @@ void populate_record_randomly(Record* record) {
          if (!(--remaining_space)) goto exit;
       }
 
-      // if not enough space, quits before termination with a space
+      // if not enough space, quits before putting a space
       if (!(--remaining_space)) goto exit;
       *cursor++ = ' ';
 

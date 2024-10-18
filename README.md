@@ -10,7 +10,7 @@
 
 # Do Trabalho
 
-Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITMOS E ESTRUTURAS DE DADOS III, com o uso da linguagem de programação C++, do Curso de Graduação em Sistemas de Informação da Universidade Federal dos Vales do Jequitinhonha e Mucuri, sob comando da Professora Luciana de Assis.
+Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITMOS E ESTRUTURAS DE DADOS III, do Curso de Graduação em Sistemas de Informação da Universidade Federal dos Vales do Jequitinhonha e Mucuri, sob comando da Professora Luciana de Assis.
 
 # Sumário
 
@@ -33,9 +33,9 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 - [2 Implementação de Funcionalidades para os Registros](#2-implementação-de-funcionalidades-para-os-registros)
 - [3 Implementação da Árvore Binária de Busca](#3-implementação-da-árvore-binária-de-busca)
    - [Implementação 3A: Algoritmo de Busca](#implementação-3a-algoritmo-de-busca)
-   - [Análise de Complexidade](#análise-de-complexidade)
+      - [Análise de Complexidade](#análise-de-complexidade)
    - [Implementação 3B: Algoritmo de inserção](#implementação-3b-algoritmo-de-inserção)
-   - [Análise de Complexidade](#análise-de-complexidade-1)
+      - [Análise de Complexidade](#análise-de-complexidade-1)
 - [4 Árvore Binária AVL](#4-árvore-binária-avl)
    - [Definição 4A: Fator de Balanceamento](#definição-4a-fator-de-balanceamento)
    - [Definição 4B: Árvore Binária Balanceada](#definição-4b-árvore-binária-balanceada)
@@ -44,7 +44,7 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
       - [ii) Rotação Direita](#ii-rotação-direita)
       - [iii) Rotação Direita-Esquerda](#iii-rotação-direita-esquerda)
       - [iv) Rotação Esquerda-Direita](#iv-rotação-esquerda-direita)
-   - [Análise de Complexidade](#análise-de-complexidade-2)
+      - [Análise de Complexidade](#análise-de-complexidade-2)
    - [Teorema 4D: Uma operação de rotação, quando executada propriamente, retorna um nó menor que o nó de entrada](#definição-4b-árvore-binária-balanceada)
    - [Corolário 4E: Uma operação de rotação sempre é suficiente para restaurar o balanceamento perdido após a inserção de um único nó](#corolário-4e-uma-operação-de-rotação-sempre-é-suficiente-para-restaurar-o-balanceamento-perdido-após-a-inserção-de-um-único-nó)
    - [Implementação 4F: Inserção em Árvore AVL](#implementação-4f-inserção-em-árvore-avl)
@@ -62,7 +62,7 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 ### Definição 1A: Árvore Binária
 Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou uma tripla ordenada $`T = \langle v, E, D \rangle`$, onde $`E`$ e $`D`$ são árvores, $`E`$ é chamada _sub-árvore esquerda_ e $`D`$ é chamada _sub-árvore direita_, e $`v`$ uma variável de conjunto totalmente ordenado[^1]. Formalmente:<br>
 
-[^1]: Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ no conjunto $`\R`$.
+[^1]: Um conjunto $S$ é dito totalmente ordenado por um relação $\prec \space \subset S \times S$ se, e somente se, para quaisquer $x, y, z \in S $: [1] $\prec$ é uma relação transitiva, isto é, se $x \prec y$ e $y \prec z$, então $x \prec z$; e [2] satisfaz tricotomia, isto é, ou $x \prec y$ ou $y \prec x$ ou $x = y$. Um exemplo de ordenação total é dada pela relação $\lt$ no conjunto $\R$.
 
 ```math
 Tree(T) \iff T = \emptyset \vee \left(T = \langle v, E, D \rangle \wedge Tree(D) \wedge Tree(E) \right)
