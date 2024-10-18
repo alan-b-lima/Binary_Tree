@@ -44,7 +44,7 @@ namespace BitTools {
    // BTS (Bit Test and Set)
    inline bool setbit_1(mword*, uint64_t);
 
-   // Fills the boolean array with a pattern
+   // Fills the boolean array with a mword-wise pattern
    mword* initialize(mword*, uint64_t, mword = 0);
 
    inline uint64_t size(uint64_t size) { return (size + MASK) >> SHIFT; }

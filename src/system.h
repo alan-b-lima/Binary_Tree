@@ -29,7 +29,7 @@ void system_specifics_setup() {
    SetConsoleOutputCP(CP_UTF8);
 }
 
-#elif 0 // Extended ascii version, identical to the UTF-8 one
+#elif 1 // Extended ascii version, identical to the UTF-8 one
 
 char BRANCH_ROOT[]      = "\x3A\xC4\xC4\xC4"; /* ":───" */
 char BRANCH_DOWN[]      = "\xB3\x20\x20\x20"; /* "│   " */
@@ -42,7 +42,7 @@ void system_specifics_setup() {}
 
 #else
 
-char BRANCH_ROOT[]      = ":---"; 
+char BRANCH_ROOT[]      = ":---";
 char BRANCH_DOWN[]      = "|   ";
 char NO_BRANCH[]        = "    ";
 char BRANCH_SIDE[]      = "|---";

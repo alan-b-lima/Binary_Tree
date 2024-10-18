@@ -3,6 +3,10 @@
 #include "base.h"
 #include "record.h"
 
+#include "../lib/bittools.h"
+#include "../lib/stack.h"
+#include "system.h"
+
 namespace Tree {
 
    typedef struct Node {

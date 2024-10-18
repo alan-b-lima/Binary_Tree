@@ -19,4 +19,3 @@ void populate_record_randomly(Record*);
 void destruct_record(Record*);
 
 #include "record.cpp"
-#include "file.h"
