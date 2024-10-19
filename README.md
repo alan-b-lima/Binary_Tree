@@ -62,7 +62,7 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 ### Definição 1A: Árvore Binária
 Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou uma tripla ordenada $`T = \langle v, E, D \rangle`$, onde $`E`$ e $`D`$ são árvores, $`E`$ é chamada _sub-árvore esquerda_ e $`D`$ é chamada _sub-árvore direita_, e $`v`$ uma variável de conjunto totalmente ordenado[^1]. Formalmente:<br>
 
-[^1]: Um conjunto $S$ é dito totalmente ordenado por um relação $\prec \space \subset S \times S$ se, e somente se, para quaisquer $x, y, z \in S $: [1] $\prec$ é uma relação transitiva, isto é, se $x \prec y$ e $y \prec z$, então $x \prec z$; e [2] satisfaz tricotomia, isto é, ou $x \prec y$ ou $y \prec x$ ou $x = y$. Um exemplo de ordenação total é dada pela relação $\lt$ no conjunto $\R$.
+[^1]: Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ no conjunto $`\R`$.
 
 ```math
 Tree(T) \iff T = \emptyset \vee \left(T = \langle v, E, D \rangle \wedge Tree(D) \wedge Tree(E) \right)
@@ -552,6 +552,7 @@ flowchart BT;
    bittools.h --> bittools_incl
    bittools.h -- "se Windows" --> intrin.h
 
+   record.h --> names.cpp
    record.h --> base.h
    
    file.h --> base.h

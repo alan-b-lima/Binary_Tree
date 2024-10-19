@@ -5,6 +5,7 @@ bool LinkedList::insert(Node** node, Record* record) {
    if (!new_node) return false;
 
    *node = new_node;
+   return true;
 }
 
 Record* LinkedList::search(Node* node, key_t key) {
@@ -12,6 +13,8 @@ Record* LinkedList::search(Node* node, key_t key) {
       if (node->content->key == key)
          return node->content;
    }
+   
+   return nullptr;
 }
 
 void LinkedList::print(Node* node) {

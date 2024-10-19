@@ -50,10 +50,8 @@ void populate_record_randomly(Record* record) {
 
    /* name */
 
-   while (true) {
+   do {
       random = rand() % NAME_LIST_SIZE;
-
-      strncpy_s(record->name, NAME_LIST[random], remaining_space);
 
       for (uint64_t i = 0; NAME_LIST[random][i]; i++) {
          *cursor++ = NAME_LIST[random][i];
@@ -66,9 +64,9 @@ void populate_record_randomly(Record* record) {
       if (!(--remaining_space)) goto exit;
       *cursor++ = ' ';
 
-      if (params & 0b100) break;
       params ^= 0b100;
-   }
+      
+   } while (params & 0b100);
 
    /* surname */
 

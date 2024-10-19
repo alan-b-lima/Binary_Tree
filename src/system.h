@@ -1,3 +1,5 @@
+#pragma once
+
 // UTF-8, ASCII extended and pure ascii respectivily
 // Assuming Linux terminals will support UTF-8
 
