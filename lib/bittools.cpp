@@ -1,7 +1,7 @@
 #include "bittools.h"
 
 BitTools::mword* BitTools::construct(uint64_t size, mword set) {
-   size = (size + 7) >> 3;
+   size = BitTools::size(size);
 
    mword* arr = new (std::nothrow) mword[size];
    if (!arr) return nullptr;
@@ -13,7 +13,7 @@ BitTools::mword* BitTools::construct(uint64_t size, mword set) {
 }
 
 BitTools::mword* BitTools::initialize(mword* arr, uint64_t size, mword set) {
-   size = (size + 7) >> 3;
+   size = BitTools::size(size);
 
    for (uint64_t i = 0; i < size; i++)
       arr[i] = set;

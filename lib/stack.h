@@ -38,9 +38,9 @@ namespace Stack {
       size *= sizeof(type_t);
 
       uint64_t alignment = sizeof(type_t) < _ALIGNMENT ? sizeof(type_t) : _ALIGNMENT;
-      type_t* pointer = (type_t*)((uint64_t(stack.frame) + stack.allocated + alignment - 1) & -alignment);
+      type_t* pointer = (type_t*)((uint64_t(stack.frame) + stack.allocated + alignment - 1) & ~(alignment - 1));
       
-      if (uint64_t(uintptr_t(pointer) - uintptr_t(stack.frame)) > FRAME_SIZE) {
+      if (uint64_t(uintptr_t(pointer) - uintptr_t(stack.frame)) + size > FRAME_SIZE) {
          return (type_t*)malloc(size);
       }
 

@@ -16,6 +16,8 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 
 <strong>[Como Usar](#como-usar)</strong>
 
+<strong>[Estrutura das dependências](#estrutura-das-dependências)</strong>
+
 <strong>[Árvores Binárias](#árvores-binárias)</strong>
 
 - [1 Definições Básicas](#1-definições-básicas)
@@ -49,20 +51,135 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
    - [Corolário 4E: Uma operação de rotação sempre é suficiente para restaurar o balanceamento perdido após a inserção de um único nó](#corolário-4e-uma-operação-de-rotação-sempre-é-suficiente-para-restaurar-o-balanceamento-perdido-após-a-inserção-de-um-único-nó)
    - [Implementação 4F: Inserção em Árvore AVL](#implementação-4f-inserção-em-árvore-avl)
 
-<strong>[Estrutura das dependências](#estrutura-das-dependências)</strong>
 
 <strong>[Referências](#referências)</strong>
 
 # Como Usar
+
+# Estrutura das Dependências
+
+## Diagrama da estrutura de dependências da aplicação
+
+```mermaid
+flowchart BT;
+
+   subgraph syslibs[*Bibliotecas de Sistema*]
+      subgraph Windows
+         Windows.h
+         intrin.h
+      end
+   end
+   
+   subgraph stdlibs[*Bibliotecas Padronizadas*]
+      base_incl[stdint.h <br> stdlib.h <br> stdio.h <br> time.h <br> iostream]
+      stack_incl[stdlib.h <br> stdint.h <br> malloc.h]
+      bittools_incl[stdlib.h <br> stdint.h <br> new]
+      random_incl[stdint.h]
+   end
+
+   subgraph usrlibs[*Bibliotecas Implementadas*]
+      random.h
+      stack.h
+      bittools.h
+   end
+
+   bittools.h[
+      bittools.h
+      bittools.cpp
+   ]
+
+   file.h[
+      file.h
+      file.cpp
+   ]
+
+   linked_list.h[
+      linked_list.h
+      linked_list.cpp
+   ]
+
+   record.h[
+      record.h
+      record.cpp
+   ]
+
+   tree.h[
+      tree.h
+      tree.cpp
+   ]
+
+   base.h --> base_incl
+   base.h --> random.h
+
+   system.h --> Windows.h
+      
+   random.h --> random_incl
+
+   stack.h --> stack_incl
+
+   bittools.h --> bittools_incl
+   bittools.h --> intrin.h
+
+   record.h ---> base.h
+   record.h --> names.cpp
+   
+   file.h --> base.h
+   file.h --> record.h
+   
+   linked_list.h --> record.h
+   linked_list.h --> base.h
+   linked_list.h ---> system.h
+   
+   tree.h --> record.h
+   tree.h ---> system.h
+   tree.h --> base.h
+   tree.h ---> stack.h
+   tree.h ---> bittools.h
+
+   main.cpp --> base.h
+   main.cpp --> file.h
+   main.cpp --> linked_list.h
+   main.cpp --> tree.h
+   
+   style syslibs fill:#0000, stroke-dasharray: 5
+   style stdlibs fill:#0000, stroke-dasharray: 5
+   style usrlibs fill:#0000, stroke-dasharray: 5
+
+   l6:::level ~~~ 
+   l5:::level ~~~
+   l4:::level ~~~
+   l3:::level ~~~
+   l2:::level ~~~
+   l1:::level ~~~
+   l0:::level
+
+   l0["**Nível 0**"]
+   l1["**Nível 1**"]
+   l2["**Nível 2**"]
+   l3["**Nível 3**"]
+   l4["**Nível 4**"]
+   l5["**Nível 5**"]
+   l6["**Nível 6**"]
+
+   classDef level fill:#0000,stroke:#0000,font-size:large
+```
+
+O diagrama acima é uma versão visual das clausulas `#include` encontradas por todo o projeto, organizadas em níveis. Esses níveis, aproximadamente, indicam a ordem de indepencência de outras partes do projeto:
+
+- **Nível 0** é completamento independente do projeto e existirá após esse;
+- **Nível 1** foi desenvolvido para o projeto, entretanto não é específico para o esse, podendo se manter relavante para o futuro;
+- **Nível 2** carrega definições importantes para todos os níveis abaixo;
+- **Nível 3** foge à regra de independência, sendo seus arquivos puramente arquivos de recursos, names.cpp sendo autoexplicativo (carrega exemplos de nomes) e system.h trata a questão de compatibilidade de terminais com UTF-8;
+- **Nível 4** está aqui posicianado por ser a estrutura à qual as estruturas do nível acima revolvem;
+- **Nível 5** define as três estruturas de dados requeridas pelo trabalho, sendo árvore de busca binária tradicional e AVL definidas em tree.h e a estrutura sequencial (lista encadeada) em linked_list.h. Ademais, o arquivo file.h define uma estrutura que abstrae o manejamento de arquivos da aplicação principal;
+- **Nível 6** compreende a entrada da aplicação assim como os desdobramento **já despostos em [Como Usar](#como-usar)**.
 
 # Árvores Binárias
 
 ## 1 Definições Básicas
 
 ### Definição 1A: Árvore Binária
-Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou uma tripla ordenada $`T = \langle v, E, D \rangle`$, onde $`E`$ e $`D`$ são árvores, $`E`$ é chamada _sub-árvore esquerda_ e $`D`$ é chamada _sub-árvore direita_, e $`v`$ uma variável de conjunto totalmente ordenado[^1]. Formalmente:<br>
-
-[^1]: Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ no conjunto $`\R`$.
+Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou uma tripla ordenada $`T = \langle v, E, D \rangle`$, onde $`E`$ e $`D`$ são árvores, $`E`$ é chamada _sub-árvore esquerda_ e $`D`$ é chamada _sub-árvore direita_, e $`v`$ uma variável de conjunto totalmente ordenado<sup>[[1]](#footnode-1)</sup>. Formalmente:<br>
 
 ```math
 Tree(T) \iff T = \emptyset \vee \left(T = \langle v, E, D \rangle \wedge Tree(D) \wedge Tree(E) \right)
@@ -479,106 +596,13 @@ Seguindo do resultado anterior, uma operação de rotação sempre diminui a alt
 
 ### Implementação 4F: Inserção em Árvore AVL
 
-Diferentemente das implementações 
-
-# Estrutura das Dependências
-
-```mermaid
-flowchart BT;
-   
-   subgraph syslibs[*Bibliotecas de Sistema*]
-      subgraph Windows
-         Windows.h
-         intrin.h
-      end
-   end
-   
-   subgraph stdlibs[*Bibliotecas Padronizadas*]
-      bittools_incl[
-         stdlib.h
-         stdint.h
-         new
-      ]
-      stack_incl[
-         stdlib.h
-         stdint.h
-         malloc.h
-      ]
-      base_incl[
-         stdint.h
-         stdlib.h
-         stdio.h
-         iostream
-         random
-      ]
-   end
-
-   subgraph usrlibs[*Bibliotecas Implementadas*]
-      stack.h
-      bittools.h
-   end
-
-   bittools.h[
-      bittools.h
-      bittools.cpp
-   ]
-
-   file.h[
-      file.h
-      file.cpp
-   ]
-
-   linked_list.h[
-      linked_list.h
-      linked_list.cpp
-   ]
-
-   record.h[
-      record.h
-      record.cpp
-   ]
-
-   tree.h[
-      tree.h
-      tree.cpp
-   ]
-
-   base.h --> base_incl
-
-   system.h -- "se Windows" --> Windows.h
-      
-   stack.h --> stack_incl
-
-   bittools.h --> bittools_incl
-   bittools.h -- "se Windows" --> intrin.h
-
-   record.h --> names.cpp
-   record.h --> base.h
-   
-   file.h --> base.h
-   file.h --> record.h
-   
-   linked_list.h --> record.h
-   linked_list.h --> base.h
-   linked_list.h ---> system.h
-   
-   tree.h --> record.h
-   tree.h --> base.h
-   tree.h ---> system.h
-   tree.h ---> stack.h
-   tree.h ---> bittools.h
-
-   main.cpp --> base.h
-   main.cpp --> file.h
-   main.cpp --> linked_list.h
-   main.cpp --> tree.h
-   
-   style syslibs fill:#0000, stroke-dasharray: 5
-   style stdlibs fill:#0000, stroke-dasharray: 5
-   style usrlibs fill:#0000, stroke-dasharray: 5
-```
+Diferentemente das implementações
 
 # Referências
 
 https://pages.cs.wisc.edu/~ealexand/cs367/NOTES/AVL-Trees/index.html
 https://docs.ufpr.br/~hoefel/ensino/CM304_CompleMat_PE3/livros/Enderton_Elements%20of%20set%20theory_%281977%29.pdf
+
+
+
+<span id="footnote-1">Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ no conjunto $`\R`$.</span>
