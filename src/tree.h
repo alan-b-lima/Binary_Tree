@@ -24,7 +24,7 @@ namespace Tree {
    /* Deprecated, not necessary */
    int64_t calculate_height(Node* node) {
       if (!node) return -1;
-      
+
       int64_t lheight = calculate_height(node->left_child);
       int64_t rheight = calculate_height(node->rght_child);
 
@@ -32,10 +32,9 @@ namespace Tree {
       return node->height;
    }
 
-   void destruct(Node**, void(*)(Record*) = nullptr);
-};
+   void destruct(Node**, void(*)(Record*) = [](Record*) {});
+namespace AVL {
 
-namespace Tree::AVL {
 
    void smpl_left_rotation(Node**);
    void smpl_rght_rotation(Node**);
@@ -43,6 +42,7 @@ namespace Tree::AVL {
    void rght_left_rotation(Node**);
 
    bool insert(Node**, Record*);
+};
 };
 
 #include "tree.cpp"

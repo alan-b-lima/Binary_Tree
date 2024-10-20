@@ -3,9 +3,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include <iostream>
-#include <random>
+#include "../lib/random.h"
 
 typedef unsigned char      byte;
 typedef unsigned short     word;

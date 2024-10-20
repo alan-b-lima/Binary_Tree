@@ -1,5 +1,14 @@
 #include "tree.h"
 
+int64_t height(Tree::Node* node) {
+   if (!node) return -1;
+
+   int64_t lheight = height(node->left_child);
+   int64_t rheight = height(node->rght_child);
+
+   return 1 + (lheight > rheight ? lheight : rheight);
+}
+
 bool Tree::insert(Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
@@ -40,21 +49,23 @@ void Tree::print(Node* node) {
    BitTools::mword* branches = nullptr;
    Node** stack = nullptr;
 
-   if (node->height) {
-      branches = Stack::allocate<BitTools::mword>(BitTools::size(node->height));
+   uint64_t _height = height(node);
+
+   if (_height) {
+      branches = Stack::allocate<BitTools::mword>(BitTools::size(_height));
       if (!branches) {
          std::cerr << "Failed to print tree!\n";
          return;
       }
 
-      stack = Stack::allocate<Node*>(node->height);
+      stack = Stack::allocate<Node*>(_height);
       if (!stack) {
          Stack::release(branches);
          std::cerr << "Failed to print tree!\n";
          return;
       }
 
-      BitTools::initialize(branches, node->height);
+      BitTools::initialize(branches, _height);
    }
 
    int64_t depth = -1;
@@ -173,6 +184,122 @@ void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
    Stack::release(stack);
 }
 
+void destructqw0(Tree::Node** node, void(*record_handler)(Record*)) {
+   if (!*node) return;
+
+   byte index = 0;
+   Tree::Node* stack[2] = { nullptr, nullptr };
+
+   Tree::Node* root = *node;
+   Tree::Node* current;
+   *node = nullptr;
+
+transversal:
+   current = root;
+
+   while (current) {
+
+      Tree::Node* tmp;
+
+      if (current->left_child && current->rght_child) {
+
+         if (index > 1) goto replacement;
+         stack[index++] = current->rght_child;
+         tmp = current->left_child;
+
+      } else tmp = current->left_child ? current->left_child : current->rght_child;
+
+      record_handler(current->content);
+      delete current;
+      current = tmp;
+   }
+
+   if (!index) return;
+
+   root = stack[--index];
+   stack[index] = nullptr;
+   goto transversal;
+
+replacement:
+   root = current;
+   while (current->height > 1) {
+      current = current->left_child ? current->left_child : current->rght_child;
+   }
+
+   if (current->left_child) {
+      record_handler(current->left_child->content);
+      delete current->left_child;
+   }
+
+   if (current->rght_child) {
+      record_handler(current->rght_child->content);
+      delete current->rght_child;
+   }
+
+   current->left_child = stack[0];
+   current->rght_child = stack[1];
+   current->height = 1 + (stack[0]->height > stack[1]->height ? stack[0]->height : stack[1]->height);
+
+   stack[0] = nullptr;
+   stack[1] = nullptr;
+   index = 0;
+
+   goto transversal;
+}
+
+void destructqw1(Tree::Node** node, void(*record_handler)(Record*)) {
+   if (!*node) return;
+
+   byte index = 0;
+   Tree::Node* stack[2] = { nullptr, nullptr };
+
+   Tree::Node* root = *node;
+   Tree::Node* current;
+   *node = nullptr;
+
+transversal:
+   current = root;
+
+   while (current) {
+
+      Tree::Node* tmp;
+
+      if (current->left_child && current->rght_child) {
+
+         if (index > 1) goto replacement;
+         stack[index++] = current->rght_child;
+         tmp = current->left_child;
+
+      } else tmp = current->left_child ? current->left_child : current->rght_child;
+
+      record_handler(current->content);
+      delete current;
+      current = tmp;
+   }
+
+   if (!index) return;
+
+   root = stack[--index];
+   stack[index] = nullptr;
+   goto transversal;
+
+replacement:
+   root = current;
+   while (current->height) {
+      current = current->left_child ? current->left_child : current->rght_child;
+   }
+
+   current->left_child = stack[0];
+   current->rght_child = stack[1];
+   current->height = 1; // Anything different from zero would've been valid
+
+   stack[0] = nullptr;
+   stack[1] = nullptr;
+   index = 0;
+
+   goto transversal;
+}
+
 void Tree::AVL::smpl_left_rotation(Node** node) {
    Node* rght_subtree = (*node)->rght_child;
 
@@ -235,15 +362,6 @@ void Tree::AVL::rght_left_rotation(Node** node) {
    midd_subtree->height++;
 
    *node = midd_subtree;
-}
-
-int64_t height(Tree::Node* node) {
-   if (!node) return -1;
-
-   int64_t lheight = height(node->left_child);
-   int64_t rheight = height(node->rght_child);
-
-   return 1 + (lheight > rheight ? lheight : rheight);
 }
 
 bool is_balanced(Tree::Node* node) {
@@ -328,7 +446,7 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
          else smpl_rght_rotation(balance_path);
 
       } else {
-         
+
          if (record->key < (*balance_path)->rght_child->content->key)
             rght_left_rotation(balance_path);
          else smpl_left_rotation(balance_path);

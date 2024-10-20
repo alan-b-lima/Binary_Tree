@@ -1,4 +1,5 @@
 #include "record.h"
+#include "../lib/random.h"
 
 void write_record(Record* record, int data, const char* name) {
 
@@ -17,6 +18,19 @@ void write_record(Record* record, int data, const char* name) {
 
 void print_record(Record* record, const char* format) {
 
+   if (!record) {
+      while (*format) {
+         std::cout.put(*format);
+
+         if (*format == '$') 
+            if (!*(++format)) return;
+            
+         format++;
+      }
+
+      return;
+   }
+
    while (*format) {
 
       if (*format == '$') {
@@ -24,11 +38,14 @@ void print_record(Record* record, const char* format) {
          format++;
          switch (*format) {
 
+         case '\0': return;
+
          case '0': std::cout << record->key; break;
          case '1': std::cout << record->data; break;
          case '2': std::cout << record->name; break;
+
          default: std::cout.put(*format); break;
-         
+
          }
 
       } else std::cout.put(*format);
@@ -65,17 +82,16 @@ void populate_record_randomly(Record* record) {
       *cursor++ = ' ';
 
       params ^= 0b100;
-      
+
    } while (params & 0b100);
 
    /* surname */
 
    // Garantees at least one surname
-   if (!params) params = 1;
+   if (!params) params = 2;
 
    do {
       random = rand() % SURNAME_LIST_SIZE;
-      params--;
 
       for (uint64_t i = 0; SURNAME_LIST[random][i]; i++) {
          *cursor++ = SURNAME_LIST[random][i];
@@ -88,7 +104,7 @@ void populate_record_randomly(Record* record) {
       if (!(--remaining_space)) goto exit;
       *cursor++ = ' ';
 
-   } while (params);
+   } while (--params);
 
    // Effectively removes the last space
    cursor--;
