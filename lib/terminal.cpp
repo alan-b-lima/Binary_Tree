@@ -190,12 +190,12 @@ void esc::style(byte style, clr foreground, clr background) {
 void esc::style(byte style, rgb foreground, rgb background) {
 
    printf_s("\e[0");
-   
-   if (foreground != DEFAULT) printf_s(";38;2;%lu;%lu;%lu",
-      (foreground & 0xFF0000) >> 16, (foreground & 0x00FF00) >> 8, (foreground & 0x0000FF));
 
    if (background != DEFAULT) printf_s(";48;2;%lu;%lu;%lu",
       (background & 0xFF0000) >> 16, (background & 0x00FF00) >> 8, (background & 0x0000FF));
+
+   if (foreground != DEFAULT) printf_s(";38;2;%lu;%lu;%lu",
+      (foreground & 0xFF0000) >> 16, (foreground & 0x00FF00) >> 8, (foreground & 0x0000FF));
 
    if (style & BOLD)      printf_s(";1");
    if (style & LIGHT)     printf_s(";2");

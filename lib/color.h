@@ -40,8 +40,9 @@ namespace Color {
       ICE  = 0xc0c0ff,
    };
 
-   static float __mod_f(float num, float mod) {
-      float result = num - floor(num / mod) * mod;
+   template <typename type_t>
+   static type_t __mod_f(type_t num, type_t mod) {
+      type_t result = num - floor(num / mod) * mod;
       if (result < 0) result += mod;
       return result;
    }
@@ -50,7 +51,12 @@ namespace Color {
       return (uint32_t(red * 255.f) << 16) | (uint32_t(green * 255.f) << 8) | uint32_t(blue * 255.f);
    }
 
-   uint32_t rgb(uint8_t red, uint8_t green, uint8_t blue) {
+   uint32_t rgb(double red, double green, double blue) {
+      return (uint32_t(red * 255.) << 16) | (uint32_t(green * 255.) << 8) | uint32_t(blue * 255.);
+   }
+
+   template <typename type_t>
+   uint32_t rgb(type_t red, type_t green, type_t blue) {
       return (uint32_t)red << 16 | (uint32_t)green << 8 | (uint32_t)blue;
    }
 
