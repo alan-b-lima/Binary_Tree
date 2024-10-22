@@ -257,7 +257,7 @@ void destructqw1(Tree::Node** node, void(*record_handler)(Record*)) {
    Tree::Node* current;
    *node = nullptr;
 
-transversal:
+loop:
    current = root;
 
    while (current) {
@@ -266,7 +266,24 @@ transversal:
 
       if (current->left_child && current->rght_child) {
 
-         if (index > 1) goto replacement;
+         if (index > 1) {
+            root = current;
+
+            while (current->height) {
+               current = current->left_child ? current->left_child : current->rght_child;
+            }
+
+            current->left_child = stack[0];
+            current->rght_child = stack[1];
+            current->height = 1; // Anything different from zero would've been valid
+
+            stack[0] = nullptr;
+            stack[1] = nullptr;
+            index = 0;
+
+            goto loop; // Why isn't there a continue(1) for continuing onto the outter loop?
+         }
+
          stack[index++] = current->rght_child;
          tmp = current->left_child;
 
@@ -281,23 +298,7 @@ transversal:
 
    root = stack[--index];
    stack[index] = nullptr;
-   goto transversal;
-
-replacement:
-   root = current;
-   while (current->height) {
-      current = current->left_child ? current->left_child : current->rght_child;
-   }
-
-   current->left_child = stack[0];
-   current->rght_child = stack[1];
-   current->height = 1; // Anything different from zero would've been valid
-
-   stack[0] = nullptr;
-   stack[1] = nullptr;
-   index = 0;
-
-   goto transversal;
+   goto loop;
 }
 
 void Tree::AVL::smpl_left_rotation(Node** node) {

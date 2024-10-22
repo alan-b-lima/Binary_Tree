@@ -1,5 +1,15 @@
 #pragma once
 
+/*
+* Author
+*    Alan Lima (https://github.com/AlanLima287/)
+*
+* Terminal
+*    It's a not precompiled C++ library that aims for a unified pseudorandom
+*    number generator, since different systems will usually have diferent 
+*    generators.
+*/
+
 #include <stdint.h>
 
 namespace Random {
