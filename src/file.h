@@ -14,29 +14,43 @@ namespace RecordFile {
       uint64_t size;
    } File;
 
-   inline bool open(const char*, File*);
+   enum mode_t : byte { READ, WRITE };
+
+   inline bool open(const char*, File*, mode_t mode);
    inline void close(File*);
    
    bool read(File*, Record*);
+   void write(File*, Record*, bool = true);
 
    template <typename... Args>
-   uint64_t iterator(const char* filename, void(*handler)(Record*, Args...), Args... args) {
+   void read_iterator(const char* filename, void(*handler)(Record*, Args...), Args... args) {
       RecordFile::File rc_file;
-      bool not_complete = RecordFile::open("./rc/test.rc", &rc_file);
-      uint64_t record_count = 0;
+      bool not_complete = RecordFile::open(filename, &rc_file, mode_t::READ);
 
       while (not_complete) {
          Record* record = new Record;
-         if (!record) return -1;
+         if (!record) return;
 
          not_complete = RecordFile::read(&rc_file, record);
-         record_count++;
-
          handler(record, args...);
       }
 
       RecordFile::close(&rc_file);
-      return record_count;
+   }
+
+   template <typename... Args>
+   void write_iterator(const char* filename, Record*(*handler)(Args...), Args... args) {
+      RecordFile::File rc_file;
+      bool not_complete = RecordFile::open(filename, &rc_file, mode_t::WRITE);
+
+      while (not_complete) {
+         Record* record = handler(record, args...);
+         if (!record) return;
+
+         not_complete = RecordFile::read(&rc_file, record);
+      }
+
+      RecordFile::close(&rc_file);
    }
 };
 
