@@ -25,7 +25,7 @@ namespace Tree {
    exit_t insert(Node**, Record*);
    Record* search(Node*, key_t);
 
-   void print(Node*);
+   void print(Node*, int64_t = -1);
 
    /* Deprecated, not necessary */
    int64_t calculate_height(Node* node) {

@@ -13,11 +13,17 @@ typedef unsigned short     word;
 typedef unsigned long      dword;
 typedef unsigned long long qword;
 
-enum EXIT_CODE {
-   FINE,
-   BAD_ALLOCATION,
-   FILE_NOT_FOUND,
-};
+#ifndef min
+   #define min(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
+#ifndef max
+   #define max(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+
+// Checks whether a some pointer is valid, if so, accesses some field in a 
+// structure/object pointed by it, if not, then returns some default value
+#define safe_access(ptr, field, def_ret) ((ptr) ? (ptr)->field : (def_ret))
 
 char EXIT_CODE_MSG[][30] = {
    "",

@@ -6,7 +6,7 @@ int64_t height(Tree::Node* node) {
    int64_t lheight = height(node->left_child);
    int64_t rheight = height(node->rght_child);
 
-   return 1 + (lheight > rheight ? lheight : rheight);
+   return 1 + max(lheight, rheight);
 }
 
 Tree::exit_t Tree::insert(Node** node, Record* record) {
@@ -15,7 +15,7 @@ Tree::exit_t Tree::insert(Node** node, Record* record) {
    if (!new_node) return BAD_ALLOCATION;
 
    Node* increment_path = *node;
-   int64_t parent_height = increment_path ? increment_path->height : -1;
+   int64_t parent_height = safe_access(increment_path, height, -1);
 
    while (*node) {
 
@@ -27,7 +27,7 @@ Tree::exit_t Tree::insert(Node** node, Record* record) {
 
       else if (record->key < (*node)->content->key)
          node = &(*node)->left_child;
-      else if (record->key > (*node)->content->key) 
+      else if (record->key > (*node)->content->key)
          node = &(*node)->rght_child;
       else /* record->key == (*node)->content->key */
          return KEY_ALREADY_EXISTS;
@@ -44,7 +44,7 @@ Tree::exit_t Tree::insert(Node** node, Record* record) {
    return SUCCESS;
 }
 
-void Tree::print(Node* node) {
+void Tree::print(Node* node, int64_t level) {
 
    if (!node) {
       std::cout.write("{}\n", 2);
@@ -54,23 +54,27 @@ void Tree::print(Node* node) {
    BitTools::mword* branches = nullptr;
    Node** stack = nullptr;
 
-   uint64_t _height = height(node);
+   if (level < 0)
+      level = node->height;
 
-   if (_height) {
-      branches = Stack::allocate<BitTools::mword>(BitTools::size(_height));
+   if (node->height) {
+
+      int64_t stack_size = min(level + 1, node->height);
+
+      branches = Stack::allocate<BitTools::mword>(BitTools::size(stack_size));
       if (!branches) {
          std::cerr << "Failed to print tree!\n";
          return;
       }
 
-      stack = Stack::allocate<Node*>(_height);
+      stack = Stack::allocate<Node*>(stack_size);
       if (!stack) {
          Stack::release(branches);
          std::cerr << "Failed to print tree!\n";
          return;
       }
 
-      BitTools::initialize(branches, _height);
+      BitTools::initialize(branches, stack_size);
    }
 
    int64_t depth = -1;
@@ -78,7 +82,7 @@ void Tree::print(Node* node) {
 
    while (true) {
 
-      if (node->left_child) {
+      if (node->left_child && level > depth) {
          stack[++top] = node;
          node = node->left_child;
          depth++;
@@ -110,17 +114,21 @@ void Tree::print(Node* node) {
                std::cout.write(BRANCH_DOWN_SIDE, sizeof(BRANCH_DOWN_SIDE) - 1);
          }
 
-         print_record(node->content, "{$0, $1, $2, ");
-         std::cout << node->height << '\n';
+         if (level > depth) {
 
-         if (node->rght_child) {
-            node = node->rght_child;
+            print_record(node->content, "{$0, $1, $2, ");
+            std::cout << node->height << ", " << depth << '\n';
 
-            depth++;
-            (void)BitTools::setbit_1(branches, depth);
+            if (node->rght_child) {
+               node = node->rght_child;
 
-            break;
-         }
+               depth++;
+               (void)BitTools::setbit_1(branches, depth);
+
+               break;
+            }
+
+         } else std::cout.write("{...}\n", 6);
 
          if (top < 0) goto exit;
          node = stack[top--];
@@ -330,8 +338,10 @@ Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
    Node** balance_node = node;
    Node** increment_path = node;
 
-   int64_t parent_height = *node ? (*node)->height : -1;
-
+   // height may be highlighted as a function, although it's actually
+   // refering to a Node's field height
+   int64_t parent_height = safe_access(*node, height, -1);
+   ((*node) ? (*node)->height : (-1));
    bool balance = false;
    bool side = false;
 
@@ -345,16 +355,16 @@ Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
       // Parent height will indeed represent the height of the parent
       // until the end of the loop, not just a holder
       parent_height = (*node)->height;
-      
-      // If you're curious (or not), that's for alignment's sake, code-wise,
-      // will simply be removed by the compiler as a trivial unreacheable conditinal
+
+      // If you're curious (or not), that's for alignment's sake, code-wise, will
+      // simply be removed by the compiler as a trivial unreacheable conditinal
       if (false) {
 
       } else if (record->key < (*node)->content->key) {
 
          // If the insertion will happen to the left of the current node, is height will be
          // compared against its right child
-         if (parent_height > 1 + ((*node)->rght_child ? (*node)->rght_child->height : -1)) {
+         if (parent_height > 1 + safe_access((*node)->rght_child, height, -1)) {
             balance_node = node;
             balance = true;
             side = true;
@@ -366,7 +376,7 @@ Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
 
          // If the insertion will happen to the right of the current node, is height will be
          // compared against its left child
-         if (parent_height > 1 + ((*node)->left_child ? (*node)->left_child->height : -1)) {
+         if (parent_height > 1 + safe_access((*node)->left_child, height, -1)) {
             balance_node = node;
             balance = true;
             side = false;

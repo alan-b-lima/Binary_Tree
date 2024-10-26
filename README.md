@@ -52,7 +52,8 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
    - [Teorema 4D: Uma operação de rotação, quando executada propriamente, retorna um nó menor que o nó de entrada](#definição-4b-árvore-binária-balanceada)
    - [Corolário 4E: Uma operação de rotação sempre é suficiente para restaurar o balanceamento perdido após a inserção de um único nó](#corolário-4e-uma-operação-de-rotação-sempre-é-suficiente-para-restaurar-o-balanceamento-perdido-após-a-inserção-de-um-único-nó)
    - [Implementação 4F: Inserção em Árvore AVL](#implementação-4f-inserção-em-árvore-avl)
-
+      - [Análise de Complexidade](#análise-de-complexidade-3)
+   - [Exercício 4G: Encontre a Complexidade de Tempo da Busca numa Árvore AVL](#exercício-4g-encontre-a-complexidade-de-tempo-da-busca-numa-árvore-avl)
 
 <strong>[Referências](#referências)</strong>
 
@@ -456,7 +457,7 @@ Tree::exit_t Tree::insert(Node** node, Record* record) {
    if (!new_node) return BAD_ALLOCATION;
 
    Node* increment_path = *node;
-   int64_t parent_height = increment_path ? increment_path->height : -1;
+   int64_t parent_height = safe_access(increment_path, height, -1);
 
    while (*node) {
 
@@ -726,7 +727,7 @@ Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
    Node** balance_node = node;
    Node** increment_path = node;
 
-   int64_t parent_height = *node ? (*node)->height : -1;
+   int64_t parent_height = safe_access(*node, height, -1);
 
    bool balance = false;
    bool side = false;
@@ -744,7 +745,7 @@ Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
 
       } else if (record->key < (*node)->content->key) {
 
-         if (parent_height > 1 + ((*node)->rght_child ? (*node)->rght_child->height : -1)) {
+         if (parent_height > 1 + safe_access((*node)->rght_child, height, -1)) {
             balance_node = node;
             balance = true;
             side = true;
@@ -754,7 +755,7 @@ Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
 
       } else if (record->key > (*node)->content->key) {
 
-         if (parent_height > 1 + ((*node)->left_child ? (*node)->left_child->height : -1)) {
+         if (parent_height > 1 + safe_access((*node)->left_child, height, -1)) {
             balance_node = node;
             balance = true;
             side = false;
@@ -804,6 +805,8 @@ Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
 }
 ```
 
+Um último detalhe a ressaltar, se a árvore precisa de balanceamento, ou seja, `balance` é `true`, o incremento ocorrerá apenas a partir do nó desbalancedo, algo que a efetividade é garantida pelo [Teorema 4D](#teorema-4d-uma-operação-de-rotação-quando-executada-propriamente-retorna-um-nó-menor-que-o-nó-de-entrada).
+
 #### Análise de Complexidade
 
 A complexidade de tempo é $`O(\log n)`$, que será discutido a frente, já a complexidade de espaço é constante, $`O(1)`$.
@@ -821,4 +824,4 @@ https://docs.ufpr.br/~hoefel/ensino/CM304_CompleMat_PE3/livros/Enderton_Elements
 
 # Notas de Rodapé
 
-1. <span id="fnote1">Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ na reta real $`\text{ℝ} ℝ`$.</span> [↩︎](#definição-1a-árvore-binária)
+1. <span id="fnote1">Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ na reta real $`\text{ℝ}`$.</span> [↩︎](#definição-1a-árvore-binária)

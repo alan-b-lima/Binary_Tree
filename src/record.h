@@ -3,7 +3,7 @@
 #include "base.h"
 #include "../rc/names.cpp"
 
-typedef int32_t key_t;
+typedef long key_t;
 static const uint64_t NAME_SIZE = 1000;
 
 typedef struct Record {
