@@ -3,7 +3,7 @@
 ## Autores
 
 @Alan Barbosa Lima [AlanLima287](https://github.com/AlanLima287)             <br>
-@Breno Augusto Braga Oliveira                                                <br>
+@Breno Augusto Braga Oliveira [bragabreno](https://github.com/bragabreno)    <br>
 @Juan Pablo Ferreira Costa [juanzinhobs18](https://github.com/juanzinhobs18) <br>
 @Luiz Felipe Melo Oliveira                                                   <br>
 @Otávio Gomes Calazans
@@ -18,6 +18,8 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 
 <strong>[Estrutura das dependências](#estrutura-das-dependências)</strong>
 
+- [Diagrama da Estrutura de Dependências da Aplicação](#diagrama-da-estrutura-de-dependências-da-aplicação)
+
 <strong>[Árvores Binárias](#árvores-binárias)</strong>
 
 - [1 Definições Básicas](#1-definições-básicas)
@@ -31,7 +33,7 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
    - [Definição 1C: Registro](#definição-1c-registro)
    - [Definição 1D: Árvore Binária de Busca](#definição-1d-árvore-binária-de-busca)
    - [Definição 1E: Altura de Árvores Binárias](#definição-1e-altura-de-árvores-binárias)
-   - [Teorema 1F: A computação da altura de uma árvore tem a complexidade do pior caso $`O(n)`$](#teorema-1f-a-computação-da-altura-de-uma-árvore-tem-a-complexidade-do-pior-caso)
+   - [Teorema 1F: A computação da altura de uma árvore tem complexidade linear no pior caso](#teorema-1f-a-computação-da-altura-de-uma-árvore-tem-complexidade-linear-no-pior-caso)
 - [2 Implementação de Funcionalidades para os Registros](#2-implementação-de-funcionalidades-para-os-registros)
 - [3 Implementação da Árvore Binária de Busca](#3-implementação-da-árvore-binária-de-busca)
    - [Implementação 3A: Algoritmo de Busca](#implementação-3a-algoritmo-de-busca)
@@ -72,12 +74,14 @@ flowchart BT;
    
    subgraph stdlibs[*Bibliotecas Padronizadas*]
       base_incl[stdint.h <br> stdlib.h <br> stdio.h <br> time.h <br> iostream]
+      terminal_incl[stdint.h <br> math.h <br> stdio.h]
+      random_incl[stdint.h]
       stack_incl[stdlib.h <br> stdint.h <br> malloc.h]
       bittools_incl[stdlib.h <br> stdint.h <br> new]
-      random_incl[stdint.h]
    end
 
    subgraph usrlibs[*Bibliotecas Implementadas*]
+      terminal.h
       random.h
       stack.h
       bittools.h
@@ -86,6 +90,12 @@ flowchart BT;
    bittools.h[
       bittools.h
       bittools.cpp
+   ]
+   
+   terminal.h[
+      terminal.h
+      terminal.cpp
+      color.h
    ]
 
    file.h[
@@ -108,21 +118,12 @@ flowchart BT;
       tree.cpp
    ]
 
-   base.h --> base_incl
-   base.h --> random.h
+   main.cpp --> terminal.h
+   main.cpp --> base.h
+   main.cpp --> file.h
+   main.cpp --> linked_list.h
+   main.cpp --> tree.h
 
-   system.h --> Windows.h
-      
-   random.h --> random_incl
-
-   stack.h --> stack_incl
-
-   bittools.h --> bittools_incl
-   bittools.h --> intrin.h
-
-   record.h ---> base.h
-   record.h --> names.cpp
-   
    file.h --> base.h
    file.h --> record.h
    
@@ -136,10 +137,22 @@ flowchart BT;
    tree.h ---> stack.h
    tree.h ---> bittools.h
 
-   main.cpp --> base.h
-   main.cpp --> file.h
-   main.cpp --> linked_list.h
-   main.cpp --> tree.h
+   record.h ---> base.h
+   record.h --> names.cpp
+
+   base.h --> base_incl
+   base.h --> random.h
+
+   system.h --> Windows.h
+   
+   terminal.h --> terminal_incl
+   
+   random.h --> random_incl
+
+   stack.h --> stack_incl
+
+   bittools.h --> bittools_incl
+   bittools.h --> intrin.h
    
    style syslibs fill:#0000, stroke-dasharray: 5
    style stdlibs fill:#0000, stroke-dasharray: 5
@@ -185,7 +198,7 @@ Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou u
 Tree(T) \iff T = \emptyset \vee \left(T = \langle v, E, D \rangle \wedge Tree(D) \wedge Tree(E) \right)
 ```
 
-Para simplificação, seja $`T = \langle v, E, D \rangle`$, $`T_E`$ denota a sub-árvore esquerda, $`T_D`$ denota a sub-àrvore direita e $`v[T]`$ denota a variável $`v`$ contida em $`T`$.
+Para simplificação, seja $`T = \langle v, E, D \rangle`$, $`T_E`$ denota a sub-árvore esquerda, $`E`$; $`T_D`$ denota a sub-àrvore direita, $`D`$; e $`v[T]`$ denota a variável $`v`$ contida em $`T`$.
 
 Em C++, a estrutura de um nó de uma árvore binária é definida:
 
@@ -200,12 +213,14 @@ typedef struct Node {
 
 ### Definição 1B: Relações entre nós
 
-A relação de descendência $`\lhd`$ entre nós ($`T \lhd S`$ lê-se "$`T`$ é descendente de $`S`$") tem intrepretação verdadeira se, e somente se, para $`T \lhd S`$, $`T`$ é filho de $`S`$, ou é filho de um filho de $`S`$ e assim por diante. Recusivamente, isto é:
+A relação de descendência $`\lhd`$ entre nós ($`T \lhd S`$ lê-se "$`T`$ é descendente de $`S`$") tem intrepretação verdadeira se, e somente se, para $`T \lhd S`$, $`T`$ é filho de $`S`$, ou é filho de um filho de $`S`$ e assim por diante. Recusivamente, isto é, para $`T`$ e $`S`$ árvore não nulas:
 
-* $`T \lhd \emptyset \iff False`$;<br>
-* $`T \lhd S \iff v[T] = v[S_D] \vee v[T] = v[S_E] \vee T \lhd S_D \vee T \lhd S_E`$, para $`S \ne \emptyset`$.
+* $`\emptyset \lhd \emptyset \iff False`$;
+* $`\emptyset \lhd S \iff True`$;
+* $`T \lhd \emptyset \iff False`$;
+* $`T \lhd S \iff v[T] = v[S_D] \vee v[T] = v[S_E] \vee T \lhd S_D \vee T \lhd S_E`$.
 
-Nota-se que o $`\emptyset`$ é descendente de todo nó que não seja $`\emptyset`$. Ademais, a relação $`\unlhd`$ é definida como descendência ou igualdade, definida da seguinte maneira:
+A relação $`\unlhd`$ é definida como descendência ou igualdade, definida da seguinte maneira:
 
 ```math
 T \unlhd S \iff T = S \vee T \lhd S
@@ -272,7 +287,7 @@ h(T) = \begin{cases}
 \end{cases}
 ```
 
-### Teorema 1F: A computação da altura de uma árvore tem a complexidade do pior caso $`O(n)`$
+### Teorema 1F: A computação da altura de uma árvore tem complexidade linear no pior caso
 
 Pelas instancias recursivas da função $`h`$, é visível que pelo menos todo nó definido é visitado, e aqueles nós que têm um único filho ainda adicionam uma vericação a um nó $`\emptyset`$. No pior caso, todo nó tem um único filho, exceto por um nó (a existência de um nó folha é obrigatória numa árvore com nós finitos), assim, com $`n`$ nós, seriam feitas $`2(n - 1) + 1`$ iterações da função, assim, a complexidade é $`O(n)`$. Esse fato motiva a inclusão do atributo `height` na estrutura `Node`.
 
@@ -339,7 +354,7 @@ void print_record(Record* record, const char* format = "{$0, $1, $2}") {
 Grande parte das operações sobre uma árvore vão se basear em alguma forma de algoritmo de busca, para isso, assume-se que entradas fornecidas são árvores binárias de busca. Como uma árvore de buscar porta a propriedade que todo nó à esquerda é menor e à direita é maior, similar à busca binária, o espaço de busca é reduzido em blocos, continuando a busca apenas na sub-árvore que pode conter o dado nó.
 
 ```math
- S(T, key) = \begin{cases}
+S(T, key) = \begin{cases}
    S(T_E, key) & \text{| } key < v[T].key\\ 
    S(T_D, key) & \text{| } key > v[T].key\\ 
    v[T] & \text{| } v[T].key = key
@@ -386,12 +401,29 @@ tem 4 nós sempre arranjandos à sub-árvore direita, a busca de nó ausente mai
 Para inserir um novo nó numa árvore binária de busca, é realizada uma busca tradicional e, quando se encotrar um nó nulo, esse nó é posto nessa posição. Seja $`+`$ a função de inserção, $`T`$ uma árvore e $`N`$ o novo registro:
 
 ```math
- +(T, N) = \begin{cases}
++(T, N) = \begin{cases}
    \langle v, +(E, N), D \rangle & \text{| } T = \langle v, E, D \rangle \wedge N < v \\
    \langle v, E, +(D, N) \rangle & \text{| } T = \langle v, E, D \rangle \wedge N > v \\
    \langle v, \emptyset, \emptyset \rangle & \text{| } T = \emptyset
-\end{cases} 
+\end{cases}
 ```
+
+<!-- ```math
+-_R(T, key) = \begin{cases}
+   \langle v, -_R(E, key), D \rangle & \text{| } T = \langle v, E, D \rangle \wedge key < v.key \\
+   \langle v, E, -_R(D, key) \rangle & \text{| } T = \langle v, E, D \rangle \wedge key > v.key \\
+   \langle R(T), E, D \rangle & \text{| } T = \langle v, E, D \rangle \wedge key = v.key \\
+   \emptyset & \text{| } T = \emptyset
+\end{cases}
+```
+
+```math
+P(T) = \begin{cases}
+   P(T_D) & \text{| } T_D \ne \emptyset \\
+   P(T_E) & \text{| } T_E \ne \emptyset \wedge T_D = \emptyset \\
+   v[T_D] & \text{| } T_E = \emptyset \wedge T_D = \emptyset
+\end{cases}
+``` -->
 
 Em C++:
 
@@ -543,8 +575,17 @@ void Tree::AVL::left_rotation(Node** node) {
 
 A rotação esquerda, denotada pela função $`R_D`$ é dada:
 
+
 ```math
 R_D(\langle v_A, \langle v_B, T_0, T_1 \rangle, T_2 \rangle) = \langle v_B, T_0, \langle v_A, T_1, T_2 \rangle \rangle
+```
+
+```
+     A                                  B
+    / \       A - B        A - B       / \
+   B  T2 =>  / \   \  =>  /   / \  => T0  A
+  / \       T0 T1  T2    T0  T1 T2       / \
+ T0 T1                                  T1 T2
 ```
 
 Nota-se que $`R_D`$ é indefinido para um nó $`T`$ se $`T_E = \emptyset`$. Ademais, $`R_D`$ é a função inversa de $`R_E`$. Assim, de forma analoga, uma rotação direita deve ser feita quando um nó $`T`$ tem $`fb(T) = -2`$ e $`fb(T_E) = -1`$. O código é dado:
@@ -596,11 +637,13 @@ Seguindo do resultado anterior, uma operação de rotação sempre diminui a alt
 
 ### Implementação 4F: Inserção em Árvore AVL
 
-Diferentemente das implementações
+Diferentemente das implementações[^1]
 
 # Referências
 
 https://pages.cs.wisc.edu/~ealexand/cs367/NOTES/AVL-Trees/index.html
 https://docs.ufpr.br/~hoefel/ensino/CM304_CompleMat_PE3/livros/Enderton_Elements%20of%20set%20theory_%281977%29.pdf
 
-1. <span id="fnote1">Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ no conjunto $`\displaystyle\mathbb{R}`$.</span>
+# Notas de Rodapé
+
+1. <span id="fnote1">Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ na reta real, &reals; $`\mathbb{R}`$ $`\R`$ $`\mathcal{R}`$.</span> [↩︎](#árvores-binárias)

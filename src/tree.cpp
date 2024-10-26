@@ -184,70 +184,7 @@ void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
    Stack::release(stack);
 }
 
-void destructqw0(Tree::Node** node, void(*record_handler)(Record*)) {
-   if (!*node) return;
-
-   byte index = 0;
-   Tree::Node* stack[2] = { nullptr, nullptr };
-
-   Tree::Node* root = *node;
-   Tree::Node* current;
-   *node = nullptr;
-
-transversal:
-   current = root;
-
-   while (current) {
-
-      Tree::Node* tmp;
-
-      if (current->left_child && current->rght_child) {
-
-         if (index > 1) goto replacement;
-         stack[index++] = current->rght_child;
-         tmp = current->left_child;
-
-      } else tmp = current->left_child ? current->left_child : current->rght_child;
-
-      record_handler(current->content);
-      delete current;
-      current = tmp;
-   }
-
-   if (!index) return;
-
-   root = stack[--index];
-   stack[index] = nullptr;
-   goto transversal;
-
-replacement:
-   root = current;
-   while (current->height > 1) {
-      current = current->left_child ? current->left_child : current->rght_child;
-   }
-
-   if (current->left_child) {
-      record_handler(current->left_child->content);
-      delete current->left_child;
-   }
-
-   if (current->rght_child) {
-      record_handler(current->rght_child->content);
-      delete current->rght_child;
-   }
-
-   current->left_child = stack[0];
-   current->rght_child = stack[1];
-   current->height = 1 + (stack[0]->height > stack[1]->height ? stack[0]->height : stack[1]->height);
-
-   stack[0] = nullptr;
-   stack[1] = nullptr;
-   index = 0;
-
-   goto transversal;
-}
-
-void destructqw1(Tree::Node** node, void(*record_handler)(Record*)) {
+void destructqw1(Tree::Node** node, void(*handler)(Record*)) {
    if (!*node) return;
 
    byte index = 0;
@@ -289,7 +226,9 @@ loop:
 
       } else tmp = current->left_child ? current->left_child : current->rght_child;
 
-      record_handler(current->content);
+      if (handler)
+         handler(current->content);
+
       delete current;
       current = tmp;
    }

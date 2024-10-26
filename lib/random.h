@@ -20,9 +20,8 @@ namespace Random {
       __seed = seed;
    }
 
-   template <typename type_t>
-   type_t rand() {
-      __seed = __seed * 279470273ull + 3010349ull;
-      return (type_t)(__seed & (~0ull >> (64 - (sizeof(type_t) << 3))));
+   uint32_t rand() {
+      __seed = __seed * 0x10A860C1ull + 0x2DEF29ull;
+      return (__seed & 0x0000'FFFF'FFFF'0000) >> 16;
    }
 }

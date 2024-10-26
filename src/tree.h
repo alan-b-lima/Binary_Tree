@@ -32,17 +32,18 @@ namespace Tree {
       return node->height;
    }
 
-   void destruct(Node**, void(*)(Record*) = [](Record*) {});
-namespace AVL {
+   void destruct(Node**, void(*)(Record*) = nullptr);
 
+};
 
+namespace Tree::AVL {
+   
    void smpl_left_rotation(Node**);
    void smpl_rght_rotation(Node**);
    void left_rght_rotation(Node**);
    void rght_left_rotation(Node**);
 
    bool insert(Node**, Record*);
-};
 };
 
 #include "tree.cpp"

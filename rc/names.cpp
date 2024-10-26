@@ -1,20 +1,16 @@
-const char NAME_LIST[][11] = {
-   "Adriana", "Adriano", "Alan", "Alessandra", "Alex", "Alexandre", "Aline", "Amanda", "Amelia", "Ana", "Anderson", "Andre", "Andreia", "Angela",
-   "Antonia", "Antonio", "Aparecida", "Augusto", "Beatriz", "Breno", "Bruna", "Bruno", "Camila", "Carla", "Carlos", "Claudia", "Claudio", "Cristiane",
-   "Daiane", "Daniel", "Daniela", "Daniele", "Davi", "Debora", "Diego", "Douglas", "Edson", "Eduardo", "Elaine", "Eliane", "Fabiana", "Fabio", "Felipe",
-   "Fernanda", "Fernando", "Flavio", "Francisca", "Francisco", "Gabriel", "Gabriela", "Geraldo", "Guilherme", "Gustavo", "Igor", "Isabel", "Jaqueline",
-   "Jeferson", "Jessica", "Joana", "Jorge", "Jose", "Josefa", "João", "Juan", "Julia", "Juliana", "Julio", "Larissa", "Leandro", "Leonardo", "Leticia",
-   "Luan", "Lucas", "Lucia", "Luciana", "Luciano", "Luis", "Luiz", "Luzia", "Manoel", "Manuel", "Marcelo", "Marcia", "Marcio", "Marcos", "Maria",
-   "Mariana", "Mario", "Marlene", "Mateus", "Matheus", "Natalia", "Otavio", "Pablo", "Patricia", "Paulo", "Pedro", "Rafael", "Rafaela", "Raimunda",
-   "Raimundo", "Raquel", "Regina", "Renata", "Renato", "Ricardo", "Rita", "Roberto", "Rodrigo", "Rogerio", "Ronaldo", "Rosa", "Rosangela", "Samuel",
-   "Sandra", "Sara", "Sergio", "Simone", "Sonia", "Sueli", "Terezinha", "Thiago", "Tiago", "Vanessa", "Vera", "Vinicius", "Vitor", "Vitoria"
+const char NAME_LIST[][10] = {
+   "Alan", "Alexandre", "Aline", "Amanda", "Amelia", "Ana", "Anderson", "André", "Andreia", "Antonio", "Aparecida", "Augusto", "Breno", "Bruno", "Camila", "Carla",
+   "Carlos", "Cláudio", "Cristine", "Daiana", "Daniele", "Davi", "Diego", "Douglas", "Eduardo", "Elaine", "Fabiana", "Fabio", "Felipe", "Francisca", "Gabriel",
+   "Guilherme", "Gustavo", "Isabelly", "João", "Juan", "Júlia", "Julio", "Leonardo", "Luan", "Lucas", "Luciana", "Luis", "Luiz", "Marcelo", "Marcia", "Marcos", "Maria",
+   "Mariana", "Mateus", "Natalia", "Otávio", "Pablo", "Rafael", "Raquel", "Regina", "Renato", "Roberto", "Rodrigo", "Sandra", "Sergio", "Tiago", "Vitor", "Vitoria"
 };
 
 const char SURNAME_LIST[][11] = {
-   "Almeida", "Alves", "Andrade", "Barbosa", "Barros", "Batista", "Borges", "Braga", "Brant", "Campos", "Calazans", "Cardoso", "Carvalho", "Castro",
-   "Costa", "Dias", "Duarte", "Freitas", "Fernandes", "Ferreira", "Garcia", "Gomes", "Goncalves", "Lima", "Lopes", "Machado", "Marques", "Martins",
-   "Medeiros", "Melo", "Mendes", "Miranda", "Monteiro", "Moraes", "Moreira", "Moura", "Nascimento", "Nunes", "Oliveira", "Pereira", "Ramos", "Reis",
-   "Ribeiro", "Rocha", "Santana", "Santos", "Silva", "Soares", "Souza", "Teixeira", "Vieira"
+   "Almeida", "Alves", "Andrade", "Assis", "Barbosa", "Barros", "Batista", "Borges", "Braga", "Brant", "Campos", "Calazans", "Cardoso", "Carvalho", 
+   "Castro", "Costa", "Dias", "Duarte", "Freitas", "Fernandes", "Ferreira", "Figueredo", "Filho", "Garcia", "Gomes", "Gonçalves", "Guimarães", "Henrique",
+   "Júnior", "Lima", "Lopes", "Machado", "Marques", "Martins", "Martinelli", "Medeiros", "Melo", "Mendes", "Miranda", "Monteiro", "Moraes", "Moreira", "Moura",
+   "Morelli", "Mozer", "Nascimento", "Nunes", "Oliveira", "Pereira", "Prado", "Ramos", "Reis", "Ribeiro", "Rocha", "Sales", "Santana", "Santos", "Silva", "Soares",
+   "Souza", "Tavares", "Teixeira", "Veloso", "Vieira"
 };
 
 const unsigned long NAME_ENTRY_SIZE = sizeof(NAME_LIST[0]);

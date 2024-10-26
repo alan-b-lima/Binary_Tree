@@ -15,6 +15,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <iostream>
 #include <new>
 
 #if __has_include("intrin.h") && (defined(_WIN32) || defined(_WIN64))

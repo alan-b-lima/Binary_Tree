@@ -3,16 +3,11 @@
 
 void write_record(Record* record, int data, const char* name) {
 
-   for (uint64_t i = 0; name[i]; i++) {
-
-      if (i >= NAME_SIZE) {
-         record->name[i] = '\0';
-         break;
-      }
-
+   uint64_t i;
+   for (i = 0; i < NAME_SIZE && name[i]; i++) 
       record->name[i] = name[i];
-   }
 
+   record->name[i] = '\0';
    record->data = data;
 }
 
@@ -54,7 +49,7 @@ void print_record(Record* record, const char* format) {
 }
 
 void populate_record_randomly(Record* record) {
-   record->data = rand();
+   record->data = Random::rand();
 
    char* cursor = record->name;
    uint64_t remaining_space = NAME_SIZE;
@@ -62,13 +57,13 @@ void populate_record_randomly(Record* record) {
    // It's a bit field
    //    [0-1] bits select the number of surnames
    //    [2] bit says whether the record's name will be composed
-   byte params = rand() & 0b111;
+   byte params = Random::rand() & 0b111;
    uint64_t random;
 
    /* name */
 
    do {
-      random = rand() % NAME_LIST_SIZE;
+      random = Random::rand() % NAME_LIST_SIZE;
 
       for (uint64_t i = 0; NAME_LIST[random][i]; i++) {
          *cursor++ = NAME_LIST[random][i];
@@ -91,7 +86,7 @@ void populate_record_randomly(Record* record) {
    if (!params) params = 2;
 
    do {
-      random = rand() % SURNAME_LIST_SIZE;
+      random = Random::rand() % SURNAME_LIST_SIZE;
 
       for (uint64_t i = 0; SURNAME_LIST[random][i]; i++) {
          *cursor++ = SURNAME_LIST[random][i];
