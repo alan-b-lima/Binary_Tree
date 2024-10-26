@@ -44,10 +44,10 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
    - [Definição 4A: Fator de Balanceamento](#definição-4a-fator-de-balanceamento)
    - [Definição 4B: Árvore Binária Balanceada](#definição-4b-árvore-binária-balanceada)
    - [Definição e Implementação 4C: Rotações](#definição-e-implementação-4c-rotações)
-      - [i) Rotação Esquerda](#i-rotação-esquerda)
-      - [ii) Rotação Direita](#ii-rotação-direita)
-      - [iii) Rotação Direita-Esquerda](#iii-rotação-direita-esquerda)
-      - [iv) Rotação Esquerda-Direita](#iv-rotação-esquerda-direita)
+      - [i) Rotação Simples à Esquerda](#i-rotação-simples-à-esquerda)
+      - [ii) Rotação Simples à Direita](#ii-rotação-simples-à-direita)
+      - [iii) Rotação Dupla Direita-Esquerda](#iii-rotação-dupla-direita-esquerda)
+      - [iv) Rotação Dupla Esquerda-Direita](#iv-rotação-dupla-esquerda-direita)
       - [Análise de Complexidade](#análise-de-complexidade-2)
    - [Teorema 4D: Uma operação de rotação, quando executada propriamente, retorna um nó menor que o nó de entrada](#definição-4b-árvore-binária-balanceada)
    - [Corolário 4E: Uma operação de rotação sempre é suficiente para restaurar o balanceamento perdido após a inserção de um único nó](#corolário-4e-uma-operação-de-rotação-sempre-é-suficiente-para-restaurar-o-balanceamento-perdido-após-a-inserção-de-um-único-nó)
@@ -223,7 +223,7 @@ A relação de descendência $`\lhd`$ entre nós ($`T \lhd S`$ lê-se "$`T`$ é 
 A relação $`\unlhd`$ é definida como descendência ou igualdade, definida da seguinte maneira:
 
 ```math
-T \unlhd S \iff T = S \vee T \lhd S
+T \unlhd S \iff v[T] = v[S] \vee T \lhd S
 ```
 
 Seguindo da definição de descendência, alguma nomenclatura é definida:
@@ -299,16 +299,11 @@ Duas funções para manejamento de instâncias do tipo `Record` serão implement
 ```C++
 void write_record(Record* record, int data, const char* name) {
 
-   for (uint64 i = 0; name[i]; i++) {
-
-      if (i >= NAME_SIZE) {
-         record->name[i] = '\0';
-         break;
-      }
-
+   uint64_t i;
+   for (i = 0; i >= NAME_SIZE && name[i]; i++) 
       record->name[i] = name[i];
-   }
 
+   record->name[i] = '\0';
    record->data = data;
 
 }
@@ -336,9 +331,7 @@ void print_record(Record* record, const char* format = "{$0, $1, $2}") {
             case '1': std::cout << record->data; break;
             case '2': std::cout << record->name; break;
 
-            default:
-               std::cout.put(*format);
-               break;
+            default: std::cout.put(*format); break;
          }
 
       } else std::cout.put(*format);
@@ -428,20 +421,25 @@ P(T) = \begin{cases}
 Em C++:
 
 ```C++
-bool Tree::insert(Tree::Node** node, Record* record) {
+Tree::exit_t Tree::insert(Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
-   if (!new_node) return false;
+   if (!new_node) return BAD_ALLOCATION;
 
    while (*node) {
 
-      node = record->key < (*node)->content->key ?
-         &(*node)->left_child : &(*node)->rght_child;
+      if (false);
 
+      else if (record->key < (*node)->content->key)
+         node = &(*node)->left_child;
+      else if (record->key > (*node)->content->key) 
+         node = &(*node)->rght_child;
+      else /* record->key == (*node)->content->key */
+         return KEY_ALREADY_EXISTS;
    }
-   
+
    *node = new_node;
-   return true;
+   return SUCCESS;
 }
 ```
 
@@ -452,13 +450,13 @@ Seja $`T`$ o nó no caminho de incremento, $`T_I`$ seu irmão e $`P`$ seu pai. S
 Dessa forma, em C++:
 
 ```C++
-bool Tree::insert(Tree::Node** node, Record* record) {
+Tree::exit_t Tree::insert(Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
-   if (!new_node) return false;
+   if (!new_node) return BAD_ALLOCATION;
 
    Node* increment_path = *node;
-   int64 parent_height = increment_path ? increment_path->height : -1;
+   int64_t parent_height = increment_path ? increment_path->height : -1;
 
    while (*node) {
 
@@ -466,11 +464,16 @@ bool Tree::insert(Tree::Node** node, Record* record) {
          increment_path = *node;
 
       parent_height = (*node)->height;
-      node = record->key < (*node)->content->key ?
-         &(*node)->left_child : &(*node)->rght_child;
+      if (false);
 
+      else if (record->key < (*node)->content->key)
+         node = &(*node)->left_child;
+      else if (record->key > (*node)->content->key) 
+         node = &(*node)->rght_child;
+      else /* record->key == (*node)->content->key */
+         return KEY_ALREADY_EXISTS;
    }
-   
+
    if (!parent_height) while (increment_path) {
       increment_path->height++;
 
@@ -479,7 +482,7 @@ bool Tree::insert(Tree::Node** node, Record* record) {
    }
 
    *node = new_node;
-   return true;
+   return SUCCESS;
 }
 ```
 
@@ -511,7 +514,7 @@ Quando uma árvore AVL possui algum nó com fator de balanceamento fora do conju
 
 Rotações, como o nome sugere, são reajamentos de nós de uma forma predefinida, há dois tipos básicos de rotação, a rotação esquerda e a rotação direita, e dois tipo compostos rotação direita-esquerda e rotação esquerda-direita, definidas a seguir. Os casos de desbalanceamento tratados abaixo são aquele gerados após a inserção de um único nó, assim, um nó $`T`$ desbalanceado nessa condição tem $`fb(T) = -2`$ ou $`fb(T) = 2`$.
 
-#### i) Rotação Esquerda
+#### i) Rotação Simples à Esquerda
 
 A rotação esquerda, denotada pela função $`R_E`$ é dada:
 
@@ -522,8 +525,6 @@ R_E(\langle v_A, T_0, \langle v_B, T_1, T_2 \rangle \rangle) = \langle v_B, \lan
 Nota-se que $`R_E`$ é indefinido para um nó $`T`$ com $`T_D = \emptyset`$.
 
 Seja a árvore $`A = \langle v, T_0, B \rangle`$, $`B = \langle u, T_1, T_2 \rangle`$, sua rotação esquerda, $`R_E(A)`$ é dada:
-
-Rotação simples à esquerda
 
 ```
    A                                         B
@@ -559,10 +560,10 @@ Note que a altura das subárvores $`T_0`$, $`T_1`$ e $`T_2`$ não são modificad
 Assim, como $`T_2 =`$`(*node)->rght_child->rght_child`, o código da rotação é dado:
 
 ```C++
-void Tree::AVL::left_rotation(Node** node) {
+void Tree::AVL::smpl_left_rotation(Node** node) {
    Node* rght_subtree = (*node)->rght_child;
 
-   (*node)->height = 1 + (rght_subtree->rght_child ? rght_subtree->rght_child->height : 0);
+   (*node)->height = rght_subtree->rght_child->height;
    rght_subtree->height = 1 + (*node)->height;
 
    (*node)->rght_child = rght_subtree->left_child;
@@ -571,10 +572,9 @@ void Tree::AVL::left_rotation(Node** node) {
 }
 ```
 
-#### ii) Rotação Direita
+#### ii) Rotação Simples à Direita
 
 A rotação esquerda, denotada pela função $`R_D`$ é dada:
-
 
 ```math
 R_D(\langle v_A, \langle v_B, T_0, T_1 \rangle, T_2 \rangle) = \langle v_B, T_0, \langle v_A, T_1, T_2 \rangle \rangle
@@ -591,10 +591,10 @@ R_D(\langle v_A, \langle v_B, T_0, T_1 \rangle, T_2 \rangle) = \langle v_B, T_0,
 Nota-se que $`R_D`$ é indefinido para um nó $`T`$ se $`T_E = \emptyset`$. Ademais, $`R_D`$ é a função inversa de $`R_E`$. Assim, de forma analoga, uma rotação direita deve ser feita quando um nó $`T`$ tem $`fb(T) = -2`$ e $`fb(T_E) = -1`$. O código é dado:
 
 ```C++
-void Tree::AVL::rght_rotation(Node** node) {
+void Tree::AVL::smpl_rght_rotation(Node** node) {
    Node* left_subtree = (*node)->left_child;
 
-   (*node)->height = left_subtree->left_child ? left_subtree->left_child->height : 0;
+   (*node)->height = left_subtree->left_child->height;
    left_subtree->height = 1 + (*node)->height;
 
    (*node)->left_child = left_subtree->rght_child;
@@ -603,7 +603,7 @@ void Tree::AVL::rght_rotation(Node** node) {
 }
 ```
 
-#### iii) Rotação Direita-Esquerda
+#### iii) Rotação Dupla Direita-Esquerda
 
 A rotação direita-esquerda, $`R_{DE}`$, supre o caso onde, para um nó $`T`$, $`fb(T) = 2`$ e $`fb(T_D) = -1`$, dada com base nas rotações simples mostradas em **i)** e **ii)**:
 
@@ -611,12 +611,72 @@ A rotação direita-esquerda, $`R_{DE}`$, supre o caso onde, para um nó $`T`$, 
 R_{DE}(\langle v, E, D \rangle) = R_E(\langle v, E, R_D(D) \rangle)
 ```
 
-#### iv) Rotação Esquerda-Direita
+```
+     A            A
+    / \          / \          _C_
+   B  T3        C  T3        /   \
+  / \    =>    / \     =>   B     A
+ T0  C        B  T2        / \   / \
+    / \      / \          T0 T1 T2 T3
+   T1 T2    T0 T1
+```
+
+Apesar de ser definida como um aninhamento de rotações, em código, essa será definida de maneira diferente, que encapsula (simplifica) as operações feitas. Os detalhes para o ajustamento da altura são deixados como exercício para o leitor, dado que esse segue diretamente dos resultados anteriores, o mesmo será válido para a próxima rotação. Em código:
+
+```C++
+void Tree::AVL::rght_left_rotation(Node** node) {
+   Node* midd_subtree = (*node)->rght_child->left_child;
+
+   (*node)->rght_child->left_child = midd_subtree->rght_child;
+   midd_subtree->rght_child = (*node)->rght_child;
+
+   (*node)->rght_child = midd_subtree->left_child;
+   midd_subtree->left_child = *node;
+
+   midd_subtree->left_child->height = midd_subtree->height;
+   midd_subtree->rght_child->height = midd_subtree->height;
+   midd_subtree->height++;
+
+   *node = midd_subtree;
+}
+```
+
+#### iv) Rotação Dupla Esquerda-Direita
 
 A rotação esquerda-direita, $`R_{ED}`$, supre o caso onde, para um nó $`T`$, $`fb(T) = -2`$ e $`fb(T_D) = 1`$, dada, também com base nas rotações simples mostradas em **i)** e **ii)**:
 
 ```math
 R_{ED}(\langle v, E, D \rangle) = R_D(\langle v, R_E(E), D \rangle)
+```
+
+```
+   A          A
+  / \        / \             _C_
+ T0  B      T0  C           /   \
+    / \  =>    / \    =>   A     B
+   C  T3      T1  B       / \   / \
+  / \            / \     T0 T1 T2 T3
+ T1 T2          T2 T3
+```
+
+Seguindo do já dito anteriormente, tem-se:
+
+```C++
+void Tree::AVL::left_rght_rotation(Node** node) {
+   Node* midd_subtree = (*node)->left_child->rght_child;
+
+   (*node)->left_child->rght_child = midd_subtree->left_child;
+   midd_subtree->left_child = (*node)->left_child;
+
+   (*node)->left_child = midd_subtree->rght_child;
+   midd_subtree->rght_child = *node;
+
+   midd_subtree->left_child->height = midd_subtree->height;
+   midd_subtree->rght_child->height = midd_subtree->height;
+   midd_subtree->height++;
+
+   *node = midd_subtree;
+}
 ```
 
 #### Análise de Complexidade
@@ -633,11 +693,126 @@ Para a rotaçõa dupla direita-esquerda, seja $`T`$ o nó desbalanceado, $`h(R_D
 
 ### Corolário 4E: Uma operação de rotação sempre é suficiente para restaurar o balanceamento perdido após a inserção de um único nó
 
-Seguindo do resultado anterior, uma operação de rotação sempre diminui a altura de alguma subárvore, tal subárvore que teve a altura incrementada pela inserção de um novo nó, ou seja, a altura é preservada acima do nó mais baixo que passou por balanceamento. Logo, o corolário é verdadeiro.
+Seguindo do resultado anterior, uma operação de rotação sempre diminui a altura de alguma subárvore, tal subárvore que teve a altura incrementada pela inserção de um novo nó, ou seja, a altura é preservada acima do nó mais baixo que passou por balanceamento. Logo, a afirmação é verdadeira.
 
 ### Implementação 4F: Inserção em Árvore AVL
 
-Diferentemente das implementações[^1]
+Pelo Corolário anterior, é evidente que apenas um nó precisa ser lembrado à propósito de balanceamento, assim, pertindo que um algoritmo iterativo _in-place_, isto é, complexidade de espaço $`O(1)`$. Todo conceito relacionado ao caminho de incremento é mantido para este algoritmo. Um novo conceito introduzido é o _nó de balanceamento_, este sendo o nó que sofre as rotações para balanceamento da árvore. Como indentificar esse?
+
+Se o leitor recorda da [definição de fator de balanceamento](#definição-4a-fator-de-balanceamento) e de [árvores binárias balanceadas](#definição-4b-árvore-binária-balanceada), um nó $`T`$ precisa de balancemento quando $`fb(T) \notin \lbrace -1, 0, 1 \rbrace`$, ou seja, a magnitude da diferença de altura com seu irmão é maior ou igual a 2.
+
+Com base na altura do pai e nó atual, como na inserção típica, não há informação suficiente para determinar se um está desbalanceado, assim o nó irmão, ou melhor, sua altura, terá que ser considerada. Considere a inserção $`+(P, N)`$ seguirá para $`+(T, N)`$, sendo $`T`$ filho de $`P`$, assumindo que está-se (!) sobre um caminho de incremento, tem-se $`h(P) - 1 = h(T) \ge h(T_I) `$, da condição de desbalanceamento seque: 
+
+```math
+\begin{align*}
+   h(T) - h(T_I) > 1
+      &\implies h(P) - 1 - h(T_I) > 1 \\
+      &\implies h(P) > 2 + h(T_I)
+\end{align*}
+```
+
+Como o incremento na altura de $`P`$ não teria sido aplicado ainda, a condição $`h(P) > 1 + h(T_I)`$ a avaliada.
+
+O raciocínio acima baseia-se na suposição que a avaliação ocorre dentro de um caminho de incremento, o que não é o caso, nem todo inserção incrementará o tamanho da árvore, para resolver esse problema, toda vez que o caminho de incremento muda de origem, a necessidade de balanceamento é tornada falsa e, se a altura do nó o qual o registro $`N`$ foi inserido é diferente de zero, nenhum incremento ou balanceamento é considerado.
+
+Assim, segue o, demasiado longo, mas funcional, código:
+
+```C++
+Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
+
+   Node* new_node = new Node{ record, nullptr, nullptr, 0 };
+   if (!new_node) return BAD_ALLOCATION;
+
+   Node** balance_node = node;
+   Node** increment_path = node;
+
+   int64_t parent_height = *node ? (*node)->height : -1;
+
+   bool balance = false;
+   bool side = false;
+
+   while (*node) {
+
+      if ((*node)->height + 1 < parent_height) {
+         increment_path = node;
+         balance = false;
+      }
+
+      parent_height = (*node)->height;
+
+      if (false) {
+
+      } else if (record->key < (*node)->content->key) {
+
+         if (parent_height > 1 + ((*node)->rght_child ? (*node)->rght_child->height : -1)) {
+            balance_node = node;
+            balance = true;
+            side = true;
+         }
+
+         node = &(*node)->left_child;
+
+      } else if (record->key > (*node)->content->key) {
+
+         if (parent_height > 1 + ((*node)->left_child ? (*node)->left_child->height : -1)) {
+            balance_node = node;
+            balance = true;
+            side = false;
+         }
+
+         node = &(*node)->rght_child;
+
+      } else /* record->key == (*node)->content->key */ {
+         return KEY_ALREADY_EXISTS;
+      }
+   }
+
+   if (parent_height) {
+      *node = new_node;
+      return SUCCESS;
+   }
+
+   if (balance)
+      increment_path = balance_node;
+
+   while (*increment_path) {
+      (*increment_path)->height++;
+
+      increment_path = record->key < (*increment_path)->content->key ?
+         &(*increment_path)->left_child : &(*increment_path)->rght_child;
+   }
+
+   *node = new_node;
+
+   if (balance) {
+
+      if (side) {
+
+         if (record->key > (*balance_node)->left_child->content->key)
+            left_rght_rotation(balance_node);
+         else smpl_rght_rotation(balance_node);
+
+      } else {
+
+         if (record->key < (*balance_node)->rght_child->content->key)
+            rght_left_rotation(balance_node);
+         else smpl_left_rotation(balance_node);
+      }
+   }
+
+   return SUCCESS;
+}
+```
+
+#### Análise de Complexidade
+
+A complexidade de tempo é $`O(\log n)`$, que será discutido a frente, já a complexidade de espaço é constante, $`O(1)`$.
+
+### Exercício 4G: Encontre a Complexidade de Tempo da Busca numa Árvore AVL
+
+O [algoritmo de busca](#implementação-3a-algoritmo-de-busca) definido para árvores de busca é o mesmo para árvores AVL, entretanto, pela estruturação da árvore AVL, a complexidade de tempo é diferente daquela da árvore de busca arbitrária.
+
+É evidente que a complexidade de tempo da função de busca é $`O(h + 1)`$, para um nó inexistente que seque pelo caminho mais longo, sendo $`h`$ a da altura da árvore, logo, para classificar a complexidade para AVL's, é preciso estabelecer limites para sua altura.
 
 # Referências
 
@@ -646,4 +821,4 @@ https://docs.ufpr.br/~hoefel/ensino/CM304_CompleMat_PE3/livros/Enderton_Elements
 
 # Notas de Rodapé
 
-1. <span id="fnote1">Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ na reta real, $`\text{ℝ}`$.</span> [↩︎](#árvores-binárias)
+1. <span id="fnote1">Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ na reta real $`\text{ℝ} ℝ`$.</span> [↩︎](#definição-1a-árvore-binária)

@@ -9,10 +9,10 @@ int64_t height(Tree::Node* node) {
    return 1 + (lheight > rheight ? lheight : rheight);
 }
 
-bool Tree::insert(Node** node, Record* record) {
+Tree::exit_t Tree::insert(Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
-   if (!new_node) return false;
+   if (!new_node) return BAD_ALLOCATION;
 
    Node* increment_path = *node;
    int64_t parent_height = increment_path ? increment_path->height : -1;
@@ -23,9 +23,14 @@ bool Tree::insert(Node** node, Record* record) {
          increment_path = *node;
 
       parent_height = (*node)->height;
-      node = record->key < (*node)->content->key ?
-         &(*node)->left_child : &(*node)->rght_child;
+      if (false);
 
+      else if (record->key < (*node)->content->key)
+         node = &(*node)->left_child;
+      else if (record->key > (*node)->content->key) 
+         node = &(*node)->rght_child;
+      else /* record->key == (*node)->content->key */
+         return KEY_ALREADY_EXISTS;
    }
 
    if (!parent_height) while (increment_path) {
@@ -36,7 +41,7 @@ bool Tree::insert(Node** node, Record* record) {
    }
 
    *node = new_node;
-   return true;
+   return SUCCESS;
 }
 
 void Tree::print(Node* node) {
@@ -317,12 +322,12 @@ bool is_balanced(Tree::Node* node) {
    return true;
 }
 
-bool Tree::AVL::insert(Tree::Node** node, Record* record) {
+Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
-   if (!new_node) return false;
+   if (!new_node) return BAD_ALLOCATION;
 
-   Node** balance_path = node;
+   Node** balance_node = node;
    Node** increment_path = node;
 
    int64_t parent_height = *node ? (*node)->height : -1;
@@ -337,36 +342,50 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
          balance = false;
       }
 
+      // Parent height will indeed represent the height of the parent
+      // until the end of the loop, not just a holder
       parent_height = (*node)->height;
-      if (record->key < (*node)->content->key) {
+      
+      // If you're curious (or not), that's for alignment's sake, code-wise,
+      // will simply be removed by the compiler as a trivial unreacheable conditinal
+      if (false) {
 
+      } else if (record->key < (*node)->content->key) {
+
+         // If the insertion will happen to the left of the current node, is height will be
+         // compared against its right child
          if (parent_height > 1 + ((*node)->rght_child ? (*node)->rght_child->height : -1)) {
+            balance_node = node;
             balance = true;
-            balance_path = node;
             side = true;
          }
 
          node = &(*node)->left_child;
 
-      } else {
+      } else if (record->key > (*node)->content->key) {
 
+         // If the insertion will happen to the right of the current node, is height will be
+         // compared against its left child
          if (parent_height > 1 + ((*node)->left_child ? (*node)->left_child->height : -1)) {
+            balance_node = node;
             balance = true;
-            balance_path = node;
             side = false;
          }
 
          node = &(*node)->rght_child;
+
+      } else /* record->key == (*node)->content->key */ {
+         return KEY_ALREADY_EXISTS;
       }
    }
 
    if (parent_height) {
       *node = new_node;
-      return true;
+      return SUCCESS;
    }
 
    if (balance)
-      increment_path = balance_path;
+      increment_path = balance_node;
 
    while (*increment_path) {
       (*increment_path)->height++;
@@ -381,17 +400,17 @@ bool Tree::AVL::insert(Tree::Node** node, Record* record) {
 
       if (side) {
 
-         if (record->key > (*balance_path)->left_child->content->key)
-            left_rght_rotation(balance_path);
-         else smpl_rght_rotation(balance_path);
+         if (record->key > (*balance_node)->left_child->content->key)
+            left_rght_rotation(balance_node);
+         else smpl_rght_rotation(balance_node);
 
       } else {
 
-         if (record->key < (*balance_path)->rght_child->content->key)
-            rght_left_rotation(balance_path);
-         else smpl_left_rotation(balance_path);
+         if (record->key < (*balance_node)->rght_child->content->key)
+            rght_left_rotation(balance_node);
+         else smpl_left_rotation(balance_node);
       }
    }
 
-   return true;
+   return SUCCESS;
 }

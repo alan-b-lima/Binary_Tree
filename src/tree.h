@@ -16,7 +16,13 @@ namespace Tree {
       int64_t height;
    } Node;
 
-   bool insert(Node**, Record*);
+   enum exit_t : byte {
+      SUCCESS,
+      BAD_ALLOCATION,
+      KEY_ALREADY_EXISTS,
+   };
+
+   exit_t insert(Node**, Record*);
    Record* search(Node*, key_t);
 
    void print(Node*);
@@ -33,17 +39,15 @@ namespace Tree {
    }
 
    void destruct(Node**, void(*)(Record*) = nullptr);
-
 };
 
 namespace Tree::AVL {
-   
    void smpl_left_rotation(Node**);
    void smpl_rght_rotation(Node**);
    void left_rght_rotation(Node**);
    void rght_left_rotation(Node**);
 
-   bool insert(Node**, Record*);
+   exit_t insert(Node**, Record*);
 };
 
 #include "tree.cpp"
