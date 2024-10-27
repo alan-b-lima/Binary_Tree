@@ -57,8 +57,10 @@ void esc::scroll(csi direction, word amount) {
    printf("\e[%hhu;%huf", direction + 'S', amount);
 }
 
-/* @param xpos, ypos
- *    moves the cursor to the specified position by xpos and ypos.
+/* @param xpos
+ *    moves the cursor to the specified x position.
+ * @param ypos
+ *    moves the cursor to the specified y position.
 */
 void esc::move_to(word xpos, word ypos) {
    // The coordinate system starts at one

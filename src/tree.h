@@ -34,7 +34,7 @@ namespace Tree {
       int64_t lheight = calculate_height(node->left_child);
       int64_t rheight = calculate_height(node->rght_child);
 
-      node->height = 1 + (lheight > rheight ? lheight : rheight);
+      node->height = 1 + maximum(lheight, rheight);
       return node->height;
    }
 
@@ -49,5 +49,3 @@ namespace Tree::AVL {
 
    exit_t insert(Node**, Record*);
 };
-
-#include "tree.cpp"

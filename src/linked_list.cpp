@@ -9,9 +9,11 @@ bool LinkedList::insert(Node** node, Record* record) {
 }
 
 Record* LinkedList::search(Node* node, key_t key) {
-   for (; node; node = node->next_node) {
+   while (node) {
       if (node->content->key == key)
          return node->content;
+      
+      node = node->next_node;
    }
    
    return nullptr;

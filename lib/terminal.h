@@ -103,6 +103,3 @@ namespace esc {
    void style(byte, clr, clr);
    void style(byte, rgb, rgb = DEFAULT);
 };
-
-#include "terminal.cpp"
-#include "color.h"

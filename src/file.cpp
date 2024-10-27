@@ -1,5 +1,4 @@
 #include "file.h"
-#include "../lib/bittools.h"
 
 // Local utilities, not meant to de used elsewhere
 /* Local utilities START */

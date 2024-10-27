@@ -4,7 +4,7 @@
 #include "../rc/names.cpp"
 
 typedef long key_t;
-static const uint64_t NAME_SIZE = 1000;
+const uint64_t NAME_SIZE = 1000;
 
 typedef struct Record {
    key_t key;
@@ -17,5 +17,3 @@ void print_record(Record*, const char* = "{$0, $1, $2}");
 
 void populate_record_randomly(Record*);
 void destruct_record(Record*);
-
-#include "record.cpp"

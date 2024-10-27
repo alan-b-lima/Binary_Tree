@@ -6,7 +6,7 @@
 *
 * Terminal
 *    It's a not precompiled C++ library that aims for a unified pseudorandom
-*    number generator, since different systems will usually have diferent 
+*    number generator, since different systems will usually have different
 *    generators.
 */
 
@@ -14,7 +14,7 @@
 
 namespace Random {
 
-   static uint64_t __seed;
+   uint64_t __seed;
 
    void srand(uint64_t seed) {
       __seed = seed;

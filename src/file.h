@@ -22,36 +22,34 @@ namespace RecordFile {
    bool read(File*, Record*);
    void write(File*, Record*, bool = true);
 
-   template <typename... Args>
-   void read_iterator(const char* filename, void(*handler)(Record*, Args...), Args... args) {
-      RecordFile::File rc_file;
-      bool not_complete = RecordFile::open(filename, &rc_file, mode_t::READ);
+   // template <typename... Args>
+   // void read_iterator(const char* filename, void(*handler)(Record*, Args...), Args... args) {
+   //    RecordFile::File rc_file;
+   //    bool not_complete = RecordFile::open(filename, &rc_file, mode_t::READ);
 
-      while (not_complete) {
-         Record* record = new Record;
-         if (!record) return;
+   //    while (not_complete) {
+   //       Record* record = new Record;
+   //       if (!record) return;
 
-         not_complete = RecordFile::read(&rc_file, record);
-         handler(record, args...);
-      }
+   //       not_complete = RecordFile::read(&rc_file, record);
+   //       handler(record, args...);
+   //    }
 
-      RecordFile::close(&rc_file);
-   }
+   //    RecordFile::close(&rc_file);
+   // }
 
-   template <typename... Args>
-   void write_iterator(const char* filename, Record*(*handler)(Args...), Args... args) {
-      RecordFile::File rc_file;
-      bool not_complete = RecordFile::open(filename, &rc_file, mode_t::WRITE);
+   // template <typename... Args>
+   // void write_iterator(const char* filename, Record*(*handler)(Args...), Args... args) {
+   //    RecordFile::File rc_file;
+   //    bool not_complete = RecordFile::open(filename, &rc_file, mode_t::WRITE);
 
-      while (not_complete) {
-         Record* record = handler(record, args...);
-         if (!record) return;
+   //    while (not_complete) {
+   //       Record* record = handler(record, args...);
+   //       if (!record) return;
 
-         not_complete = RecordFile::read(&rc_file, record);
-      }
+   //       not_complete = RecordFile::read(&rc_file, record);
+   //    }
 
-      RecordFile::close(&rc_file);
-   }
+   //    RecordFile::close(&rc_file);
+   // }
 };
-
-#include "file.cpp"

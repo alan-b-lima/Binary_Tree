@@ -6,7 +6,7 @@ int64_t height(Tree::Node* node) {
    int64_t lheight = height(node->left_child);
    int64_t rheight = height(node->rght_child);
 
-   return 1 + max(lheight, rheight);
+   return 1 + maximum(lheight, rheight);
 }
 
 Tree::exit_t Tree::insert(Node** node, Record* record) {
@@ -59,18 +59,18 @@ void Tree::print(Node* node, int64_t level) {
 
    if (node->height) {
 
-      int64_t stack_size = min(level + 1, node->height);
+      int64_t stack_size = minimum(level + 1, node->height);
 
       branches = Stack::allocate<BitTools::mword>(BitTools::size(stack_size));
       if (!branches) {
-         std::cerr << "Failed to print tree!\n";
+         std::cout.write(FAIL_PRINT_TREE, sizeof(FAIL_PRINT_TREE) - 1);
          return;
       }
 
       stack = Stack::allocate<Node*>(stack_size);
       if (!stack) {
          Stack::release(branches);
-         std::cerr << "Failed to print tree!\n";
+         std::cout.write(FAIL_PRINT_TREE, sizeof(FAIL_PRINT_TREE) - 1);
          return;
       }
 
@@ -341,7 +341,6 @@ Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
    // height may be highlighted as a function, although it's actually
    // refering to a Node's field height
    int64_t parent_height = safe_access(*node, height, -1);
-   ((*node) ? (*node)->height : (-1));
    bool balance = false;
    bool side = false;
 

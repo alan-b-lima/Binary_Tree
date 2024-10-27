@@ -1,18 +1,26 @@
 #pragma once
 
+#ifndef __SYSTEM___SPECIFICS___
+#define __SYSTEM___SPECIFICS___
+
+#include "../rc/strings.cpp"
+
 // UTF-8, ASCII extended and pure ascii respectivily
 // Assuming Linux terminals will support UTF-8
 
+void get_terminal_dimensions(word&, word&);
 inline void system_specifics_setup();
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
 
-   const char BRANCH_ROOT[]      = "\u003A\u2500\u2500\u2500"; /* ":───" */
-   const char BRANCH_DOWN[]      = "\u2502\u0020\u0020\u0020"; /* "│   " */
-   const char NO_BRANCH[]        = "\u0020\u0020\u0020\u0020"; /* "    " */
-   const char BRANCH_SIDE[]      = "\u251C\u2500\u2500\u2500"; /* "├───" */
-   const char BRANCH_DOWN_SIDE[] = "\u2514\u2500\u2500\u2500"; /* "└───" */
-   const char BRANCH_UP_SIDE[]   = "\u250C\u2500\u2500\u2500"; /* "┌───" */
+   #include <sys/ioctl.h>
+
+   void get_terminal_dimensions(word&, word&) {
+      struct winsize win;
+      ioctl(fileno(stdout), TIOCGWINSZ, &w);
+      width = word(win.ws_col);
+      height = word(win.ws_row);
+   }
 
    inline void system_specifics_setup() {}
 
@@ -20,43 +28,20 @@ inline void system_specifics_setup();
 
    #include <Windows.h>
 
-   #if defined(_WINDOWS_) && defined(_APISETCONSOLEL2_)
+   void get_terminal_dimensions(word& width, word& height) {
+      CONSOLE_SCREEN_BUFFER_INFO csbi;
+      GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+      
+      height = word(csbi.srWindow.Bottom - csbi.srWindow.Top + 1);
+      width = word(csbi.srWindow.Right - csbi.srWindow.Left + 1);
+   }
 
-      const char BRANCH_ROOT[]      = "\u003A\u2500\u2500\u2500"; /* ":───" */
-      const char BRANCH_DOWN[]      = "\u2502\u0020\u0020\u0020"; /* "│   " */
-      const char NO_BRANCH[]        = "\u0020\u0020\u0020\u0020"; /* "    " */
-      const char BRANCH_SIDE[]      = "\u251C\u2500\u2500\u2500"; /* "├───" */
-      const char BRANCH_DOWN_SIDE[] = "\u2514\u2500\u2500\u2500"; /* "└───" */
-      const char BRANCH_UP_SIDE[]   = "\u250C\u2500\u2500\u2500"; /* "┌───" */
-
-      // The default code page, i.e, under which encoding caracters are renderer,
-      // is not garantied to be UTF-8, this fixes that
-      inline void system_specifics_setup() {
-         SetConsoleOutputCP(CP_UTF8);
-      }
-
-   #else // Extended ascii version, identical to the UTF-8 one
-
-      const char BRANCH_ROOT[]      = "\x3A\xC4\xC4\xC4"; /* ":───" */
-      const char BRANCH_DOWN[]      = "\xB3\x20\x20\x20"; /* "│   " */
-      const char NO_BRANCH[]        = "\x20\x20\x20\x20"; /* "    " */
-      const char BRANCH_SIDE[]      = "\xC3\xC4\xC4\xC4"; /* "├───" */
-      const char BRANCH_DOWN_SIDE[] = "\xC0\xC4\xC4\xC4"; /* "└───" */
-      const char BRANCH_UP_SIDE[]   = "\xDA\xC4\xC4\xC4"; /* "┌───" */
-
-      inline void system_specifics_setup() {}
-
-   #endif
-
-#else
-
-   const char BRANCH_ROOT[]      = ":---";
-   const char BRANCH_DOWN[]      = "|   ";
-   const char NO_BRANCH[]        = "    ";
-   const char BRANCH_SIDE[]      = "|---";
-   const char BRANCH_DOWN_SIDE[] = "+---";
-   const char BRANCH_UP_SIDE[]   = "+---";
-
-   inline void system_specifics_setup() {}
+   // The default code page, i.e, the encoding under which caracters are renderer,
+   // is not garantied to be UTF-8, this fixes that
+   inline void system_specifics_setup() {
+      SetConsoleOutputCP(CP_UTF8);
+   }
 
 #endif
+
+#endif /* __SYSTEM___SPECIFICS___ */

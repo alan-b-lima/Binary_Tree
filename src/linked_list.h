@@ -18,5 +18,3 @@ namespace LinkedList {
 
    void destruct(Node**, void(*)(Record*) = nullptr);
 }
-
-#include "linked_list.cpp"

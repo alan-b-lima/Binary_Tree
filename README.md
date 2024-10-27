@@ -68,8 +68,12 @@ flowchart BT;
 
    subgraph syslibs[*Bibliotecas de Sistema*]
       subgraph Windows
-         Windows.h
          intrin.h
+         Windows.h
+      end
+
+      subgraph UNIX[Baseado em UNIX]
+         sys/ioctl.h
       end
    end
    
@@ -123,6 +127,7 @@ flowchart BT;
    main.cpp --> base.h
    main.cpp --> file.h
    main.cpp --> linked_list.h
+   main.cpp --> application.h
    main.cpp --> tree.h
 
    file.h --> base.h
@@ -132,6 +137,8 @@ flowchart BT;
    linked_list.h --> base.h
    linked_list.h ---> system.h
    
+   application.h ---> system.h
+
    tree.h --> record.h
    tree.h ---> system.h
    tree.h --> base.h
@@ -144,6 +151,7 @@ flowchart BT;
    base.h --> base_incl
    base.h --> random.h
 
+   system.h --> sys/ioctl.h
    system.h --> Windows.h
    
    terminal.h --> terminal_incl
@@ -185,7 +193,7 @@ O diagrama acima é uma versão visual das clausulas `#include` encontradas por 
 - **Nível 2** carrega definições importantes para todos os níveis abaixo;
 - **Nível 3** foge à regra de independência, sendo seus arquivos puramente arquivos de recursos, names.cpp sendo autoexplicativo (carrega exemplos de nomes) e system.h trata a questão de compatibilidade de terminais com UTF-8;
 - **Nível 4** está aqui posicianado por ser a estrutura à qual as estruturas do nível acima revolvem;
-- **Nível 5** define as três estruturas de dados requeridas pelo trabalho, sendo árvore de busca binária tradicional e AVL definidas em tree.h e a estrutura sequencial (lista encadeada) em linked_list.h. Ademais, o arquivo file.h define uma estrutura que abstrae o manejamento de arquivos da aplicação principal;
+- **Nível 5** define as três estruturas de dados requeridas pelo trabalho, sendo árvore de busca binária tradicional e AVL definidas em tree.h e a estrutura sequencial (lista encadeada) em linked_list.h. Ademais, o arquivo file.h define uma estrutura que abstrae o manejamento de arquivos da aplicação principal e o arquivo application.h que lida com interações com o usuário;
 - **Nível 6** compreende a entrada da aplicação assim como os desdobramento **já despostos em [Como Usar](#como-usar)**.
 
 # Árvores Binárias
