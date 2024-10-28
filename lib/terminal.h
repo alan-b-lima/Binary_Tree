@@ -23,51 +23,54 @@ namespace esc {
    enum csi : byte {
       PRE_CURSOR = 0,
       POS_CURSOR = 1,
-      ENTIRE = 2,
-      CLEANSE = 3,
+      ENTIRE     = 2,
+      CLEANSE    = 3,
 
-      UP = 0,
-      DOWN = 1,
+      UP      = 0,
+      DOWN    = 1,
       FORWARD = 2,
-      BACK = 3,
+      BACK    = 3,
+
+      NEXT     = 1,
+      PREVIOUS = 0,
    };
 
    enum clr : byte {
-      BLACK = 30,
-      RED = 31,
-      GREEN = 32,
-      YELLOW = 33,
-      BLUE = 34,
+      BLACK   = 30,
+      RED     = 31,
+      GREEN   = 32,
+      YELLOW  = 33,
+      BLUE    = 34,
       MAGENTA = 35,
-      CYAN = 36,
-      WHITE = 37,
+      CYAN    = 36,
+      WHITE   = 37,
 
       RESET = 39,
 
-      GRAY = 90,
-      BRIGHT_BLACK = 90,
-      BRIGHT_RED = 91,
-      BRIGHT_GREEN = 92,
-      BRIGHT_YELLOW = 93,
-      BRIGHT_BLUE = 94,
+      GRAY           = 90,
+      BRIGHT_BLACK   = 90,
+      BRIGHT_RED     = 91,
+      BRIGHT_GREEN   = 92,
+      BRIGHT_YELLOW  = 93,
+      BRIGHT_BLUE    = 94,
       BRIGHT_MAGENTA = 95,
-      BRIGHT_CYAN = 96,
-      BRIGHT_WHITE = 97,
+      BRIGHT_CYAN    = 96,
+      BRIGHT_WHITE   = 97,
    };
 
    enum grnd : byte {
-      FOREGROUNG = 38,
-      BACKGROUNG = 48,
+      FOREGROUND = 38,
+      BACKGROUND = 48,
    };
 
    enum smk : byte {
-      NONE = 0x00,
-      BOLD = 0x01,
-      LIGHT = 0x02,
-      ITALIC = 0x04,
+      NONE      = 0x00,
+      BOLD      = 0x01,
+      LIGHT     = 0x02,
+      ITALIC    = 0x04,
       UNDERLINE = 0x08,
-      STRIKE = 0x10,
-      INVERT = 0x20,
+      STRIKE    = 0x10,
+      INVERT    = 0x20,
    };
 
    const rgb DEFAULT = 0xFF000000;
@@ -83,6 +86,7 @@ namespace esc {
    void scroll(csi, word = 1);
 
    void move_to(word, word);
+   void move_to(word);
 
    /* SGR (Select Graphic Rendition) */
 

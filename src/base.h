@@ -15,6 +15,7 @@ typedef unsigned long long qword;
 
 #define minimum(a, b) (((a) < (b)) ? (a) : (b))
 #define maximum(a, b) (((a) > (b)) ? (a) : (b))
+#define clamp(_minv, _val, _maxv) (((_minv) < (_val)) ? (((_maxv) > (_val)) ? (_val) : (_maxv)) : ((_minv)))
 
 // Checks whether a some pointer is valid, if so, accesses some field in a 
 // structure/object pointed by it, if not, then returns some default value

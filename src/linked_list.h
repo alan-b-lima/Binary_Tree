@@ -2,7 +2,7 @@
 
 #include "base.h"
 #include "record.h"
-#include "system.h"
+#include "../rc/strings.cpp"
 
 namespace LinkedList {
 

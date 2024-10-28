@@ -5,7 +5,8 @@
 
 #include "../lib/bittools.h"
 #include "../lib/stack.h"
-#include "system.h"
+
+#include "../rc/strings.cpp"
 
 namespace Tree {
 

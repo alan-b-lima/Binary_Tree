@@ -1,3 +1,5 @@
+#pragma once
+
 const char NAME_LIST[][10] = {
    "Alan", "Alexandre", "Aline", "Amanda", "Amelia", "Ana", "Anderson", "André", "Andreia", "Antonio", "Aparecida", "Augusto", "Breno", "Bruno", "Camila", "Carla",
    "Carlos", "Cláudio", "Cristine", "Daiana", "Daniele", "Davi", "Diego", "Douglas", "Eduardo", "Elaine", "Fabiana", "Fabio", "Felipe", "Francisca", "Gabriel",
@@ -13,4 +15,4 @@ const char SURNAME_LIST[][11] = {
 };
 
 const unsigned long NAME_LIST_SIZE = sizeof(NAME_LIST) / sizeof(NAME_LIST[0]);
-const unsigned long SURNAME_LIST_SIZE = sizeof(SURNAME_LIST) / sizeof(NAME_LIST[0]);
+const unsigned long SURNAME_LIST_SIZE = sizeof(SURNAME_LIST) / sizeof(SURNAME_LIST[0]);

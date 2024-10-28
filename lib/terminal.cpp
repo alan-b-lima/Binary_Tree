@@ -20,10 +20,10 @@ void esc::clear_line(csi mode) {
 }
 
 /* @param direction
- *    UP: Move the cursor amount of cells upwards;
- *    DOWN: Move the cursor amount of cells downwards;
- *    FORWARD: Move the cursor amount of cells forward;
- *    BACK: Move the cursor amount of cells backwards.
+ *    UP: Move the cursor `amount` of cells upwards;
+ *    DOWN: Move the cursor `amount` of cells downwards;
+ *    FORWARD: Move the cursor `amount` of cells forward;
+ *    BACK: Move the cursor `amount` of cells backwards.
  *
  * @param amount
  *    defines the amount (default 1) of cells the cursor will move in the given
@@ -34,8 +34,8 @@ void esc::move(csi direction, word amount) {
 }
 
 /* @param direction
- *    UP: Move the cursor amount of lines upwards;
- *    DOWN: Move the cursor amount of lines downwards;
+ *    NEXT: Move the cursor to the beginning of the `amount`-th next line;
+ *    PREVIOUS: Move the cursor to the beginning of the `amount`-th previous line;
  *
  * @param amount
  *    defines the amount (default 1) of lines the cursor will move in the given
@@ -46,8 +46,8 @@ void esc::move_line(csi direction, word amount) {
 }
 
 /* @param direction
- *    UP: Scroll page up by amount lines;
- *    DOWN: Scroll page down by amount lines;
+ *    UP: Scroll page up by `amount` lines;
+ *    DOWN: Scroll page down by `amount` lines;
  *
  * @param amount
  *    defines the amount (default 1) of lines the cursor will scroll in the given
@@ -57,14 +57,22 @@ void esc::scroll(csi direction, word amount) {
    printf("\e[%hhu;%huf", direction + 'S', amount);
 }
 
-/* @param xpos
- *    moves the cursor to the specified x position.
- * @param ypos
- *    moves the cursor to the specified y position.
+/* @param row
+ *    moves the cursor to the specified row.
+ * @param column
+ *    moves the cursor to the specified column.
 */
-void esc::move_to(word xpos, word ypos) {
+void esc::move_to(word row, word column) {
    // The coordinate system starts at one
-   printf("\e[%hu;%huH", xpos + 1, ypos + 1);
+   printf("\e[%hu;%huf", row + 1, column + 1);
+}
+
+/* @param column
+ *    moves the cursor to the specified column.
+*/
+void esc::move_to(word column) {
+   // The coordinate system starts at one
+   printf("\e[%huG", column + 1);
 }
 
 /* Clear all styles apllied
@@ -83,7 +91,7 @@ void esc::reset() {
 */
 void esc::color(clr color, grnd ground) {
    // Backgroung literal are 10 plus foreground ones
-   printf("\e[%hhum", ground == BACKGROUNG ? color + 10 : color);
+   printf("\e[%hhum", ground == BACKGROUND ? color + 10 : color);
 }
 
 /* Reset colors to default color (specified by the system).
