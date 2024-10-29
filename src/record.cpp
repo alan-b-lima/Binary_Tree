@@ -14,15 +14,7 @@ void write_record(Record* record, int data, const char* name) {
 void print_record(Record* record, const char* format) {
 
    if (!record) {
-      while (*format) {
-         std::cout.put(*format);
-
-         if (*format == '$') 
-            if (!*(++format)) return;
-            
-         format++;
-      }
-
+      std::cout.write("{}\n", 3);
       return;
    }
 

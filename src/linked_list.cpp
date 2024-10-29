@@ -1,11 +1,11 @@
 #include "linked_list.h"
 
-bool LinkedList::insert(Node** node, Record* record) {
+exit_t LinkedList::insert(Node** node, Record* record) {
    Node* new_node = new (std::nothrow) Node{ record, *node };
-   if (!new_node) return false;
+   if (!new_node) return BAD_ALLOCATION;
 
    *node = new_node;
-   return true;
+   return SUCCESS;
 }
 
 Record* LinkedList::search(Node* node, key_t key) {

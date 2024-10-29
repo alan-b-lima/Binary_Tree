@@ -67,27 +67,27 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 flowchart BT;
 
    subgraph syslibs[*Bibliotecas de Sistema*]
+      subgraph UNIX[Baseado em UNIX]
+         sys/ioctl.h
+      end
+
       subgraph Windows
          intrin.h
          Windows.h
-      end
-
-      subgraph UNIX[Baseado em UNIX]
-         sys/ioctl.h
       end
    end
    
    subgraph stdlibs[*Bibliotecas Padronizadas*]
       base_incl[stdint.h <br> stdlib.h <br> stdio.h <br> time.h <br> iostream]
-      terminal_incl[stdint.h <br> math.h <br> stdio.h]
       random_incl[stdint.h]
+      terminal_incl[stdint.h <br> math.h <br> stdio.h]
       stack_incl[stdlib.h <br> stdint.h <br> malloc.h]
       bittools_incl[stdlib.h <br> stdint.h <br> new]
    end
 
    subgraph usrlibs[*Bibliotecas Implementadas*]
-      terminal.h
       random.h
+      terminal.h
       stack.h
       bittools.h
    end
@@ -123,24 +123,25 @@ flowchart BT;
       tree.cpp
    ]
 
-   main.cpp --> terminal.h
    main.cpp --> base.h
    main.cpp --> file.h
    main.cpp --> linked_list.h
    main.cpp --> application.h
    main.cpp --> tree.h
+   main.cpp --> system.h
 
    file.h --> base.h
    file.h --> record.h
    
-   linked_list.h --> record.h
    linked_list.h --> base.h
-   linked_list.h ---> system.h
+   linked_list.h --> record.h
+   linked_list.h ---> strings.cpp
    
-   application.h ---> system.h
+   application.h --> terminal.h
+   application.h ---> strings.cpp
 
    tree.h --> record.h
-   tree.h ---> system.h
+   tree.h ---> strings.cpp
    tree.h --> base.h
    tree.h ---> stack.h
    tree.h ---> bittools.h
@@ -151,8 +152,8 @@ flowchart BT;
    base.h --> base_incl
    base.h --> random.h
 
-   system.h --> sys/ioctl.h
    system.h --> Windows.h
+   system.h --> sys/ioctl.h
    
    terminal.h --> terminal_incl
    
@@ -189,9 +190,9 @@ flowchart BT;
 O diagrama acima é uma versão visual das clausulas `#include` encontradas por todo o projeto, organizadas em níveis. Esses níveis, aproximadamente, indicam a ordem de indepencência de outras partes do projeto:
 
 - **Nível 0** é completamento independente do projeto e existirá após esse;
-- **Nível 1** foi desenvolvido para o projeto, entretanto não é específico para o esse, podendo se manter relavante para o futuro;
+- **Nível 1** foi desenvolvido para o projeto, entretanto não é específico para o esse, podendo se manter relavante para o futuro. Ademais, system.h trata a questão de compatibilidade de terminais com UTF-8 e com código ANSI de escape;
 - **Nível 2** carrega definições importantes para todos os níveis abaixo;
-- **Nível 3** foge à regra de independência, sendo seus arquivos puramente arquivos de recursos, names.cpp sendo autoexplicativo (carrega exemplos de nomes) e system.h trata a questão de compatibilidade de terminais com UTF-8;
+- **Nível 3** foge à regra de independência, sendo seus arquivos puramente arquivos de recursos, names.cpp sendo autoexplicativo (carrega exemplos de nomes) e strings.cpp, que carrega cadeias de caracteres usadas pela aplicação;
 - **Nível 4** está aqui posicianado por ser a estrutura à qual as estruturas do nível acima revolvem;
 - **Nível 5** define as três estruturas de dados requeridas pelo trabalho, sendo árvore de busca binária tradicional e AVL definidas em tree.h e a estrutura sequencial (lista encadeada) em linked_list.h. Ademais, o arquivo file.h define uma estrutura que abstrae o manejamento de arquivos da aplicação principal e o arquivo application.h que lida com interações com o usuário;
 - **Nível 6** compreende a entrada da aplicação assim como os desdobramento **já despostos em [Como Usar](#como-usar)**.
@@ -430,7 +431,7 @@ P(T) = \begin{cases}
 Em C++:
 
 ```C++
-Tree::exit_t Tree::insert(Node** node, Record* record) {
+exit_t Tree::insert(Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return BAD_ALLOCATION;
@@ -459,7 +460,7 @@ Seja $`T`$ o nó no caminho de incremento, $`T_I`$ seu irmão e $`P`$ seu pai. S
 Dessa forma, em C++:
 
 ```C++
-Tree::exit_t Tree::insert(Node** node, Record* record) {
+exit_t Tree::insert(Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return BAD_ALLOCATION;
@@ -727,7 +728,7 @@ O raciocínio acima baseia-se na suposição que a avaliação ocorre dentro de 
 Assim, segue o, demasiado longo, mas funcional, código:
 
 ```C++
-Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
+exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return BAD_ALLOCATION;

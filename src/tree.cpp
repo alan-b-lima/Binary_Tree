@@ -9,7 +9,7 @@ int64_t height(Tree::Node* node) {
    return 1 + maximum(lheight, rheight);
 }
 
-Tree::exit_t Tree::insert(Node** node, Record* record) {
+exit_t Tree::insert(Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return BAD_ALLOCATION;
@@ -47,7 +47,7 @@ Tree::exit_t Tree::insert(Node** node, Record* record) {
 void Tree::print(Node* node, int64_t level) {
 
    if (!node) {
-      std::cout.write("{}\n", 2);
+      std::cout.write("{}\n", 3);
       return;
    }
 
@@ -330,7 +330,7 @@ bool is_balanced(Tree::Node* node) {
    return true;
 }
 
-Tree::exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
+exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
 
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return BAD_ALLOCATION;

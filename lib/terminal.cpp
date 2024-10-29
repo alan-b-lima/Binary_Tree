@@ -177,11 +177,12 @@ void esc::strike(bool on) {
 
 /* Set the style of printing
  *
+ * @param style
+ *    BOLD, LIGHT, ITALIC, UNDERLINE, STRIKE and INVERT, these can be
+ *    combined using the bitwise or (|) operator;
  * @param foreground, background
  *    BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE or RESET.
  *    BRIGHT_<color> to get a brighter version of the color.
- * @param style
- * 
 */
 void esc::style(byte style, clr foreground, clr background) {
 
@@ -197,6 +198,14 @@ void esc::style(byte style, clr foreground, clr background) {
    printf("m");
 }
 
+/* Set the style of printing
+ *
+ * @param style
+ *    BOLD, LIGHT, ITALIC, UNDERLINE, STRIKE and INVERT, these can be
+ *    combined using the bitwise or (|) operator;
+ * @param foreground, background
+ *    especifies an RGB color 0xRRGGBB.
+*/
 void esc::style(byte style, rgb foreground, rgb background) {
 
    printf("\e[0");

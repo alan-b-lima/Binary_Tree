@@ -17,12 +17,6 @@ namespace Tree {
       int64_t height;
    } Node;
 
-   enum exit_t : byte {
-      SUCCESS,
-      BAD_ALLOCATION,
-      KEY_ALREADY_EXISTS,
-   };
-
    exit_t insert(Node**, Record*);
    Record* search(Node*, key_t);
 

@@ -11,7 +11,7 @@ namespace LinkedList {
       Node* next_node;
    } Node;
 
-   bool insert(Node**, Record*);
+   exit_t insert(Node**, Record*);
    Record* search(Node*, key_t);
 
    void print(Node*);
