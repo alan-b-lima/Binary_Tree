@@ -20,3 +20,10 @@ typedef unsigned long long qword;
 // Checks whether a some pointer is valid, if so, accesses some field in a 
 // structure/object pointed by it, if not, then returns some default value
 #define safe_access(ptr, field, def_ret) ((ptr) ? (ptr)->field : (def_ret))
+
+enum exit_t : byte {
+   SUCCESS,
+   BAD_ALLOCATION,
+   KEY_ALREADY_EXISTS,
+   EXIT_APPLICATION,
+};

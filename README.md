@@ -258,8 +258,8 @@ Por fim, um _nó raiz_ é aquele nó ascendente a todos os outros nós de uma á
 Como requerido pelo trabalho, a estrutura de registro é definida:
 
 ```C++
-typedef int32 key_t;
-static const uint64 NAME_SIZE = 1000;
+typedef long key_t;
+const uint64_t NAME_SIZE = 1000;
 
 typedef struct Record {
    key_t key;

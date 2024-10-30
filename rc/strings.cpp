@@ -8,9 +8,13 @@ const char AUTHORS[]           = "Autores\n";
 const char AUTHORS_NAMES[]     = "   Alan Barbosa Lima\n   Breno Augusto Braga Oliveira\n   Juan Pablo Ferreira Costa\n   Luiz Felipe Melo Oliveira\n   Otávio Gomes Calazans\n";
 const char LITTLE_CHICK[]      = "               /-=$$\n            ######\n         ###########\n        #&(\u2219)####(\u2219)&#\n$$$$   ######⌐¨¨¬#####    $$$$\n  $$$$ #####¨----¨##### $$$$\n   $$$$@#####@######@##$$$$ \n    $@#@#@#@@#@@#@#@#@#$$\n    @@@@@@@@@@@@@@@@@@@ \n   \u2588@\u2584@\u258C@\u2590\u2584@@@\u2584\u2588\u258C@@\u2588\u2588@@\u2588\n   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n   \u2588\u2588   Hello World   \u2588\u2588\n    \u2580\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2580\n      \u2580\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2580\u2580\n";
 
+const char LL_IDENTIFIER[]     = "Lista encadeada: ";
+const char TREE_IDENTIFIER[]   = "Árvore binária: "; 
+
+const char STRUCT_NOT_FOUND[]  = "Estrutura não encontrada!\n"; 
 const char FAIL_PRINT_TREE[]   = "Falha ao imprimir a árvore\n";
 const char CONFIRM_EXIT[]      = "Você quer realmente sair ([s]im ou [n]ão)? ";
-const char INVALID_RESPONSE[]  = "Resposta Inválida\n";
+const char INVALID_INPUT[]     = "Entrada Inválida\n";
 
 const char BRANCH_ROOT[]       = "\u003A\u2500\u2500\u2500";
 const char BRANCH_DOWN[]       = "\u2502\u0020\u0020\u0020";

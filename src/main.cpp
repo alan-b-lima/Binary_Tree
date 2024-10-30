@@ -2,11 +2,12 @@
 #include "file.h"
 #include "tree.h"
 #include "linked_list.h"
+#include "application.h"
+#include "system.h"
 
 /* Planning the interface
  *
  * Some commands:
- *    modify records
  *    get/set seed
  *    test speed and stuff (actual shit)
  *    help
@@ -15,54 +16,43 @@
 */
 
 int main(int argc, char** argv) {
-   // int main() { int argc = 3; char argv[][11] = { "", "0", "16" };
-   system_specifics_setup();
 
-   time_t seed;
-   size_t n_of_records = 16;
-
-   switch (argc) {
-      case 3:
-         n_of_records = atoi(argv[2]);
-
-      case 2:
-         seed = atoi(argv[1]);
-         if (seed) break;
-
-      case 1:
-         seed = time(NULL);
-         break;
-
-      default:
-         return 1;
+   if (!system_specifics_setup()) {
+      std::cout.write(FATAL_ERROR_ENTRY, sizeof(FATAL_ERROR_ENTRY) - 1);
+      return -1;
    }
 
-   std::cout << seed << std::endl;
-   srand(seed);
+   const uint64_t buffer_size = 1024;
+   char buffer[buffer_size];
+   JAST::init();
 
-   Tree::Node* root = nullptr;
-   BitTools::mword* helper = BitTools::initialize(
-      Stack::allocate<BitTools::mword>(BitTools::size(n_of_records)),
-      n_of_records
-   );
+   while (true) {
+      std::cout.write("JAST > ", 7);
+      std::cin.getline(buffer, buffer_size);
 
-   for (uint64_t i = 0; i < n_of_records; i++) {
-      uint64_t num = rand() % n_of_records;
+      // switch (exit_t::BAD_ALLOCATION) {
+      switch (JAST::interpreter(buffer)) {
+         case exit_t::SUCCESS:
+            continue;
+         
+         case exit_t::BAD_ALLOCATION:
+            
+            esc::style(esc::smk::BOLD, esc::clr::WHITE, esc::clr::RED);
+            std::cout.write("Erro Fatal:", 12);
 
-      while (BitTools::getbit(helper, num))
-         if (++num >= n_of_records) num = 0;
+            esc::style(esc::smk::NONE, esc::clr::RED, esc::clr::RESET);
+            std::cout.write(" Má Alocação\n", 16);
+            goto terminate;
 
-      (void)BitTools::flipbit(helper, num);
-      Record* record = new Record{ key_t(num & 0xFFFF) };
-      populate_record_randomly(record);
-      record->data = i;
+         case exit_t::KEY_ALREADY_EXISTS:
+            std::cout.write("Chave já existe na estrutura ", 30);
+            continue;
 
-      (void)Tree::AVL::insert(&root, record);
+         case exit_t::EXIT_APPLICATION: goto terminate;
+      }
    }
 
-   Stack::release(helper);
-   Tree::print(root);
-
-   Tree::destruct(&root, destruct_record);
+terminate:
+   esc::reset();
    return 0;
 }
