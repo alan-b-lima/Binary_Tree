@@ -96,6 +96,11 @@ flowchart BT;
       bittools.h
       bittools.cpp
    ]
+
+   record.h[
+      record.h
+      record.cpp
+   ]
    
    terminal.h[
       terminal.h
@@ -113,9 +118,9 @@ flowchart BT;
       linked_list.cpp
    ]
 
-   record.h[
-      record.h
-      record.cpp
+   application.h[
+      application.h
+      application.cpp
    ]
 
    tree.h[
@@ -139,6 +144,7 @@ flowchart BT;
    
    application.h --> terminal.h
    application.h ---> strings.cpp
+   application.h ---> stack.h
 
    tree.h --> record.h
    tree.h ---> strings.cpp
@@ -217,7 +223,7 @@ typedef struct Node {
    Record* content;
    Node* left_child;
    Node* rght_child;
-   int64 height;
+   int64_t height;
 } Node;
 ```
 
@@ -442,8 +448,10 @@ exit_t Tree::insert(Node** node, Record* record) {
 
       else if (record->key < (*node)->content->key)
          node = &(*node)->left_child;
+      
       else if (record->key > (*node)->content->key) 
          node = &(*node)->rght_child;
+      
       else /* record->key == (*node)->content->key */
          return KEY_ALREADY_EXISTS;
    }
@@ -729,7 +737,7 @@ Assim, segue o, demasiado longo, mas funcional, código:
 
 ```C++
 exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
-
+   
    Node* new_node = new Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return BAD_ALLOCATION;
 
@@ -737,7 +745,6 @@ exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
    Node** increment_path = node;
 
    int64_t parent_height = safe_access(*node, height, -1);
-
    bool balance = false;
    bool side = false;
 

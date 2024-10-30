@@ -23,12 +23,15 @@ exit_t Tree::insert(Node** node, Record* record) {
          increment_path = *node;
 
       parent_height = (*node)->height;
+      
       if (false);
 
       else if (record->key < (*node)->content->key)
          node = &(*node)->left_child;
+
       else if (record->key > (*node)->content->key)
          node = &(*node)->rght_child;
+
       else /* record->key == (*node)->content->key */
          return KEY_ALREADY_EXISTS;
    }

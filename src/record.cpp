@@ -41,7 +41,7 @@ void print_record(Record* record, const char* format) {
 }
 
 void populate_record_randomly(Record* record) {
-   record->data = Random::rand();
+   record->data = int(Random::rand() & 0xFFFF);
 
    char* cursor = record->name;
    uint64_t remaining_space = NAME_SIZE;
@@ -74,7 +74,7 @@ void populate_record_randomly(Record* record) {
 
    /* surname */
 
-   // Garantees at least one surname
+   // Guarantees at least one surname
    if (!params) params = 2;
 
    do {
@@ -99,7 +99,7 @@ void populate_record_randomly(Record* record) {
    // goto labels, hate or love them, I'll use them regardless, with some regard, still
 exit:
 
-   // Garanties null termination inside the intended buffer
+   // Guarantees null termination inside the intended buffer
    *cursor = '\0';
 }
 

@@ -34,10 +34,11 @@ inline bool RecordFile::open(const char* filename, File* rc_file, mode_t mode) {
    // Where doing our own management here, not buffering is needed
    setvbuf(rc_file->file, NULL, _IONBF, 0);
 
-   // Does not reflect reality, it's for triggering it to load from
-   // a file without terminating
-   rc_file->size = PAGE_SIZE;
-   rc_file->cursor = PAGE_SIZE;
+   rc_file->size = fread(rc_file->buffer, sizeof(char), RecordFile::PAGE_SIZE, rc_file->file);
+   
+   // Means that the file is empty
+   if (!rc_file->size) return false;
+   rc_file->cursor = 0;
 
    return true;
 }

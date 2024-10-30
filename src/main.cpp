@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
    JAST::init();
 
    while (true) {
-      std::cout.write("JAST > ", 7);
+      std::cout.write("> ", 2);
       std::cin.getline(buffer, buffer_size);
 
       // switch (exit_t::BAD_ALLOCATION) {

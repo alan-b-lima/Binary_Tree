@@ -7,6 +7,7 @@
 
 #include "../lib/terminal.h"
 #include "../lib/color.h"
+#include "../lib/stack.h"
 
 #include "linked_list.h"
 #include "tree.h"
@@ -17,6 +18,8 @@ namespace JAST {
 
    enum kind_t : byte { LINKED_LIST, TREE, AVL_TREE };
    enum command_t : byte { _chfocus, _create, _help, _init, _load, _new, _print, _quit, _save, _search, _test };
+   enum rule_t : byte { _random, _ordered, _inversed };
+
    const byte NOT_FOUND = -1;
 
    typedef long id_t;
@@ -56,7 +59,6 @@ namespace JAST {
       "print",   _print,
       "quit",    _quit,
       "save",    _save,
-      "search",  _search,
       "test",    _test,
    };
 
@@ -68,8 +70,23 @@ namespace JAST {
       "tree", TREE,
    };
 
+   Map<9> RULES[] = {
+      "i", _inversed,
+      "inv", _inversed,
+      "inversed", _inversed,
+      "o", _ordered,
+      "ord", _ordered,
+      "ordered", _ordered,
+      "r", _random,
+      "rand", _random,
+      "random", _random,
+   };
+
    const uint64_t COMMAND_LIST_SIZE = sizeof(COMMANDS) / sizeof(COMMANDS[0]);
    const uint64_t STRUCTURE_LIST_SIZE = sizeof(STRUCTURES) / sizeof(STRUCTURES[0]);
+   const uint64_t RULE_LIST_SIZE = sizeof(RULES) / sizeof(RULES[0]);
+
+   const uint64_t ITERATION_LIMIT = 64;
    
    // Functionalities
 
@@ -134,7 +151,6 @@ namespace JAST {
    
    void __cmd_chfocus(uint64_t, char*);
    void __cmd_print(uint64_t, char*);
-   void __cmd_search(uint64_t, char*);
    void __cmd_test(uint64_t, char*);
 
    // The interpreter
