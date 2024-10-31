@@ -23,24 +23,26 @@
 
 /* Local utilities END */
 
-inline bool RecordFile::open(const char* filename, File* rc_file, mode_t mode) {
+inline RecordFile::exit_t RecordFile::open(const char* filename, File* rc_file, mode_t mode) {
    char option[3] = " +";
    if (mode == READ)  option[0] = 'r';
    if (mode == WRITE) option[0] = 'w';
 
    rc_file->file = fopen(filename, option);
-   if (!rc_file->file) return false;
+   if (!rc_file->file) return exit_t::BAD;
 
    // Where doing our own management here, not buffering is needed
    setvbuf(rc_file->file, NULL, _IONBF, 0);
 
-   rc_file->size = fread(rc_file->buffer, sizeof(char), RecordFile::PAGE_SIZE, rc_file->file);
+   if (mode == READ) {
+      // Try to pre-load for reading, also identifies empty files
+      rc_file->size = fread(rc_file->buffer, sizeof(char), RecordFile::PAGE_SIZE, rc_file->file);
+      if (!rc_file->size) return exit_t::EMPTY;
+   } 
    
-   // Means that the file is empty
-   if (!rc_file->size) return false;
    rc_file->cursor = 0;
 
-   return true;
+   return exit_t::GOOD;
 }
 
 inline void RecordFile::close(File* rc_file) {
@@ -69,12 +71,13 @@ bool RecordFile::read(File* rc_file, Record* record) {
    return true;
 }
 
-void RecordFile::write(File* rc_file, Record* record, bool start) {
-   if (start) __putch(rc_file, '\n');
+void RecordFile::write(File* rc_file, Record* record, bool endl) {
    __write_int(rc_file, record->key); __putch(rc_file, ';');
    __write_int(rc_file, record->data); __putch(rc_file, ';');
    __write_str(rc_file, record->name);
+   
    if (rc_file->cursor) __flush(rc_file);
+   if (endl) __putch(rc_file, '\n');
 }
 
 static inline bool __getch(RecordFile::File* rc_file, char& ch) {

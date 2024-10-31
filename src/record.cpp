@@ -96,7 +96,7 @@ void populate_record_randomly(Record* record) {
    // Effectively removes the last space
    cursor--;
 
-   // goto labels, hate or love them, I'll use them regardless, with some regard, still
+// goto labels, hate or love them, I'll use them regardless, with some regard, still
 exit:
 
    // Guarantees null termination inside the intended buffer

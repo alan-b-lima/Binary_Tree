@@ -20,10 +20,9 @@ void JAST::__cmd_help(uint64_t argc, char* prompt) {
             "   print   Imprime estruturas\n"
             "   quit    Encerra a aplicação\n"
             "   save    Salva os dados de uma estrutura para algum arquivo\n"
-            "   search  Procura por uma chave na estrutura em foco\n"
             "   test    Realisa testes de busca na estrutura em foco\n\n"
             "Digite `help <comando>` para obter mais informações sobre um comando\n"
-            , 620);
+            , 566);
       } break;
 
       case command_t::_chfocus: {
@@ -40,9 +39,8 @@ void JAST::__cmd_help(uint64_t argc, char* prompt) {
             "create $<id> <key> <data> <name> - Cria um registro e insere na estrutura de id <id>\n"
             "create $<id> random              - Cria um registro aleatório e insere na estrutura de id <id>\n"
             "create <key> <data> <name>       - Cria um registro e insere na estrutrura em foco\n"
-            "create random <count>            - Cria <count> registros aleatórios e insere-os na estrutura em foco\n"
             "create random                    - Cria um registro aleatório e insere na estrutura em foco\n"
-            , 480);
+            , 357);
          break;
       }
 
@@ -53,7 +51,13 @@ void JAST::__cmd_help(uint64_t argc, char* prompt) {
          break;
       }
 
-      case command_t::_load: std::cout << "load WIP\n"; break;
+      case command_t::_load: {
+         std::cout.write(
+            "load <struct> <filename> - Carrega os registros de <filename> para a estrutura em foco\n"
+            "   <struct>: tree; avl ou avl_tree; linked_list ou ll\n"
+            , 141);
+         break;
+      }
 
       case command_t::_new: {
          std::cout.write(
@@ -85,8 +89,14 @@ void JAST::__cmd_help(uint64_t argc, char* prompt) {
          break;
       }
 
-      case command_t::_save: std::cout << "save WIP\n"; break;
-      case command_t::_search: std::cout << "search WIP\n"; break;
+      case command_t::_save: {
+         std::cout.write(
+            "save <filename>       - Salva os registros da estrutura em foco no arquivo <filename>\n"
+            "save $<id> <filename> - Salva os registros da estrutura de id <id> no arquivo <filename>\n"
+            , 175);
+         break;
+      }
+
       case command_t::_test: std::cout << "test WIP\n"; break;
 
       default: {
@@ -152,6 +162,7 @@ exit_t JAST::interpreter(char* prompt) {
 
       case command_t::_help: __cmd_help(argc - 1, prompt); break;
       case command_t::_new: return __cmd_new(argc - 1, prompt);
+      case command_t::_load: return __cmd_load(argc - 1, prompt);
 
       case command_t::_print: __cmd_print(argc - 1, prompt); break;
 
@@ -168,6 +179,8 @@ exit_t JAST::interpreter(char* prompt) {
          }
 
          break;
+
+      case command_t::_save: return __cmd_save(argc - 1, prompt);
 
       case NOT_FOUND:
          esc::color(esc::YELLOW, esc::FOREGROUND);
@@ -187,7 +200,7 @@ void JAST::__cmd_chfocus(uint64_t argc, char* prompt) {
    if (!argc) {
 
       if (!state.focused) {
-         std::cout.write("Nenhuma estrutura está em foco!\n", 33);
+         std::cout.write(NO_STRUCT_FOCUS, sizeof(NO_STRUCT_FOCUS) - 1);
          return;
       }
 
@@ -211,7 +224,7 @@ void JAST::__cmd_chfocus(uint64_t argc, char* prompt) {
    if (prompt[0] == '$') {
       state.focused = find_structure(string_to_int_consume(++prompt));
       if (!state.focused) {
-         esc::color(esc::FOREGROUND, esc::BRIGHT_RED);
+         esc::color(esc::BLUE, esc::FOREGROUND);
          std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
          esc::reset();
       }
@@ -230,185 +243,182 @@ void JAST::__cmd_chfocus(uint64_t argc, char* prompt) {
 }
 
 exit_t JAST::__cmd_create(uint64_t argc, char* prompt) {
-   return exit_t::BAD_ALLOCATION;
+
+   if (argc) {
+
+      StructStack* structure;
+
+      if (prompt[0] == '$') {
+         structure = find_structure(string_to_int_consume(++prompt));
+         argc--;
+
+         if (!structure) {
+            esc::color(esc::BLUE, esc::FOREGROUND);
+            std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
+            esc::reset();
+
+            return exit_t::SUCCESS;
+         }
+
+      } else if (!state.focused) {
+
+         std::cout.write(NO_STRUCT_FOCUS, sizeof(NO_STRUCT_FOCUS) - 1);
+         return exit_t::SUCCESS;
+
+      } else structure = state.focused;
+
+      Record* record = new (std::nothrow) Record;
+      if (!record) return exit_t::BAD_ALLOCATION;
+
+      // Check whether the record should be random
+      if (!match_consume_word("random", prompt)) {
+
+         if (argc < 3) goto invalid_input;
+
+         record->key = string_to_int_consume(prompt);
+         int data = string_to_int_consume(prompt);
+         write_record(record, data, prompt);
+
+         exit_t response = exit_t::SUCCESS;
+
+         switch (structure->kind) {
+            case LINKED_LIST: response = LinkedList::insert(&structure->node.linked_list, record); break;
+            case AVL_TREE: response = Tree::AVL::insert(&structure->node.tree, record); break;
+            case TREE: response = Tree::insert(&structure->node.tree, record); break;
+         }
+
+         if (response == exit_t::BAD_ALLOCATION) {
+            delete record;
+            return exit_t::BAD_ALLOCATION;
+         }
+
+         if (response == exit_t::KEY_ALREADY_EXISTS) {
+            esc::color(esc::BRIGHT_RED, esc::FOREGROUND);
+            std::cout << "A chave " << record->key << " já existe!\n";
+            esc::reset();
+
+            delete record;
+         }
+
+         return exit_t::SUCCESS;
+      }
+
+      // Populate randomly and search for a valid key up to 64 times
+      populate_record_randomly(record);
+
+      // The loop must execute at least once
+      exit_t response = exit_t::KEY_ALREADY_EXISTS;
+
+      for (uint64_t i = 0; response == exit_t::KEY_ALREADY_EXISTS; i++) {
+
+         if (i >= ITERATION_LIMIT) {
+            esc::color(esc::BLUE, esc::FOREGROUND);
+            std::cout.write("Uma nova chave única não foi encontrada!\n", 43);
+            esc::reset();
+
+            return exit_t::SUCCESS;
+         }
+
+         record->key = key_t(Random::rand() & 0xFFFFF);
+
+         switch (structure->kind) {
+            case LINKED_LIST: response = LinkedList::insert(&structure->node.linked_list, record); break;
+            case AVL_TREE: response = Tree::AVL::insert(&structure->node.tree, record); break;
+            case TREE: response = Tree::insert(&structure->node.tree, record); break;
+         }
+
+         if (response == exit_t::BAD_ALLOCATION) {
+            delete record;
+            return exit_t::BAD_ALLOCATION;
+         }
+      }
+
+      return exit_t::SUCCESS;
+   }
+
+invalid_input:
+   esc::color(esc::RED, esc::FOREGROUND);
+   std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
+   esc::reset();
+
+   return exit_t::SUCCESS;
 }
-// exit_t JAST::__cmd_create(uint64_t argc, char* prompt) {
 
-//    // Count how many id's have been given
-//    uint64_t id_count = 0, i;
-//    for (i = 0; id_count < argc; i++) {
-//       if (prompt[i] != '$') break;
-//       id_count++;
+exit_t JAST::__cmd_load(uint64_t argc, char* prompt) {
 
-//       while (prompt[i++]);
-//    }
+   if (argc >= 2) {
 
-//    char* ids_start = prompt;
-//    prompt += i + 1;
+      RecordFile::File rc_file;
+      byte kind = access_map(STRUCTURES, STRUCTURE_LIST_SIZE, prompt);
+      if (kind == NOT_FOUND) goto invalid_input;
 
-//    uint64_t random_struct_count = 0;
-//    Record* record = new (std::nothrow) Record;
-//    if (!record) return exit_t::BAD_ALLOCATION;
+      // Try to load the file
+      RecordFile::exit_t response = RecordFile::open(prompt, &rc_file, RecordFile::READ);
 
-//    if (argc - id_count >= 1) {
+      if (response == RecordFile::BAD) {
+         esc::color(esc::RED, esc::FOREGROUND);
+         std::cout.write(FILE_OPENING_ERROR, sizeof(FILE_OPENING_ERROR) - 1);
+         esc::reset();
 
-//       if (match_consume_word("randomly", prompt)) {
+         return exit_t::SUCCESS;
+      }
 
-//          if (id_count > 1) {
-//             esc::color(esc::YELLOW, esc::FOREGROUND);
-//             std::cout.write("Inserir aleatóriamente em multíplas estruturas não é permitido!\n", 68);
-//             esc::reset();
+      if (response == RecordFile::EMPTY) {
+         esc::color(esc::BLUE, esc::FOREGROUND);
+         std::cout.write("O arquivo fornecido está vazio\n", 32);
+         esc::reset();
 
-//             return exit_t::SUCCESS;
-//          }
+         RecordFile::close(&rc_file);
+         return exit_t::SUCCESS;
+      }
 
-//          if (argc - id_count >= 2) {
-//             uint64_t random_struct_count = string_to_int_consume(prompt);
-//             if (!random_struct_count) return exit_t::SUCCESS;
-//          }
+      id_t next_id = state.stack ? state.stack->id + 1 : 0;
+      StructStack* structure = new (std::nothrow) StructStack{ next_id, kind_t(kind), nullptr, state.stack };
+      if (!structure) {
+         RecordFile::close(&rc_file);
+         return exit_t::BAD_ALLOCATION;
+      }
 
-//          if (random_struct_count <= 1) {
-//             populate_record_randomly(record);
-//             random_struct_count = 0;
-//          }
+      state.stack = structure;
+      bool not_complete = true;
 
-//       } else if (argc - id_count >= 3) {
+      while (not_complete) {
+         Record* record = new (std::nothrow) Record;
+         if (!record) {
+            RecordFile::close(&rc_file);
+            return exit_t::BAD_ALLOCATION;
+         }
 
-//          record->key = string_to_int_consume(prompt);
-//          int data = string_to_int_consume(prompt);
-//          write_record(record, data, prompt);
+         not_complete = RecordFile::read(&rc_file, record);
+         exit_t response = exit_t::SUCCESS;
 
-//       } else {
-//          esc::color(esc::RED, esc::FOREGROUND);
-//          std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
-//          esc::reset();
+         switch (structure->kind) {
+            case LINKED_LIST: response = LinkedList::insert(&structure->node.linked_list, record); break;
+            case AVL_TREE: response = Tree::AVL::insert(&structure->node.tree, record); break;
+            case TREE: response = Tree::insert(&structure->node.tree, record); break;
+         }
 
-//          return exit_t::SUCCESS;
-//       }
+         if (response == exit_t::BAD_ALLOCATION) {
+            delete record;
+            return exit_t::BAD_ALLOCATION;
+         }
 
-//    } else goto not_enough_args;
+         if (response == exit_t::KEY_ALREADY_EXISTS) {
+            delete record;
+         }
+      }
 
-//    StructStack** id_stack;
-//    bool found_ids = false;
+      RecordFile::close(&rc_file);
+      return exit_t::SUCCESS;
+   }
 
-//    if (!id_count) {
+invalid_input:
+   esc::color(esc::RED, esc::FOREGROUND);
+   std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
+   esc::reset();
 
-//       // If no id's have been given and there's no state to focus,
-//       // then quit the function saying "not enough args"
-//       if (!state.focused) goto not_enough_args;
-
-//       // its access is equivalent to accessing the 0-th position of
-//       // an array, so, no worries
-//       id_stack = &state.focused;
-//       id_count = 1;
-
-//    } else {
-//       id_stack = Stack::allocate<StructStack*>(id_count);
-
-//       for (uint64_t i = 0; i < id_count; i++) {
-//          id_t id = string_to_int_consume(++ids_start);
-//          id_stack[i] = find_structure(id);
-
-//          if (!id_stack[i]) {
-//             id_count--;
-//             i--;
-
-//             esc::color(esc::YELLOW, esc::FOREGROUND);
-//             std::cout << '$' << id << " - ";
-//             std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
-
-//             esc::reset();
-//             continue;
-//          }
-
-//          found_ids = true;
-//       }
-
-//       if (!found_ids) {
-//          Stack::release(id_stack);
-//          goto no_structure_found;
-//       }
-//    }
-
-//    for (uint64_t i = 0; i < id_count; i++) {
-//       if (random_struct_count) {
-
-//          for (uint64_t j = 0; j < random_struct_count; j++) {
-
-//             record = new (std::nothrow) Record;
-//             if (!record) {
-//                if (found_ids) Stack::release(id_stack);
-//                return exit_t::BAD_ALLOCATION;
-//             }
-
-//             bool inserted = false;
-//             populate_record_randomly(record);
-//             exit_t response;
-//             uint64_t k = 0;
-
-//             for (k = 0; response == exit_t::KEY_ALREADY_EXISTS; k++) {
-
-//                if (k >= ITERATION_LIMIT) {
-//                   esc::color(esc::BLUE, esc::FOREGROUND);
-//                   std::cout.write("Uma nova chave única não foi encontrada!\n", 43);
-//                   esc::reset();
-
-//                   if (found_ids) Stack::release(id_stack);
-//                   return exit_t::SUCCESS;
-//                }
-
-//                record->key = key_t(Random::rand());
-
-//                switch (state.focused->kind) {
-//                   case LINKED_LIST: response = LinkedList::insert(&id_stack[i]->node.linked_list, record); break;
-//                   case AVL_TREE: response = Tree::AVL::insert(&id_stack[i]->node.tree, record); break;
-//                   case TREE: response = Tree::insert(&id_stack[i]->node.tree, record); break;
-//                }
-
-//                if (response == exit_t::BAD_ALLOCATION) goto bad_allocation;
-//             }
-//          }
-
-//       } else {
-
-//          exit_t response;
-
-//          switch (state.focused->kind) {
-//             case LINKED_LIST: response = LinkedList::insert(&id_stack[i]->node.linked_list, record); break;
-//             case AVL_TREE: response = Tree::AVL::insert(&id_stack[i]->node.tree, record); break;
-//             case TREE: response = Tree::insert(&id_stack[i]->node.tree, record); break;
-//          }
-
-//          if (response == exit_t::BAD_ALLOCATION) goto bad_allocation;
-//          if (response == exit_t::KEY_ALREADY_EXISTS) {
-//             esc::color(esc::YELLOW, esc::FOREGROUND);
-//             std::cout << "A chave " << record->key << " já existe na estrutura de id $" << id_stack[i]->id << '\n';
-//             esc::reset();
-//          }
-//       }
-//    }
-
-//    if (found_ids) Stack::release(id_stack);
-//    return exit_t::SUCCESS;
-
-// bad_allocation:
-//    if (found_ids) Stack::release(id_stack);
-//    return exit_t::SUCCESS;
-
-// no_structure_found:
-//    esc::color(esc::RED, esc::FOREGROUND);
-//    std::cout.write(NO_STRUCT_FOUND, sizeof(NO_STRUCT_FOUND) - 1);
-//    esc::reset();
-
-//    return exit_t::SUCCESS;
-
-// not_enough_args:
-//    esc::color(esc::BRIGHT_RED, esc::FOREGROUND);
-//    std::cout.write("Argumentos Insuficientes\n", 25);
-//    esc::reset();
-
-//    return exit_t::SUCCESS;
-// }
+   return exit_t::SUCCESS;
+}
 
 exit_t JAST::__cmd_new(uint64_t argc, char* prompt) {
 
@@ -417,14 +427,11 @@ exit_t JAST::__cmd_new(uint64_t argc, char* prompt) {
       kind_t structure = (kind_t)access_map(STRUCTURES, STRUCTURE_LIST_SIZE, prompt);
       if (structure == NOT_FOUND) goto invalid_input;
 
-      StructStack* temp = state.stack;
       id_t next_id = state.stack ? state.stack->id + 1 : 0;
 
-      state.stack = new (std::nothrow) StructStack{ next_id, structure, nullptr, temp };
-      if (!state.stack) {
-         state.stack = temp;
-         return exit_t::BAD_ALLOCATION;
-      }
+      StructStack* new_structure = new (std::nothrow) StructStack{ next_id, structure, nullptr, state.stack };
+      if (!new_structure) return exit_t::BAD_ALLOCATION;
+      state.stack = new_structure;
 
       if (argc < 3) return exit_t::SUCCESS;
 
@@ -492,6 +499,7 @@ exit_t JAST::__cmd_new(uint64_t argc, char* prompt) {
          }
       }
 
+      Stack::release(helper);
       return exit_t::SUCCESS;
    }
 
@@ -505,13 +513,13 @@ invalid_input:
 
 void JAST::__cmd_print(uint64_t argc, char* prompt) {
 
-   StructStack* strc;
+   StructStack* structure;
 
    if (!argc) {
 
       if (state.focused) {
 
-         strc = state.focused;
+         structure = state.focused;
          goto print_specific;
 
       } else goto print_all;
@@ -519,8 +527,8 @@ void JAST::__cmd_print(uint64_t argc, char* prompt) {
    } else switch (prompt[0]) {
 
       case '$':
-         strc = find_structure(string_to_int_consume(++prompt));
-         if (!strc) {
+         structure = find_structure(string_to_int_consume(++prompt));
+         if (!structure) {
             esc::color(esc::BRIGHT_RED, esc::FOREGROUND);
             std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
             esc::reset();
@@ -539,18 +547,18 @@ void JAST::__cmd_print(uint64_t argc, char* prompt) {
    }
 
 print_specific:
-   if (strc->kind == kind_t::LINKED_LIST) {
+   if (structure->kind == kind_t::LINKED_LIST) {
       std::cout.write(LL_IDENTIFIER, sizeof(LL_IDENTIFIER) - 1);
       std::cout.put('\n');
 
-      LinkedList::print(strc->node.linked_list);
+      LinkedList::print(structure->node.linked_list);
 
    } else {
-      if (strc->kind == kind_t::TREE) std::cout.write(TREE_IDENTIFIER, sizeof(TREE_IDENTIFIER) - 1);
+      if (structure->kind == kind_t::TREE) std::cout.write(TREE_IDENTIFIER, sizeof(TREE_IDENTIFIER) - 1);
       else std::cout.write(AVL_TREE_IDENTIFIER, sizeof(AVL_TREE_IDENTIFIER) - 1);
       std::cout.put('\n');
 
-      Tree::print(strc->node.tree);
+      Tree::print(structure->node.tree);
    }
 
    return;
@@ -572,6 +580,98 @@ print_all:
 
       print_record(record, "{$0: $1, $2\n");
    }
+}
+
+exit_t JAST::__cmd_save(uint64_t argc, char* prompt) {
+
+   if (!argc && argc > 2) goto invalid_input;
+
+   RecordFile::File rc_file;
+   StructStack* structure;
+
+   // One args, so it's gonna be just a filename, verifies whether there's
+   // a focused structure
+   if (argc == 1) {
+
+      if (!state.focused) {
+         std::cout.write(NO_STRUCT_FOCUS, sizeof(NO_STRUCT_FOCUS) - 1);
+         return exit_t::SUCCESS;
+      }
+
+      structure = state.focused;
+
+   // Has two args, first one must be an id, second a filename
+   } else if (prompt[0] == '$') {
+
+      structure = find_structure(string_to_int_consume(++prompt));
+      if (!structure) {
+         std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
+         return exit_t::SUCCESS;
+      }
+
+   } else goto invalid_input;
+
+   // Try to load the file
+   if (RecordFile::open(prompt, &rc_file, RecordFile::WRITE) == RecordFile::BAD) {
+      esc::color(esc::RED, esc::FOREGROUND);
+      std::cout.write(FILE_OPENING_ERROR, sizeof(FILE_OPENING_ERROR) - 1);
+      esc::reset();
+
+      return exit_t::SUCCESS;
+   }
+
+   switch (structure->kind) {
+
+      case kind_t::TREE:
+      case kind_t::AVL_TREE: {
+
+         Tree::Node* node = structure->node.tree;
+
+         if (!node) break;
+
+         Tree::Node** stack = nullptr;
+         if (node->height) {
+            stack = Stack::allocate<Tree::Node*>(node->height);
+            if (!stack) return exit_t::BAD_ALLOCATION;
+         }
+
+         int64_t top = -1;
+
+         while (true) {
+
+            if (node->left_child) stack[++top] = node->left_child;
+            if (node->rght_child) stack[++top] = node->rght_child;
+
+            RecordFile::write(&rc_file, node->content, top >= 0);
+
+            if (top < 0) break;
+            node = stack[top--];
+         }
+
+         Stack::release(stack);
+      } break;
+
+      case kind_t::LINKED_LIST: {
+
+         LinkedList::Node* node = structure->node.linked_list;
+
+         while (node) {
+            RecordFile::write(&rc_file, node->content, bool(node->next_node));
+            node = node->next_node;
+         }
+
+      } break;
+   }
+
+   RecordFile::close(&rc_file);
+   return exit_t::SUCCESS;
+
+invalid_input:
+   esc::color(esc::RED, esc::FOREGROUND);
+   std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
+   esc::reset();
+
+   return exit_t::SUCCESS;
 }
 
 // match two strings (case sensitevely) and consume the second

@@ -12,11 +12,13 @@ const char LL_IDENTIFIER[]       = "Lista encadeada: ";
 const char TREE_IDENTIFIER[]     = "Árvore binária: ";
 const char AVL_TREE_IDENTIFIER[] = "Árvore AVL: ";
 
-const char NO_STRUCT_FOUND[]  = "Nenhuma estrutura encontrada!\n"; 
-const char STRUCT_NOT_FOUND[] = "Estrutura não encontrada!\n"; 
-const char FAIL_PRINT_TREE[]  = "Falha ao imprimir a árvore\n";
-const char CONFIRM_EXIT[]     = "Você quer realmente sair ([s]im ou [n]ão)? ";
-const char INVALID_INPUT[]    = "Entrada Inválida\n";
+const char FILE_OPENING_ERROR[] = "Não foi possível abrir o arquivo!\n"; 
+const char NO_STRUCT_FOUND[]    = "Nenhuma estrutura encontrada!\n"; 
+const char STRUCT_NOT_FOUND[]   = "Estrutura não encontrada!\n"; 
+const char FAIL_PRINT_TREE[]    = "Falha ao imprimir a árvore\n";
+const char CONFIRM_EXIT[]       = "Você quer realmente sair ([s]im ou [n]ão)? ";
+const char INVALID_INPUT[]      = "Entrada Inválida\n";
+const char NO_STRUCT_FOCUS[]    = "Nenhuma estrutura está em foco!\n";
 
 const char BRANCH_ROOT[]      = "\u003A\u2500\u2500\u2500";
 const char BRANCH_DOWN[]      = "\u2502\u0020\u0020\u0020";

@@ -22,6 +22,8 @@ int main(int argc, char** argv) {
       return -1;
    }
 
+   Random::srand(time(NULL));
+
    const uint64_t buffer_size = 1024;
    char buffer[buffer_size];
    JAST::init();
@@ -34,25 +36,23 @@ int main(int argc, char** argv) {
       switch (JAST::interpreter(buffer)) {
          case exit_t::SUCCESS:
             continue;
-         
+
          case exit_t::BAD_ALLOCATION:
-            
+
             esc::style(esc::smk::BOLD, esc::clr::WHITE, esc::clr::RED);
-            std::cout.write("Erro Fatal:", 12);
+            std::cout.write("Erro Fatal", 11);
 
             esc::style(esc::smk::NONE, esc::clr::RED, esc::clr::RESET);
-            std::cout.write(" Má Alocação\n", 16);
-            goto terminate;
-
-         case exit_t::KEY_ALREADY_EXISTS:
-            std::cout.write("Chave já existe na estrutura ", 30);
+            std::cout.write(": Má Alocação\n", 17);
             continue;
 
-         case exit_t::EXIT_APPLICATION: goto terminate;
+         case exit_t::EXIT_APPLICATION:
+            esc::reset();
+            return 0;
+
+         default: return 0;
       }
    }
 
-terminate:
-   esc::reset();
    return 0;
 }

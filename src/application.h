@@ -17,7 +17,7 @@
 namespace JAST {
 
    enum kind_t : byte { LINKED_LIST, TREE, AVL_TREE };
-   enum command_t : byte { _chfocus, _create, _help, _init, _load, _new, _print, _quit, _save, _search, _test };
+   enum command_t : byte { _chfocus, _create, _help, _init, _load, _new, _print, _quit, _save, _test };
    enum rule_t : byte { _random, _ordered, _inversed };
 
    const byte NOT_FOUND = -1;
@@ -63,23 +63,23 @@ namespace JAST {
    };
 
    Map<12> STRUCTURES[] = {
-      "avl", AVL_TREE,
-      "avl_tree", AVL_TREE,
+      "avl",         AVL_TREE,
+      "avl_tree",    AVL_TREE,
       "linked_list", LINKED_LIST,
-      "ll", LINKED_LIST,
-      "tree", TREE,
+      "ll",          LINKED_LIST,
+      "tree",        TREE,
    };
 
    Map<9> RULES[] = {
-      "i", _inversed,
-      "inv", _inversed,
+      "i",        _inversed,
+      "inv",      _inversed,
       "inversed", _inversed,
-      "o", _ordered,
-      "ord", _ordered,
-      "ordered", _ordered,
-      "r", _random,
-      "rand", _random,
-      "random", _random,
+      "o",        _ordered,
+      "ord",      _ordered,
+      "ordered",  _ordered,
+      "r",        _random,
+      "rand",     _random,
+      "random",   _random,
    };
 
    const uint64_t COMMAND_LIST_SIZE = sizeof(COMMANDS) / sizeof(COMMANDS[0]);
