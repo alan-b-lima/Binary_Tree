@@ -5,16 +5,6 @@
 #include "application.h"
 #include "system.h"
 
-/* Planning the interface
- *
- * Some commands:
- *    get/set seed
- *    test speed and stuff (actual shit)
- *    help
- *    about
- *    exit codes
-*/
-
 int main(int argc, char** argv) {
 
    if (!system_specifics_setup()) {
@@ -32,7 +22,6 @@ int main(int argc, char** argv) {
       std::cout.write("> ", 2);
       std::cin.getline(buffer, buffer_size);
 
-      // switch (exit_t::BAD_ALLOCATION) {
       switch (JAST::interpreter(buffer)) {
          case exit_t::SUCCESS:
             continue;
@@ -44,13 +33,13 @@ int main(int argc, char** argv) {
 
             esc::style(esc::smk::NONE, esc::clr::RED, esc::clr::RESET);
             std::cout.write(": Má Alocação\n", 17);
+            
+            esc::reset();
             continue;
 
-         case exit_t::EXIT_APPLICATION:
+         default:
             esc::reset();
             return 0;
-
-         default: return 0;
       }
    }
 

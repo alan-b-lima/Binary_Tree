@@ -34,6 +34,7 @@ namespace JAST {
       } node;
 
       StructStack* next_node;
+      uint64_t count;
    } StructStack;
 
    template <uint64_t str_size>
@@ -142,16 +143,16 @@ namespace JAST {
    // Commands
 
    void init();
-   void __cmd_help(uint64_t, char*);
+   void cmd_help(uint64_t, char*);
 
-   exit_t __cmd_create(uint64_t, char*);
-   exit_t __cmd_load(uint64_t, char*);
-   exit_t __cmd_new(uint64_t, char*);
-   exit_t __cmd_save(uint64_t, char*);
+   exit_t cmd_create(uint64_t, char*);
+   exit_t cmd_load(uint64_t, char*);
+   exit_t cmd_new(uint64_t, char*);
+   exit_t cmd_save(uint64_t, char*);
    
-   void __cmd_chfocus(uint64_t, char*);
-   void __cmd_print(uint64_t, char*);
-   void __cmd_test(uint64_t, char*);
+   void cmd_chfocus(uint64_t, char*);
+   void cmd_print(uint64_t, char*);
+   void cmd_test(uint64_t, char*);
 
    // The interpreter
    exit_t interpreter(char* prompt);

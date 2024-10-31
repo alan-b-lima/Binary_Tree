@@ -1,6 +1,6 @@
 #include "application.h"
 
-void JAST::__cmd_help(uint64_t argc, char* prompt) {
+void JAST::cmd_help(uint64_t argc, char* prompt) {
 
    byte command = command_t::_help;
    if (argc) command = access_map(COMMANDS, COMMAND_LIST_SIZE, prompt);
@@ -73,11 +73,13 @@ void JAST::__cmd_help(uint64_t argc, char* prompt) {
 
       case command_t::_print: {
          std::cout.write(
-            "print       - Imprime a estrutura em foco, se nenhuma estrutura em foco,\n"
-            "              imprime o primeiro registro de todas estruturas e seus id's\n"
-            "print $<id> - Imprime a estrutura de id <id>, se existir\n"
-            "print all   - imprime o primeiro registro de todas estruturas e seus id's\n\n"
-            , 279);
+            "print               - Imprime a estrutura em foco, se nenhuma estrutura em foco,\n"
+            "                      imprime o primeiro registro de todas estruturas e seus id's\n"
+            "print <limit>       - Imprime a estrutura em foco, se existir, limitando a profundidade em <limit>\n"
+            "print $<id>         - Imprime a estrutura de id <id>, se existir\n"
+            "print $<id> <limit> - Imprime a estrutura de id <id>, se existir, limitando a profundidade em <limit>\n"
+            "print all           - imprime o primeiro registro de todas estruturas e seus id's\n\n"
+            , 512);
          break;
       }
 
@@ -97,7 +99,13 @@ void JAST::__cmd_help(uint64_t argc, char* prompt) {
          break;
       }
 
-      case command_t::_test: std::cout << "test WIP\n"; break;
+      case command_t::_test: {
+         std::cout.write(
+            "test $<id> - Testa a estrutura de id <id>\n"
+            "test       - Testa a estrutura em foco\n"
+            , 0);
+         break;
+      }
 
       default: {
          esc::color(esc::YELLOW, esc::FOREGROUND);
@@ -155,16 +163,16 @@ exit_t JAST::interpreter(char* prompt) {
 
    switch (access_map(COMMANDS, COMMAND_LIST_SIZE, prompt)) {
 
-      case command_t::_chfocus: __cmd_chfocus(argc - 1, prompt); break;
-      case command_t::_create: return __cmd_create(argc - 1, prompt);
+      case command_t::_chfocus: cmd_chfocus(argc - 1, prompt); break;
+      case command_t::_create: return cmd_create(argc - 1, prompt);
 
       case command_t::_init: init(); break;
 
-      case command_t::_help: __cmd_help(argc - 1, prompt); break;
-      case command_t::_new: return __cmd_new(argc - 1, prompt);
-      case command_t::_load: return __cmd_load(argc - 1, prompt);
+      case command_t::_help: cmd_help(argc - 1, prompt); break;
+      case command_t::_new: return cmd_new(argc - 1, prompt);
+      case command_t::_load: return cmd_load(argc - 1, prompt);
 
-      case command_t::_print: __cmd_print(argc - 1, prompt); break;
+      case command_t::_print: cmd_print(argc - 1, prompt); break;
 
       case command_t::_quit:
 
@@ -180,7 +188,7 @@ exit_t JAST::interpreter(char* prompt) {
 
          break;
 
-      case command_t::_save: return __cmd_save(argc - 1, prompt);
+      case command_t::_save: return cmd_save(argc - 1, prompt);
 
       case NOT_FOUND:
          esc::color(esc::YELLOW, esc::FOREGROUND);
@@ -196,7 +204,76 @@ exit_t JAST::interpreter(char* prompt) {
    return exit_t::SUCCESS;
 }
 
-void JAST::__cmd_chfocus(uint64_t argc, char* prompt) {
+void JAST::cmd_test(uint64_t argc, char* prompt) {
+
+   return;
+
+   StructStack* structure;
+
+   if (!argc) {
+      if (!state.focused) {
+         std::cout.write(NO_STRUCT_FOCUS, sizeof(NO_STRUCT_FOCUS) - 1);
+         return;
+      }
+   } else if (prompt[0] == '$') {
+      structure = find_structure(string_to_int_consume(++prompt));
+      if (!structure) {
+         esc::color(esc::BLUE, esc::FOREGROUND);
+         std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
+         esc::reset();
+
+         return;
+      }
+   } else {
+      esc::color(esc::RED, esc::FOREGROUND);
+      std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
+      esc::reset();
+
+      return;
+   }
+
+   struct {
+      Record::key_t keys[15];
+      uint64_t count;
+      clock_t mean;
+   } ordered, random;
+
+   ordered.count = 0;
+   random.count = 0;
+
+   ordered.mean = 0;
+   random.mean = 0;
+
+   switch (structure->kind) {
+
+      case kind_t::LINKED_LIST: {
+
+         Record::key_t min_key, max_key;
+
+         LinkedList::Node* current = structure->node.linked_list;
+         while (current) {
+
+            if (false);
+
+            else if (current->content->key < min_key)
+               min_key = current->content->key;
+            else if (current->content->key > max_key)
+               max_key = current->content->key;
+
+            current = current->next_node;
+         }
+      } break;
+
+      case kind_t::AVL_TREE:
+      case kind_t::TREE:
+
+
+
+         break;
+   }
+}
+
+void JAST::cmd_chfocus(uint64_t argc, char* prompt) {
    if (!argc) {
 
       if (!state.focused) {
@@ -242,7 +319,7 @@ void JAST::__cmd_chfocus(uint64_t argc, char* prompt) {
    esc::reset();
 }
 
-exit_t JAST::__cmd_create(uint64_t argc, char* prompt) {
+exit_t JAST::cmd_create(uint64_t argc, char* prompt) {
 
    if (argc) {
 
@@ -344,7 +421,7 @@ invalid_input:
    return exit_t::SUCCESS;
 }
 
-exit_t JAST::__cmd_load(uint64_t argc, char* prompt) {
+exit_t JAST::cmd_load(uint64_t argc, char* prompt) {
 
    if (argc >= 2) {
 
@@ -420,7 +497,7 @@ invalid_input:
    return exit_t::SUCCESS;
 }
 
-exit_t JAST::__cmd_new(uint64_t argc, char* prompt) {
+exit_t JAST::cmd_new(uint64_t argc, char* prompt) {
 
    if (argc) {
 
@@ -511,18 +588,17 @@ invalid_input:
    return exit_t::SUCCESS;
 }
 
-void JAST::__cmd_print(uint64_t argc, char* prompt) {
+void JAST::cmd_print(uint64_t argc, char* prompt) {
 
    StructStack* structure;
+   int64_t level = -1;
 
    if (!argc) {
 
-      if (state.focused) {
+      if (!state.focused) goto print_all;
 
-         structure = state.focused;
-         goto print_specific;
-
-      } else goto print_all;
+      structure = state.focused;
+      goto print_specific;
 
    } else switch (prompt[0]) {
 
@@ -534,16 +610,25 @@ void JAST::__cmd_print(uint64_t argc, char* prompt) {
             esc::reset();
 
             return;
-         } else goto print_specific;
+         } else {
+            if (argc > 1) level = string_to_int_consume(prompt);
+            goto print_specific;
+         }
 
       case 'a':
          if (match_consume_word("all", prompt)) goto print_all;
 
       default:
-         esc::color(esc::RED, esc::FOREGROUND);
-         std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
-         esc::reset();
-         return;
+         level = string_to_int_consume(prompt);
+         if (!state.focused) {
+            esc::color(esc::RED, esc::FOREGROUND);
+            std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
+            esc::reset();
+            return;
+         }
+
+         structure = state.focused;
+         goto print_specific;
    }
 
 print_specific:
@@ -551,14 +636,14 @@ print_specific:
       std::cout.write(LL_IDENTIFIER, sizeof(LL_IDENTIFIER) - 1);
       std::cout.put('\n');
 
-      LinkedList::print(structure->node.linked_list);
+      LinkedList::print(structure->node.linked_list, level);
 
    } else {
       if (structure->kind == kind_t::TREE) std::cout.write(TREE_IDENTIFIER, sizeof(TREE_IDENTIFIER) - 1);
       else std::cout.write(AVL_TREE_IDENTIFIER, sizeof(AVL_TREE_IDENTIFIER) - 1);
       std::cout.put('\n');
 
-      Tree::print(structure->node.tree);
+      Tree::print(structure->node.tree, level);
    }
 
    return;
@@ -582,7 +667,7 @@ print_all:
    }
 }
 
-exit_t JAST::__cmd_save(uint64_t argc, char* prompt) {
+exit_t JAST::cmd_save(uint64_t argc, char* prompt) {
 
    if (!argc && argc > 2) goto invalid_input;
 
