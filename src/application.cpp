@@ -319,7 +319,7 @@ exit_t JAST::__cmd_create(uint64_t argc, char* prompt) {
             return exit_t::SUCCESS;
          }
 
-         record->key = key_t(Random::rand() & 0xFFFFF);
+         record->key = Record::key_t(Random::rand() & 0xFFFFF);
 
          switch (structure->kind) {
             case LINKED_LIST: response = LinkedList::insert(&structure->node.linked_list, record); break;
@@ -469,7 +469,7 @@ exit_t JAST::__cmd_new(uint64_t argc, char* prompt) {
             case _inversed: key -= order; break;
          }
 
-         Record* record = new (std::nothrow) Record{ key_t(key) };
+         Record* record = new (std::nothrow) Record{ Record::key_t(key) };
          if (!record) {
             Stack::release(helper);
             return exit_t::BAD_ALLOCATION;

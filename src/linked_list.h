@@ -12,7 +12,7 @@ namespace LinkedList {
    } Node;
 
    exit_t insert(Node**, Record*);
-   Record* search(Node*, key_t);
+   Record* search(Node*, Record::key_t);
 
    void print(Node*);
 

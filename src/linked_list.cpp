@@ -8,7 +8,7 @@ exit_t LinkedList::insert(Node** node, Record* record) {
    return SUCCESS;
 }
 
-Record* LinkedList::search(Node* node, key_t key) {
+Record* LinkedList::search(Node* node, Record::key_t key) {
    while (node) {
       if (node->content->key == key)
          return node->content;

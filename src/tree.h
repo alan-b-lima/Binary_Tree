@@ -18,7 +18,7 @@ namespace Tree {
    } Node;
 
    exit_t insert(Node**, Record*);
-   Record* search(Node*, key_t);
+   Record* search(Node*, Record::key_t);
 
    void print(Node*, int64_t = -1);
 

@@ -13,9 +13,9 @@ inline bool system_specifics_setup();
 
 #include <sys/ioctl.h>
 
-void get_terminal_dimensions(unsigned short&, unsigned short&) {
+void get_terminal_dimensions(unsigned short& width, unsigned short& height) {
    struct winsize win;
-   ioctl(fileno(stdout), TIOCGWINSZ, &w);
+   ioctl(fileno(stdout), TIOCGWINSZ, &win);
    width = (unsigned short)(win.ws_col);
    height = (unsigned short)(win.ws_row);
 }

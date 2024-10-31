@@ -151,7 +151,7 @@ exit:
    Stack::release(branches);
 }
 
-Record* Tree::search(Tree::Node* node, key_t key) {
+Record* Tree::search(Tree::Node* node, Record::key_t key) {
 
    while (node) {
 

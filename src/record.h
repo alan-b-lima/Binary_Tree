@@ -3,10 +3,12 @@
 #include "base.h"
 #include "../rc/names.cpp"
 
-typedef long key_t;
+typedef long key_type;
 const uint64_t NAME_SIZE = 1000;
 
 typedef struct Record {
+   typedef long key_t;
+
    key_t key;
    int   data;
    char  name[NAME_SIZE + 1];
