@@ -34,7 +34,6 @@ namespace JAST {
       } node;
 
       StructStack* next_node;
-      uint64_t count;
    } StructStack;
 
    template <uint64_t str_size>
@@ -137,7 +136,6 @@ namespace JAST {
    bool match_consume_word(const char*, char*&);
    uint64_t string_to_int_consume(char*&);
 
-
    uint64_t print_in_column(const char*, word, word);
 
    // Commands
@@ -156,4 +154,24 @@ namespace JAST {
 
    // The interpreter
    exit_t interpreter(char* prompt);
+
+   void finish() {
+      while (state.stack) {
+         switch (state.stack->kind) {
+            case kind_t::LINKED_LIST:
+               LinkedList::destruct(&state.stack->node.linked_list, destruct_record);
+               break;
+
+            case kind_t::AVL_TREE:
+            case kind_t::TREE:
+               Tree::destruct(&state.stack->node.tree, destruct_record);
+               break;
+         }
+
+         StructStack* next_node = state.stack->next_node;
+         delete state.stack;
+         
+         state.stack = next_node;
+      }
+   }
 };

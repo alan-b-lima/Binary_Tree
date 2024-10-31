@@ -34,6 +34,7 @@ namespace Tree {
    }
 
    void destruct(Node**, void(*)(Record*) = nullptr);
+   void destruct_s(Node**, void(*)(Record*) = nullptr);
 };
 
 namespace Tree::AVL {

@@ -22,26 +22,23 @@ int main(int argc, char** argv) {
       std::cout.write("> ", 2);
       std::cin.getline(buffer, buffer_size);
 
-      switch (JAST::interpreter(buffer)) {
-         case exit_t::SUCCESS:
-            continue;
+      exit_t response = JAST::interpreter(buffer);
 
-         case exit_t::BAD_ALLOCATION:
+      if (response == exit_t::BAD_ALLOCATION) {
+         esc::style(esc::smk::BOLD, esc::clr::WHITE, esc::clr::RED);
+         std::cout.write("Erro Fatal", 11);
 
-            esc::style(esc::smk::BOLD, esc::clr::WHITE, esc::clr::RED);
-            std::cout.write("Erro Fatal", 11);
+         esc::style(esc::smk::NONE, esc::clr::RED, esc::clr::RESET);
+         std::cout.write(": Má Alocação\n", 17);
 
-            esc::style(esc::smk::NONE, esc::clr::RED, esc::clr::RESET);
-            std::cout.write(": Má Alocação\n", 17);
-            
-            esc::reset();
-            continue;
+         esc::reset();
+         continue;
+      }
 
-         default:
-            esc::reset();
-            return 0;
+      if (response == exit_t::EXIT_APPLICATION) {
+         JAST::finish();
+         esc::reset();
+         return 0;
       }
    }
-
-   return 0;
 }

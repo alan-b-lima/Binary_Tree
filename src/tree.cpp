@@ -176,7 +176,7 @@ void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
    Node** stack = nullptr;
    if ((*node)->height) {
       stack = Stack::allocate<Node*>((*node)->height);
-      if (!stack) return;
+      if (!stack) destruct_s(node, record_handler);
    }
 
    Node* current = *node;
@@ -200,7 +200,7 @@ void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
    Stack::release(stack);
 }
 
-void destructqw1(Tree::Node** node, void(*handler)(Record*)) {
+void Tree::destruct_s(Node** node, void(*record_handler)(Record*)) {
    if (!*node) return;
 
    byte index = 0;
@@ -242,8 +242,8 @@ loop:
 
       } else tmp = current->left_child ? current->left_child : current->rght_child;
 
-      if (handler)
-         handler(current->content);
+      if (record_handler)
+         record_handler(current->content);
 
       delete current;
       current = tmp;

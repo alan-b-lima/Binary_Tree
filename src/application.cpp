@@ -101,8 +101,8 @@ void JAST::cmd_help(uint64_t argc, char* prompt) {
 
       case command_t::_test: {
          std::cout.write(
-            "test $<id> - Testa a estrutura de id <id>\n"
-            "test       - Testa a estrutura em foco\n"
+            "test $<id> <sample_size> - Realiza testes <sample_size> de busca na estrutura de id <id>\n"
+            "test <sample_size>       - Realiza testes <sample_size> de busca na estrutura em foco\n"
             , 0);
          break;
       }
@@ -189,15 +189,12 @@ exit_t JAST::interpreter(char* prompt) {
          break;
 
       case command_t::_save: return cmd_save(argc - 1, prompt);
+      case command_t::_test: cmd_test(argc - 1, prompt); break;
 
       case NOT_FOUND:
          esc::color(esc::YELLOW, esc::FOREGROUND);
          std::cout.write(COMMAND_NOT_FOUND, sizeof(COMMAND_NOT_FOUND) - 1);
          esc::reset();
-         break;
-
-      default:
-         std::cout.write("WIP\n", 4);
          break;
    }
 
@@ -206,16 +203,17 @@ exit_t JAST::interpreter(char* prompt) {
 
 void JAST::cmd_test(uint64_t argc, char* prompt) {
 
-   return;
+   if (!argc || (prompt[0] == '$' && argc == 1)) {
+      esc::color(esc::RED, esc::FOREGROUND);
+      std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
+      esc::reset();
+
+      return;
+   }
 
    StructStack* structure;
 
-   if (!argc) {
-      if (!state.focused) {
-         std::cout.write(NO_STRUCT_FOCUS, sizeof(NO_STRUCT_FOCUS) - 1);
-         return;
-      }
-   } else if (prompt[0] == '$') {
+   if (prompt[0] == '$') {
       structure = find_structure(string_to_int_consume(++prompt));
       if (!structure) {
          esc::color(esc::BLUE, esc::FOREGROUND);
@@ -224,25 +222,26 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
 
          return;
       }
-   } else {
-      esc::color(esc::RED, esc::FOREGROUND);
-      std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
-      esc::reset();
+   } else if (!state.focused) {
 
+      std::cout.write(NO_STRUCT_FOCUS, sizeof(NO_STRUCT_FOCUS) - 1);
       return;
-   }
+
+   } else structure = state.focused;
+
+   uint64_t sample_size = string_to_int_consume(prompt);
 
    struct {
-      Record::key_t keys[15];
-      uint64_t count;
-      clock_t mean;
-   } ordered, random;
+      struct {
+         uint64_t count, span;
+      } in, out;
+   } sample;
 
-   ordered.count = 0;
-   random.count = 0;
+   sample.out.span = 0;
+   sample.in.span = 0;
 
-   ordered.mean = 0;
-   random.mean = 0;
+   sample.out.count = 0;
+   sample.in.count = 0;
 
    switch (structure->kind) {
 
@@ -254,7 +253,6 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
          while (current) {
 
             if (false);
-
             else if (current->content->key < min_key)
                min_key = current->content->key;
             else if (current->content->key > max_key)
@@ -262,15 +260,116 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
 
             current = current->next_node;
          }
+
+         // The ranged random function is upper exclusive
+         max_key++;
+
+         for (
+            uint64_t iteration_limit = ITERATION_LIMIT * sample_size;
+            sample.in.count < sample_size || sample.out.count < sample_size;
+            iteration_limit--) {
+
+            if (iteration_limit <= 0) {
+               esc::color(esc::BLUE, esc::FOREGROUND);
+               std::cout.write("Não foram encontradas chaves de teste suficientes!\n", 53);
+               esc::reset();
+
+               return;
+            }
+
+            Record::key_t key = Random::rand(min_key, max_key);
+            Record* record;
+
+            auto start = std::chrono::high_resolution_clock::now();
+
+            record = LinkedList::search(structure->node.linked_list, key);
+
+            auto end = std::chrono::high_resolution_clock::now();
+
+            if (record) {
+               if (sample.in.count < sample_size) {
+                  sample.in.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+                  sample.in.count++;
+               }
+            } else {
+               if (sample.out.count < sample_size) {
+                  sample.out.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+                  sample.out.count++;
+               }
+            }
+         }
+
       } break;
 
       case kind_t::AVL_TREE:
-      case kind_t::TREE:
+      case kind_t::TREE: {
 
+         Tree::Node* current = structure->node.tree;
+         Record::key_t min_key, max_key;
 
+         if (current) {
+            while (current->left_child)
+               current = current->left_child;
+            min_key = current->content->key;
 
-         break;
+            current = structure->node.tree;
+
+            while (current->rght_child)
+               current = current->rght_child;
+
+            // The ranged random function is upper exclusive
+            max_key = current->content->key + 1;
+         }
+
+         for (
+            uint64_t iteration_limit = ITERATION_LIMIT * sample_size;
+            sample.in.count < sample_size || sample.out.count < sample_size;
+            iteration_limit--) {
+
+            if (iteration_limit <= 0) {
+               esc::color(esc::BLUE, esc::FOREGROUND);
+               std::cout.write("Não foram encontradas chaves de teste suficientes!\n", 53);
+               esc::reset();
+
+               return;
+            }
+
+            Record::key_t key = Random::rand(min_key, max_key);
+            Record* record;
+
+            auto start = std::chrono::high_resolution_clock::now();
+
+            record = Tree::search(structure->node.tree, key);
+
+            auto end = std::chrono::high_resolution_clock::now();
+
+            if (record) {
+               if (sample.in.count < sample_size) {
+                  sample.in.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+                  sample.in.count++;
+               }
+            } else {
+               if (sample.out.count < sample_size) {
+                  sample.out.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+                  sample.out.count++;
+               }
+            }
+         }
+
+      } break;
    }
+
+   std::cout << "Teste de " << sample_size << (sample_size == 1 ? " chave" : " chaves");
+
+   // Present keys
+   std::cout.write("\nChaves presentes:", 18);
+   std::cout << "\n   Tempo médio: " << ((double)sample.in.span / (double)sample_size) << "ms";
+
+   // Non-existing keys
+   std::cout.write("\nChaves inexistentes:", 21);
+   std::cout << "\n   Tempo médio: " << ((double)sample.out.span / (double)sample_size) << "ms";
+
+   std::cout.put('\n');
 }
 
 void JAST::cmd_chfocus(uint64_t argc, char* prompt) {
