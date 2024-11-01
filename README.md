@@ -14,15 +14,15 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 
 # Sumário
 
-<strong>[Como Usar](#como-usar)</strong>
+<strong>[Como Usar](#como-usar-e-disposições-do-trabalho)</strong>
 
 <strong>[Estrutura das dependências](#estrutura-das-dependências)</strong>
 
 - [Diagrama da Estrutura de Dependências da Aplicação](#diagrama-da-estrutura-de-dependências-da-aplicação)
 
-<strong>[Árvores Binárias](#árvores-binárias)</strong>
+<strong>[Estrutura de Dados](#estruturas-de-dados)</strong>
 
-- [1 Definições Básicas](#1-definições-básicas)
+- [1 Definições Básicas](#1-árvores-binárias)
    - [Definição 1A: Árvore Binária](#definição-1a-árvore-binária)
    - [Definição 1B: Relações entre nós](#definição-1b-relações-entre-nós)
       - [i) Nós Filhos](#i-nós-filhos)
@@ -57,7 +57,108 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 
 <strong>[Referências](#referências)</strong>
 
-# Como Usar
+# Como Usar e Disposições do Trabalho
+
+## Como compilar
+
+Há um árquivo próprio para a compiliação, que faz, parcialmente, a função de um linker, este é o arquivo localizado em ./build/build.cpp, para compilá-lo pode-se executar:
+
+```sh
+g++ ./build/build.cpp -O2 -o jast
+```
+
+Ou pode-se usar o make.sh (para sistemas Linux) ou o make.bat (para Windows).
+
+## Executando o programa
+
+A aplicação é baseada em shell básico que interpreta uma séria predefinida de comandos, sendo esses:
+
+* `chfocus`: Coloca uma estrutura em foco;
+* `create`: Cria um novo registro;
+* `exit`: Encerra a aplicação;
+* `help`: Mostra os comando disponíveis;
+* `init`: Mostra a tela de início;
+* `load`: Carrega registro de um arquivo;
+* `new`: Cria uma nova estrutura;
+* `print`: Imprime uma estrutura;
+* `quit`: Encerra a aplicação;
+* `save`: Salva os dados em um arquivo;
+* `test`: Realiza testes.
+
+Para mais detalhes, recomenda-se utilizar a aplicação, use `help <comando>` para obter ajuda sobre um comando especifico.
+
+### Realizando testes
+
+Como requerido pelo trabalho, séries de testes devem ser realizadas com a estruturas de dados implementadas, o exemplo mostrado a seguir será relativo ao teste com estruturas com 100 registros, entretanto o funcionamento é análogo a números diferentes de registros. Ademais, para a maioria dos comandos, existirão multiplas formas de obter o mesmo resultado, aqui, entretanto, será mostrado apenas uma forma.
+
+Os acrônimos para as estruturas de dados são:
+- Árvore Binária (tradicional):`tree`;
+- Árvore AVL: `avl` ou `avl_tree`;
+- Lista Encadeada: `ll` ou `linked_list`,
+
+Esses serão referidos como `<struct>`, para simplificação. Para criar uma estrutura com 100 registros aleatórios, executa-se:
+
+```
+> new <struct> 100 random
+```
+
+Essa estrutura terá uma distribuição densa de chaves, isto é, todas as chaves inteiras de 0 até 100 - 1, para mitigar tal fato (possuir chaves inexistentes não externas), pode executar-se:
+
+```
+> new <struct> 100 random <order>
+```
+
+Assim, se `<order>` for 1, esse terá o mesmo efeito que sem o argumento, já com `<order>` maior que um, a faixa de chaves escalona por `<order>`, mais precisamente, chave são geradas de 0 até `<order>` * número de registros - 1. `<order>` é assumido 1 quando não explicitamente declarado.
+
+Agora, encontra-se o id da estrutura guardando os 100 registros, para isso:
+
+```
+> print all
+```
+
+Assim, o id, tipo da estrutura e primeiro nó (cabeça na lista encadeada e raiz nas árvores). Sabendo o id da estrutura que se deseja testar, seja esse `n` (um inteiro em notação decimal), executa-se:
+
+```
+> test $n <tamanho da amostra>
+```
+
+O tamanho da amostra, por definição do trabalho, é 15, entretanto, esse pode ser escolhido dinamicamente quando realizandos os testes.
+
+Uma saída da seguite forma é esperada:
+
+```
+Teste de 15 chaves
+Chaves presentes:
+   Tempo médio: 200ms
+Chaves inexistentes:
+   Tempo médio: 1400ms
+```
+
+Há um limite de tentativas para gerar as chaves, nomeadamente 64 * `<tamanho da amostra>`, se não forem geradas chaves que atendem os requisitos, a seguinte mensagem é impressa:
+
+```
+Não foram encontradas chaves de teste suficientes!
+```
+
+Para gerar uma estrutura com insersão em ordem, o mesmo é dado, se não por:
+
+```
+> new <struct> 100 ordered <order>
+```
+
+Os passos a seguir seguem a mesma lógica. Se prefere-se carregar dados de um arquivo, usa-se:
+
+```
+> load <struct> <filename>
+```
+
+### Pontos de Melhora e Conclusão
+
+O projeto, como se encontra agora, possui uma documentação razoavél, sendo parte do código, como ./lib/terminal.h, consideravelmente documentada, outras partes, como ./src/tree.h, têm sua disposição aqui, até pelo teor matemático, enquanto outras partes podem ser ditas "obscuras", como ./src/application.h, menção especial à função `JAST::process_args`, que se trata de um automato finito que põe os argumentos em um formato ideal, é possível aferir esse comportamento, com certo estudo, mas esse pode não ser simples.
+
+Sobre a estruturação do código de ./src/application.cpp, muito código repetido pode ser encontrado, além de corpos gigantes de funções, que apesar de funcional, poderia se tornar desafio para manutenção. Ademais, as funcionalidades são extremamente básicas, questões como deletar estruturas e registros não estão disponíveis.
+
+Concluindo essa pequena dissertação, o projeto foi o maior já desenvolvido pelos autores e resaltou a importância de um bom planejamento para o desenvolvimento de software.
 
 # Estrutura das Dependências
 
@@ -78,7 +179,7 @@ flowchart BT;
    end
    
    subgraph stdlibs[*Bibliotecas Padronizadas*]
-      base_incl[stdint.h <br> stdlib.h <br> stdio.h <br> time.h <br> iostream]
+      base_incl[stdint.h <br> stdlib.h <br> stdio.h <br> time.h <br> chrono <br> iostream]
       random_incl[stdint.h]
       terminal_incl[stdint.h <br> math.h <br> stdio.h]
       stack_incl[stdlib.h <br> stdint.h <br> malloc.h]
@@ -201,13 +302,18 @@ O diagrama acima é uma versão visual das clausulas `#include` encontradas por 
 - **Nível 3** foge à regra de independência, sendo seus arquivos puramente arquivos de recursos, names.cpp sendo autoexplicativo (carrega exemplos de nomes) e strings.cpp, que carrega cadeias de caracteres usadas pela aplicação;
 - **Nível 4** está aqui posicianado por ser a estrutura à qual as estruturas do nível acima revolvem;
 - **Nível 5** define as três estruturas de dados requeridas pelo trabalho, sendo árvore de busca binária tradicional e AVL definidas em tree.h e a estrutura sequencial (lista encadeada) em linked_list.h. Ademais, o arquivo file.h define uma estrutura que abstrae o manejamento de arquivos da aplicação principal e o arquivo application.h que lida com interações com o usuário;
-- **Nível 6** compreende a entrada da aplicação assim como os desdobramento **já despostos em [Como Usar](#como-usar)**.
+- **Nível 6** compreende a entrada da aplicação assim como os desdobramento **já despostos em [Como Usar](#como-usar-e-disposições-do-trabalho)**.
 
-# Árvores Binárias
+# Estruturas de Dados
 
-## 1 Definições Básicas
+## 1 Lista Encadeada
+
+### Definição 1A: Lista Encadeada
+
+## 1 Árvores Binárias
 
 ### Definição 1A: Árvore Binária
+
 Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou uma tripla ordenada $`T = \langle v, E, D \rangle`$, onde $`E`$ e $`D`$ são árvores, $`E`$ é chamada _sub-árvore esquerda_ e $`D`$ é chamada _sub-árvore direita_, e $`v`$ uma variável de conjunto totalmente ordenado<sup>[[1]](#user-content-fnote1)</sup>. Formalmente:<br>
 
 ```math
@@ -308,7 +414,7 @@ h(T) = \begin{cases}
 
 Pelas instancias recursivas da função $`h`$, é visível que pelo menos todo nó definido é visitado, e aqueles nós que têm um único filho ainda adicionam uma vericação a um nó $`\emptyset`$. No pior caso, todo nó tem um único filho, exceto por um nó (a existência de um nó folha é obrigatória numa árvore com nós finitos), assim, com $`n`$ nós, seriam feitas $`2(n - 1) + 1`$ iterações da função, assim, a complexidade é $`O(n)`$. Esse fato motiva a inclusão do atributo `height` na estrutura `Node`.
 
-## 2. Implementação de Funcionalidades para os Registros
+## 2 Implementação de Funcionalidades para os Registros
 
 Duas funções para manejamento de instâncias do tipo `Record` serão implementadas:
 * Escrever para um registro, com tratamento para caso o nome fornecido tenha mais de mil caracteres:
@@ -317,7 +423,7 @@ Duas funções para manejamento de instâncias do tipo `Record` serão implement
 void write_record(Record* record, int data, const char* name) {
 
    uint64_t i;
-   for (i = 0; i >= NAME_SIZE && name[i]; i++) 
+   for (i = 0; i < NAME_SIZE && name[i]; i++) 
       record->name[i] = name[i];
 
    record->name[i] = '\0';
@@ -357,7 +463,7 @@ void print_record(Record* record, const char* format = "{$0, $1, $2}") {
 }
 ```
 
-## 3. Implementação da Árvore Binária de Busca
+## 3 Implementação da Árvore Binária de Busca
 
 ### Implementação 3A: Algoritmo de Busca
 
@@ -417,23 +523,6 @@ Para inserir um novo nó numa árvore binária de busca, é realizada uma busca 
    \langle v, \emptyset, \emptyset \rangle & \text{| } T = \emptyset
 \end{cases}
 ```
-
-<!-- ```math
--_R(T, key) = \begin{cases}
-   \langle v, -_R(E, key), D \rangle & \text{| } T = \langle v, E, D \rangle \wedge key < v.key \\
-   \langle v, E, -_R(D, key) \rangle & \text{| } T = \langle v, E, D \rangle \wedge key > v.key \\
-   \langle R(T), E, D \rangle & \text{| } T = \langle v, E, D \rangle \wedge key = v.key \\
-   \emptyset & \text{| } T = \emptyset
-\end{cases}
-```
-
-```math
-P(T) = \begin{cases}
-   P(T_D) & \text{| } T_D \ne \emptyset \\
-   P(T_E) & \text{| } T_E \ne \emptyset \wedge T_D = \emptyset \\
-   v[T_D] & \text{| } T_E = \emptyset \wedge T_D = \emptyset
-\end{cases}
-``` -->
 
 Em C++:
 

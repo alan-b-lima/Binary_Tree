@@ -1,2 +1,2 @@
 #!/bin/bash
-g++ ./build/build.cpp -O2 -Wall -o main
+g++ ./build/build.cpp -O2 -Wall -o jast

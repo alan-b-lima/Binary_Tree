@@ -11,7 +11,7 @@ void JAST::cmd_help(uint64_t argc, char* prompt) {
          std::cout.write(
             "Lista de todos os comandos:\n\n"
             "   chfocus Muda a estrutura em foco\n"
-            "   create  Cria um registro e o insere na estrutura em foco\n"
+            "   create  Cria um registro e o insere numa estrutura\n"
             "   exit    Mesmo que `quit`\n"
             "   help    Mostra essa tela\n"
             "   init    Mostra a tela de entrada\n"
@@ -22,7 +22,7 @@ void JAST::cmd_help(uint64_t argc, char* prompt) {
             "   save    Salva os dados de uma estrutura para algum arquivo\n"
             "   test    Realisa testes de busca na estrutura em foco\n\n"
             "Digite `help <comando>` para obter mais informações sobre um comando\n"
-            , 566);
+            , 560);
       } break;
 
       case command_t::_chfocus: {
@@ -203,9 +203,10 @@ exit_t JAST::interpreter(char* prompt) {
 
 void JAST::cmd_test(uint64_t argc, char* prompt) {
 
+   // Identifies whether the supplied args are enough
    if (!argc || (prompt[0] == '$' && argc == 1)) {
-      esc::color(esc::RED, esc::FOREGROUND);
-      std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
+      esc::color(esc::YELLOW, esc::FOREGROUND);
+      std::cout.write(NOT_ENOUGH_ARGS, sizeof(NOT_ENOUGH_ARGS) - 1);
       esc::reset();
 
       return;
@@ -214,7 +215,11 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
    StructStack* structure;
 
    if (prompt[0] == '$') {
+
+      // Tries to load an id and find its structure
       structure = find_structure(string_to_int_consume(++prompt));
+      
+      // If not found, quits
       if (!structure) {
          esc::color(esc::BLUE, esc::FOREGROUND);
          std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
@@ -222,6 +227,8 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
 
          return;
       }
+      
+   // If an id was not supplies verifies whether there's a focused structure
    } else if (!state.focused) {
 
       std::cout.write(NO_STRUCT_FOCUS, sizeof(NO_STRUCT_FOCUS) - 1);
@@ -229,6 +236,7 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
 
    } else structure = state.focused;
 
+   // Load the sample size
    uint64_t sample_size = string_to_int_consume(prompt);
 
    struct {
@@ -247,9 +255,17 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
 
       case kind_t::LINKED_LIST: {
 
-         Record::key_t min_key, max_key;
+         // Store the min and max keys, will use them to generate key in the
+         // range of the tree
+         Record::key_t min_key = structure->node.linked_list->content->key;
+         Record::key_t max_key = structure->node.linked_list->content->key;
 
-         LinkedList::Node* current = structure->node.linked_list;
+         if (!structure->node.linked_list) {
+            std::cout.write("Não é possivel realizar testes em estruturas vazias!\n", 55);
+            return;
+         }
+
+         LinkedList::Node* current = structure->node.linked_list->next_node;
          while (current) {
 
             if (false);
@@ -264,6 +280,7 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
          // The ranged random function is upper exclusive
          max_key++;
 
+         // Execute a limited hard-fixed amount of times, to avoid undecidability
          for (
             uint64_t iteration_limit = ITERATION_LIMIT * sample_size;
             sample.in.count < sample_size || sample.out.count < sample_size;
@@ -277,15 +294,21 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
                return;
             }
 
+            // Generates a random key in range, doesn't actully check if it
+            // hasn't already been generated
             Record::key_t key = Random::rand(min_key, max_key);
             Record* record;
 
+            // Mark the start
             auto start = std::chrono::high_resolution_clock::now();
 
+            // Search for the key
             record = LinkedList::search(structure->node.linked_list, key);
 
+            // Mark the end
             auto end = std::chrono::high_resolution_clock::now();
 
+            // If the key has been found, count as in, if not, count as out
             if (record) {
                if (sample.in.count < sample_size) {
                   sample.in.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
@@ -319,8 +342,12 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
 
             // The ranged random function is upper exclusive
             max_key = current->content->key + 1;
+         } else {
+            std::cout.write("Não é possivel realizar testes em estruturas vazias!\n", 55);
+            return;
          }
 
+         // Execute a limited hard-fixed amount of times, to avoid undecidability
          for (
             uint64_t iteration_limit = ITERATION_LIMIT * sample_size;
             sample.in.count < sample_size || sample.out.count < sample_size;
@@ -334,15 +361,21 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
                return;
             }
 
+            // Generates a random key in range, doesn't actully check if it
+            // hasn't already been generated
             Record::key_t key = Random::rand(min_key, max_key);
             Record* record;
 
+            // Mark the start
             auto start = std::chrono::high_resolution_clock::now();
 
+            // Search for the key
             record = Tree::search(structure->node.tree, key);
 
+            // Mark the end
             auto end = std::chrono::high_resolution_clock::now();
 
+            // If the key has been found, count as in, if not, count as out
             if (record) {
                if (sample.in.count < sample_size) {
                   sample.in.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
@@ -858,8 +891,7 @@ invalid_input:
    return exit_t::SUCCESS;
 }
 
-// match two strings (case sensitevely) and consume the second
-// word if it matches
+// match two strings (case sensitevely) and consume the second word if it matches
 bool JAST::match_consume_word(const char* compare, char*& consume) {
 
    for (uint64_t i = 0; compare[i] == consume[i]; i++) {
@@ -872,8 +904,7 @@ bool JAST::match_consume_word(const char* compare, char*& consume) {
    return false;
 }
 
-// parse a string containing a decimal integer representation
-// while consuming the word
+// parse a string containing a decimal integer representation while consuming the word
 uint64_t JAST::string_to_int_consume(char*& consume) {
    uint64_t num = 0;
    bool sign = false;

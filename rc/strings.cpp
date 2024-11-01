@@ -17,6 +17,7 @@ const char NO_STRUCT_FOUND[]    = "Nenhuma estrutura encontrada!\n";
 const char STRUCT_NOT_FOUND[]   = "Estrutura não encontrada!\n"; 
 const char FAIL_PRINT_TREE[]    = "Falha ao imprimir a árvore\n";
 const char CONFIRM_EXIT[]       = "Você quer realmente sair ([s]im ou [n]ão)? ";
+const char NOT_ENOUGH_ARGS[]    = "Argumentos insuficientes\n";
 const char INVALID_INPUT[]      = "Entrada Inválida\n";
 const char NO_STRUCT_FOCUS[]    = "Nenhuma estrutura está em foco!\n";
 

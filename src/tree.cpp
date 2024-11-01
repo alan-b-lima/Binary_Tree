@@ -119,8 +119,7 @@ void Tree::print(Node* node, int64_t level) {
 
          if (level > depth) {
 
-            print_record(node->content, "{$0, $1, $2, ");
-            std::cout << node->height << ", " << depth << '\n';
+            print_record(node->content, "{$0, $1, $2\n");
 
             if (node->rght_child) {
                node = node->rght_child;
@@ -176,7 +175,10 @@ void Tree::destruct(Node** node, void(*record_handler)(Record*)) {
    Node** stack = nullptr;
    if ((*node)->height) {
       stack = Stack::allocate<Node*>((*node)->height);
-      if (!stack) destruct_s(node, record_handler);
+      if (!stack) {
+         destruct_s(node, record_handler);
+         return;
+      }
    }
 
    Node* current = *node;
