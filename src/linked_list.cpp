@@ -19,6 +19,21 @@ Record* LinkedList::search(Node* node, Record::key_t key) {
    return nullptr;
 }
 
+Record* LinkedList::search_c(Node* node, Record::key_t key, uint64_t& comparisons) {
+   
+   comparisons++;
+   while (node) {
+      
+      comparisons++;
+      if (node->content->key == key)
+         return node->content;
+
+      node = node->next_node;
+   }
+
+   return nullptr;
+}
+
 void LinkedList::print(Node* node, int64_t level) {
    if (!node) {
       std::cout.write("{}\n", 3);

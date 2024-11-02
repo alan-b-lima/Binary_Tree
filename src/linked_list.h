@@ -14,6 +14,9 @@ namespace LinkedList {
    exit_t insert(Node**, Record*);
    Record* search(Node*, Record::key_t);
 
+   // Search counting comparisons
+   Record* search_c(Node*, Record::key_t, uint64_t&);
+
    void print(Node*, int64_t = -1);
 
    void destruct(Node**, void(*)(Record*) = nullptr);

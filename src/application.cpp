@@ -278,9 +278,11 @@ exit_t JAST::interpreter(char* prompt) {
 
 exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
 
+   get_terminal_dimensions(state.width, state.height);
+
    // Identifies whether the supplied args are enough
    if (!argc || (prompt[0] == '$' && argc == 1)) {
-      std::cout.write(NOT_ENOUGH_ARGS, sizeof(NOT_ENOUGH_ARGS) - 1);
+      print_in_column(NOT_ENOUGH_ARGS, 0, state.width);
       return exit_t::SUCCESS;
    }
 
@@ -307,36 +309,38 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
 
    // Load the sample size
    uint64_t sample_size = __aut_str_to_int(prompt);
+   if (sample_size < 2) {
+      esc::color(esc::CYAN, esc::FOREGROUND);
+      print_in_column("Amostra muito pequena!\n", 0, state.width);
+      esc::reset();
+
+      return exit_t::SUCCESS;
+   }
 
    struct {
       struct {
          // The mean and variance won't actually be calculated
          // in this variables, they're just helpers
          uint64_t mean, variance;
+         uint64_t comparisons;
          uint64_t count;
       } in, out;
    } sample = {
-      { 0, 0, 0 },
-      { 0, 0, 0 }
+      { 0, 0, 0, 0 },
+      { 0, 0, 0, 0 }
    };
 
-   Record::key_t min_key = 0, max_key = 0; // No need for initalization, compiler's being mean
+   // Store the min and max keys, will use them to generate key in the range of the tree
+   Record::key_t min_key = 0, max_key = 1; // No need for initalization, compiler's being mean
+
    Record::key_t* sample_keys = Stack::allocate<Record::key_t>(2 * sample_size);
    if (!sample_keys) return exit_t::BAD_ALLOCATION;
 
-   get_terminal_dimensions(state.width, state.height);
-
    std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
-   using time_order = std::chrono::microseconds;
 
    switch (structure->kind) {
 
       case kind_t::LINKED_LIST: {
-
-         // Store the min and max keys, will use them to generate key in the
-         // range of the tree
-         Record::key_t min_key = structure->node.linked_list->content->key;
-         Record::key_t max_key = structure->node.linked_list->content->key;
 
          if (!structure->node.linked_list) {
             print_in_column(WARNING_EMPTY_STRUCT, 0, state.width);
@@ -344,6 +348,9 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
             Stack::release(sample_keys);
             return exit_t::SUCCESS;
          }
+
+         min_key = structure->node.linked_list->content->key;
+         max_key = structure->node.linked_list->content->key;
 
          LinkedList::Node* current = structure->node.linked_list->next_node;
          while (current) {
@@ -408,6 +415,8 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
       Record::key_t key = Random::rand(min_key, max_key);
       Record* record = nullptr;
 
+      uint64_t comparisons = 0;
+
       // Checks whether the key has already been generated
       uint64_t i = 0;
       for (; i < sample.in.count + sample.out.count; i++) {
@@ -433,6 +442,9 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
 
             // Mark the end
             end = std::chrono::high_resolution_clock::now();
+            
+            // Search again, this time counting comparisons
+            LinkedList::search_c(structure->node.linked_list, key, comparisons);
 
          } break;
 
@@ -448,20 +460,26 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
             // Mark the end
             end = std::chrono::high_resolution_clock::now();
 
+            // Search again, this time counting comparisons
+            Tree::search_c(structure->node.tree, key, comparisons);
+
          } break;
       }
 
+      using time_order = std::chrono::microseconds;
       uint64_t span = std::chrono::duration_cast<time_order>(end - start).count();
 
       // If the key has been found, count as in, if not, count as out
       if (record) {
          if (sample.in.count < sample_size) {
+            sample.in.comparisons += comparisons;
             sample.in.variance += span * span;
             sample.in.mean += span;
             sample.in.count++;
          }
       } else {
          if (sample.out.count < sample_size) {
+            sample.out.comparisons += comparisons;
             sample.out.variance += span * span;
             sample.out.mean += span;
             sample.out.count++;
@@ -484,11 +502,13 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
 
    // Present keys
    std::cout.write("\nChaves presentes:\n", 19);
+   std::cout << "   Número médio de comparações: " << ((double)sample.in.comparisons / (double)sample_size) << '\n';
    std::cout << "   Tempo médio: " << mean_in << " microsegundos\n";
    std::cout << "   Desvio padrão: " << sd_in << " microsegundos\n";
 
    // Non-existing keys
    std::cout.write("\nChaves inexistentes:\n", 22);
+   std::cout << "   Número médio de comparações: " << ((double)sample.out.comparisons / (double)sample_size) << '\n';
    std::cout << "   Tempo médio: " << mean_out << " microsegundos\n";
    std::cout << "   Desvio padrão: " << sd_out << " microsegundos\n";
 

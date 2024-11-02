@@ -23,7 +23,7 @@ exit_t Tree::insert(Node** node, Record* record) {
          increment_path = *node;
 
       parent_height = (*node)->height;
-      
+
       if (false);
 
       else if (record->key < (*node)->content->key)
@@ -150,7 +150,7 @@ exit:
    Stack::release(branches);
 }
 
-Record* Tree::search(Tree::Node* node, Record::key_t key) {
+Record* Tree::search(Node* node, Record::key_t key) {
 
    while (node) {
 
@@ -161,6 +161,30 @@ Record* Tree::search(Tree::Node* node, Record::key_t key) {
 
       else if (key > node->content->key)
          node = node->rght_child;
+
+      else /* (key == node->content->key) */
+         return node->content;
+   }
+
+   return nullptr;
+}
+
+Record* Tree::search_c(Node* node, Record::key_t key, uint64_t& comparisons) {
+
+   comparisons++;
+   while (node) {
+
+      comparisons++;
+      if (key < node->content->key) {
+         node = node->left_child;
+         continue;
+      }
+
+      comparisons++;
+      if (key > node->content->key) {
+         node = node->rght_child;
+         continue;
+      }
 
       else /* (key == node->content->key) */
          return node->content;
