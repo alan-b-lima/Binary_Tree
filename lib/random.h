@@ -21,14 +21,14 @@ namespace Random {
       __seed = seed;
    }
 
-   // Generate pseudorandom 32 unsigned bit integers 
+   // Generate pseudorandom 32 unsigned bit integers
    inline uint32_t rand() {
-      __seed = __seed * 6364136223846793005 + 1442695040888963407;
+      __seed = __seed * 0x5851'F42D'4C95'7F2D + 0x1405'7B7E'F767'814F;
       return (__seed & 0x0000'FFFF'FFFF'0000) >> 16;
    }
 
    // Generate pseudorandom integers in the range [minv, maxv)
-   inline uint32_t rand(uint32_t minv, uint32_t _maxv) {
-      return minv + (rand() % (_maxv - minv));
+   inline uint32_t rand(uint32_t minv, uint32_t maxv) {
+      return minv + (rand() % (maxv - minv));
    }
 }

@@ -10,111 +10,185 @@ void JAST::cmd_help(uint64_t argc, char* prompt) {
    switch (command) {
 
       case command_t::_help: {
-         std::cout.write(
-            "Lista de todos os comandos:\n\n"
-            "   chfocus Muda a estrutura em foco\n"
-            "   create  Cria um registro e o insere numa estrutura\n"
-            "   exit    Mesmo que `quit`\n"
-            "   help    Mostra essa tela\n"
-            "   init    Mostra a tela de entrada\n"
-            "   load    Carrega dados de um arquivo para alguma estrutura\n"
-            "   new     Cria uma nova estrutura\n"
-            "   print   Imprime estruturas\n"
-            "   quit    Encerra a aplicação\n"
-            "   save    Salva os dados de uma estrutura para algum arquivo\n"
-            "   test    Realisa testes de busca na estrutura em foco\n\n"
-            "Digite `help <comando>` para obter mais informações sobre um comando\n"
-            , 560);
+         uint64_t start = 11;
+
+         print_in_column("Lista de todos os comandos:\n\n", 0, state.width);
+
+         print_in_column("chfocus", 3, start);
+         print_in_column("Muda a estrutura em foco\n", start, state.width - start);
+
+         print_in_column("create", 3, start);
+         print_in_column("Cria um registro e o insere numa estrutura\n", start, state.width - start);
+
+         print_in_column("exit", 3, start);
+         print_in_column("Mesmo que `quit`\n", start, state.width - start);
+
+         print_in_column("help", 3, start);
+         print_in_column("Mostra essa tela\n", start, state.width - start);
+
+         print_in_column("init", 3, start);
+         print_in_column("Mostra a tela de entrada\n", start, state.width - start);
+
+         print_in_column("load", 3, start);
+         print_in_column("Carrega dados de um arquivo para alguma estrutura\n", start, state.width - start);
+
+         print_in_column("new", 3, start);
+         print_in_column("Cria uma nova estrutura\n", start, state.width - start);
+
+         print_in_column("print", 3, start);
+         print_in_column("Imprime estruturas\n", start, state.width - start);
+
+         print_in_column("quit", 3, start);
+         print_in_column("Encerra a aplicação\n", start, state.width - start);
+
+         print_in_column("save", 3, start);
+         print_in_column("Salva os dados de uma estrutura para algum arquivo\n", start, state.width - start);
+
+         print_in_column("test", 3, start);
+         print_in_column("Realisa testes de busca em estruturas\n", start, state.width - start);
+
+         print_in_column("\nDigite `help <comando>` para obter mais informações sobre um comando\n", 0, state.width);
          break;
       }
 
       case command_t::_chfocus: {
-         std::cout.write(
-            "chfocus $<id>  - Foca a estrutura de id <id>\n"
-            "chfocus remove - Remove o foco de estrutrura\n"
-            "chfocus        - Mostra a estrutrura em foco\n"
-            , 135);
+         uint64_t start = 15;
+
+         print_in_column("chfocus $<id>", 0, start);
+         print_in_column("Foca a estrutura de id <id>\n", start, state.width - start);
+
+         print_in_column("chfocus remove", 0, start);
+         print_in_column("Remove o foco de estrutrura\n", start, state.width - start);
+
+         print_in_column("chfocus", 0, start);
+         print_in_column("Mostra a estrutrura em foco\n", start, state.width - start);
+
+         esc::move_to(0);
          break;
       }
 
       case command_t::_create: {
-         std::cout.write(
-            "create $<id> <key> <data> <name> - Cria um registro e insere na estrutura de id <id>\n"
-            "create $<id> random              - Cria um registro aleatório e insere na estrutura de id <id>\n"
-            "create <key> <data> <name>       - Cria um registro e insere na estrutrura em foco\n"
-            "create random                    - Cria um registro aleatório e insere na estrutura em foco\n"
-            , 357);
+         uint64_t start = 33;
+
+         print_in_column("create $<id> <key> <data> <name>", 0, start);
+         print_in_column("Cria um registro e insere na estrutura de id <id>\n", 0, state.width - start);
+
+         print_in_column("create $<id> random", 0, start);
+         print_in_column("Cria um registro aleatório e insere na estrutura de id <id>\n", 0, state.width - start);
+
+         print_in_column("create <key> <data> <name>", 0, start);
+         print_in_column("Cria um registro e insere na estrutrura em foco\n", 0, state.width - start);
+
+         print_in_column("create random", 0, start);
+         print_in_column("Cria um registro aleatório e insere na estrutura em foco\n", 0, state.width - start);
+
+         esc::move_to(0);
          break;
       }
 
       case command_t::_init: {
-         std::cout.write(
-            "init - Mostra a tela de entrada\n"
-            , 0);
+         uint64_t start = 5;
+
+         print_in_column("init", 0, start);
+         print_in_column("Mostra a tela de entrada\n", start, state.width - start);
+
+         esc::move_to(0);
          break;
       }
 
       case command_t::_load: {
-         std::cout.write(
-            "load <struct> <filename> - Carrega os registros de <filename> para a estrutura em foco\n"
-            "   <struct>: tree; avl ou avl_tree; linked_list ou ll\n"
-            , 141);
+         uint64_t start = 25;
+
+         print_in_column("load <struct> <filename>", 0, start);
+         print_in_column("Carrega os registros de <filename> para a estrutura em foco\n", start, state.width - start);
+
+         print_in_column("<struct>: tree; avl ou avl_tree; linked_list ou ll\n", 3, state.width - 3);
+
+         esc::move_to(0);
          break;
       }
 
       case command_t::_new: {
-         std::cout.write(
-            "new <struct>                        - Cria uma nova estrutura vazia\n"
-            "new <struct> <count> <rule>         - Cria uma nova estrutura com <count> registros aleatórios\n"
-            "new <struct> <count> <rule> <order> - Cria uma nova estrutura com <count> registros aleatórios,\n"
-            "                                      seguindo uma regra <rule> e chaves em [0, <count> * <order>)\n"
-            "   <struct>: tree; avl ou avl_tree; linked_list ou ll\n"
-            "   <rule>: ordered, random, inversed\n"
-            , 451);
+         uint64_t start = 36;
+
+         print_in_column("new <struct>", 0, start);
+         print_in_column("Cria uma nova estrutura vazia\n", start, state.width - start);
+
+         print_in_column("new <struct> <count> <rule>", 0, start);
+         print_in_column("Cria uma nova estrutura com <count> registros aleatórios\n", start, state.width - start);
+
+         print_in_column("new <struct> <count> <rule> <order>", 0, start);
+         print_in_column("Cria uma nova estrutura com <count> registros aleatórios, seguindo uma regra <rule> e chaves em [0, <count> * <order>)\n", start, state.width - start);
+
+         print_in_column("<struct>: tree; avl ou avl_tree; linked_list ou ll\n<rule>: ordered, random, inversed\n", 3, state.width - 3);
+
+         esc::move_to(0);
          break;
       }
 
       case command_t::_print: {
-         print_in_column(
-            "print               - Imprime a estrutura em foco, se nenhuma estrutura em foco, imprime o primeiro registro de todas estruturas e seus id's\n"
-            "print <limit>       - Imprime a estrutura em foco, se existir, limitando a profundidade em <limit>\n"
-            "print $<id>         - Imprime a estrutura de id <id>, se existir\n"
-            "print $<id> <limit> - Imprime a estrutura de id <id>, se existir, limitando a profundidade em <limit>\n"
-            "print all           - imprime o primeiro registro de todas estruturas e seus id's\n"
-            , 0, state.width);
+         uint64_t start = 20;
+
+         print_in_column("print", 0, start);
+         print_in_column("Imprime a estrutura em foco, se nenhuma estrutura em foco, imprime o primeiro registro de todas estruturas e seus id's\n", start, state.width - start);
+
+         print_in_column("print <limit>", 0, start);
+         print_in_column("Imprime a estrutura em foco, se existir, limitando a profundidade em <limit>\n", start, state.width - start);
+
+         print_in_column("print $<id>", 0, start);
+         print_in_column("Imprime a estrutura de id <id>, se existir\n", start, state.width - start);
+
+         print_in_column("print $<id> <limit>", 0, start);
+         print_in_column("Imprime a estrutura de id <id>, se existir, limitando a profundidade em <limit>\n", start, state.width - start);
+
+         print_in_column("print all", 0, start);
+         print_in_column("imprime o primeiro registro de todas estruturas e seus id's\n", start, state.width - start);
+
+         esc::move_to(0);
          break;
       }
 
       case command_t::_quit: {
-         std::cout.write(
-            "exit - Encerra a aplicação\n"
-            "quit - Encerra a aplicação\n"
-            , 58);
+         uint64_t start = 5;
+
+         print_in_column("exit", 0, start);
+         print_in_column("Encerra a aplicação\n", start, state.width - start);
+
+         print_in_column("quit", 0, start);
+         print_in_column("Encerra a aplicação\n", start, state.width - start);
+
+         esc::move_to(0);
          break;
       }
 
       case command_t::_save: {
-         std::cout.write(
-            "save <filename>       - Salva os registros da estrutura em foco no arquivo <filename>\n"
-            "save $<id> <filename> - Salva os registros da estrutura de id <id> no arquivo <filename>\n"
-            , 175);
+         uint64_t start = 22;
+
+         print_in_column("save <filename>", 0, start);
+         print_in_column("Salva os registros da estrutura em foco no arquivo <filename>\n", start, state.width - start);
+
+         print_in_column("save $<id> <filename>", 0, start);
+         print_in_column("Salva os registros da estrutura de id <id> no arquivo <filename>\n", start, state.width - start);
+
+         esc::move_to(0);
          break;
       }
 
       case command_t::_test: {
-         uint64_t width = 25;
+         uint64_t start = 25;
 
-         print_in_column("test $<id> <sample_size>", 0, state.width);
-         print_in_column("Realiza testes <sample_size> de busca na estrutura de id <id>\n", width, state.width);
+         print_in_column("test $<id> <sample_size>", 0, start);
+         print_in_column("Realiza testes <sample_size> de busca na estrutura de id <id>\n", start, state.width - start);
 
-         print_in_column("test $<id> <sample_size>", 0, state.width);
-         print_in_column("test $<id> <sample_size> - Realiza testes <sample_size> de busca na estrutura em foco\n", width, state.width);
-         
+         print_in_column("test <sample_size>", 0, start);
+         print_in_column("Realiza testes <sample_size> de busca na estrutura em foco\n", start, state.width - start);
+
+         esc::move_to(0);
          break;
       }
 
       default: {
-         std::cout.write(COMMAND_NOT_FOUND, sizeof(COMMAND_NOT_FOUND) - 1);
+         print_in_column(COMMAND_NOT_FOUND, 0, state.width);
          break;
       }
    }
@@ -143,7 +217,7 @@ void JAST::init() {
    lines += print_in_column(AUTHORS, little_chick_width, state.width - little_chick_width);
 
    esc::italic();
-   lines += print_in_column(AUTHORS_NAMES, little_chick_width, state.width - little_chick_width);
+   lines += print_in_column(AUTHORS_NAMES, little_chick_width + 3, state.width - (little_chick_width + 3));
 
    esc::reset();
    esc::move_to(2 + maximum(lines, 14 /* little_chick_height */), 0);
@@ -202,12 +276,12 @@ exit_t JAST::interpreter(char* prompt) {
    return exit_t::SUCCESS;
 }
 
-void JAST::cmd_test(uint64_t argc, char* prompt) {
+exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
 
    // Identifies whether the supplied args are enough
    if (!argc || (prompt[0] == '$' && argc == 1)) {
       std::cout.write(NOT_ENOUGH_ARGS, sizeof(NOT_ENOUGH_ARGS) - 1);
-      return;
+      return exit_t::SUCCESS;
    }
 
    StructStack* structure;
@@ -220,14 +294,14 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
       // If not found, quits
       if (!structure) {
          std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
-         return;
+         return exit_t::SUCCESS;
       }
 
    // If an id was not supplies verifies whether there's a focused structure
    } else if (!state.focused) {
 
       std::cout.write(NO_STRUCT_FOCUS, sizeof(NO_STRUCT_FOCUS) - 1);
-      return;
+      return exit_t::SUCCESS;
 
    } else structure = state.focused;
 
@@ -236,15 +310,24 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
 
    struct {
       struct {
-         uint64_t count, span;
+         // The mean and variance won't actually be calculated
+         // in this variables, they're just helpers
+         uint64_t mean, variance;
+         uint64_t count;
       } in, out;
-   } sample;
+   } sample = {
+      { 0, 0, 0 },
+      { 0, 0, 0 }
+   };
 
-   sample.out.span = 0;
-   sample.in.span = 0;
+   Record::key_t min_key, max_key;
+   Record::key_t* sample_keys = Stack::allocate<Record::key_t>(2 * sample_size);
+   if (!sample_keys) return exit_t::BAD_ALLOCATION;
 
-   sample.out.count = 0;
-   sample.in.count = 0;
+   get_terminal_dimensions(state.width, state.height);
+
+   std::chrono::time_point<std::chrono::high_resolution_clock> start, end;
+   using time_order = std::chrono::microseconds;
 
    switch (structure->kind) {
 
@@ -256,8 +339,10 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
          Record::key_t max_key = structure->node.linked_list->content->key;
 
          if (!structure->node.linked_list) {
-            std::cout.write("Não é possivel realizar testes em estruturas vazias!\n", 55);
-            return;
+            print_in_column(WARNING_EMPTY_STRUCT, 0, state.width);
+
+            Stack::release(sample_keys);
+            return exit_t::SUCCESS;
          }
 
          LinkedList::Node* current = structure->node.linked_list->next_node;
@@ -275,52 +360,12 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
          // The ranged random function is upper exclusive
          max_key++;
 
-         // Execute a limited hard-fixed amount of times, to avoid undecidability
-         for (
-            uint64_t iteration_limit = ITERATION_LIMIT * sample_size;
-            sample.in.count < sample_size || sample.out.count < sample_size;
-            iteration_limit--) {
-
-            if (iteration_limit <= 0) {
-               std::cout.write("Não foram encontradas chaves de teste suficientes!\n", 53);
-               return;
-            }
-
-            // Generates a random key in range, doesn't actully check if it
-            // hasn't already been generated
-            Record::key_t key = Random::rand(min_key, max_key);
-            Record* record;
-
-            // Mark the start
-            auto start = std::chrono::high_resolution_clock::now();
-
-            // Search for the key
-            record = LinkedList::search(structure->node.linked_list, key);
-
-            // Mark the end
-            auto end = std::chrono::high_resolution_clock::now();
-
-            // If the key has been found, count as in, if not, count as out
-            if (record) {
-               if (sample.in.count < sample_size) {
-                  sample.in.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-                  sample.in.count++;
-               }
-            } else {
-               if (sample.out.count < sample_size) {
-                  sample.out.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-                  sample.out.count++;
-               }
-            }
-         }
-
       } break;
 
       case kind_t::AVL_TREE:
       case kind_t::TREE: {
 
          Tree::Node* current = structure->node.tree;
-         Record::key_t min_key, max_key;
 
          if (current) {
             while (current->left_child)
@@ -335,63 +380,120 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
             // The ranged random function is upper exclusive
             max_key = current->content->key + 1;
          } else {
-            std::cout.write("Não é possivel realizar testes em estruturas vazias!\n", 55);
-            return;
-         }
+            print_in_column(WARNING_EMPTY_STRUCT, 0, state.width);
 
-         // Execute a limited hard-fixed amount of times, to avoid undecidability
-         for (
-            uint64_t iteration_limit = ITERATION_LIMIT * sample_size;
-            sample.in.count < sample_size || sample.out.count < sample_size;
-            iteration_limit--) {
-
-            if (iteration_limit <= 0) {
-               std::cout.write("Não foram encontradas chaves de teste suficientes!\n", 53);
-               return;
-            }
-
-            // Generates a random key in range, doesn't actully check if it
-            // hasn't already been generated
-            Record::key_t key = Random::rand(min_key, max_key);
-            Record* record;
-
-            // Mark the start
-            auto start = std::chrono::high_resolution_clock::now();
-
-            // Search for the key
-            record = Tree::search(structure->node.tree, key);
-
-            // Mark the end
-            auto end = std::chrono::high_resolution_clock::now();
-
-            // If the key has been found, count as in, if not, count as out
-            if (record) {
-               if (sample.in.count < sample_size) {
-                  sample.in.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-                  sample.in.count++;
-               }
-            } else {
-               if (sample.out.count < sample_size) {
-                  sample.out.span += std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-                  sample.out.count++;
-               }
-            }
+            Stack::release(sample_keys);
+            return exit_t::SUCCESS;
          }
 
       } break;
    }
 
-   std::cout << "Teste de " << sample_size << (sample_size == 1 ? " chave" : " chaves");
+   // Execute a limited hard-fixed amount of times, to avoid undecidability
+   for (
+      uint64_t iteration_limit = ITERATION_LIMIT * sample_size;
+      sample.in.count < sample_size || sample.out.count < sample_size;
+      iteration_limit--) {
+
+   loop_again:
+      if (iteration_limit <= 0) {
+         print_in_column(NOT_ENOUGH_KEYS, 0, state.width);
+
+         Stack::release(sample_keys);
+         return exit_t::SUCCESS;
+      }
+
+      // Generates a random key in range, doesn't actully check if it
+      // hasn't already been generated
+      Record::key_t key = Random::rand(min_key, max_key);
+      Record* record;
+
+      // Checks whether the key has already been generated
+      uint64_t i = 0;
+      for (; i < sample.in.count + sample.out.count; i++) {
+         if (key != sample_keys[i]) continue;
+
+         iteration_limit--;
+         goto loop_again;
+      }
+
+      sample_keys[i] = key;
+
+      // The time marking operation is common to both and could be put in
+      // evidence, however, since we're marking, every (micro)second counts
+      switch (structure->kind) {
+
+         case kind_t::LINKED_LIST: {
+
+            // Mark the start
+            start = std::chrono::high_resolution_clock::now();
+
+            // Search for the key
+            record = LinkedList::search(structure->node.linked_list, key);
+
+            // Mark the end
+            end = std::chrono::high_resolution_clock::now();
+
+         } break;
+
+         case kind_t::AVL_TREE:
+         case kind_t::TREE: {
+
+            // Mark the start
+            start = std::chrono::high_resolution_clock::now();
+
+            // Search for the key
+            record = Tree::search(structure->node.tree, key);
+
+            // Mark the end
+            end = std::chrono::high_resolution_clock::now();
+
+         } break;
+      }
+
+      uint64_t span = std::chrono::duration_cast<time_order>(end - start).count();
+
+      // If the key has been found, count as in, if not, count as out
+      if (record) {
+         if (sample.in.count < sample_size) {
+            sample.in.variance += span * span;
+            sample.in.mean += span;
+            sample.in.count++;
+         }
+      } else {
+         if (sample.out.count < sample_size) {
+            sample.out.variance += span * span;
+            sample.out.mean += span;
+            sample.out.count++;
+         }
+      }
+   }
+
+   double mean_out = (double)sample.out.mean / (double)sample_size;
+   double mean_in = (double)sample.in.mean / (double)sample_size;
+
+   double sd_out = ((double)sample.out.variance - mean_out * mean_out) / (double)sample_size;
+   double sd_in = ((double)sample.in.variance - mean_in * mean_in) / (double)sample_size;
+
+   std::cout << "Teste de " << sample_size << " chaves\n";
+
+   // std::cout.put('\n');
+   // std::cout << sample_keys[0];
+   // for (uint64_t i = 0; i < 2 * sample_size; i++)
+   //    std::cout << ", " << sample_keys[i];
 
    // Present keys
-   std::cout.write("\nChaves presentes:", 18);
-   std::cout << "\n   Tempo médio: " << ((double)sample.in.span / (double)sample_size) << "ms";
+   std::cout.write("\nChaves presentes:\n", 19);
+   std::cout << "   Tempo médio: " << mean_in << " microsegundos\n";
+   std::cout << "   Desvio padrão: " << sd_in << " microsegundos\n";
 
    // Non-existing keys
-   std::cout.write("\nChaves inexistentes:", 21);
-   std::cout << "\n   Tempo médio: " << ((double)sample.out.span / (double)sample_size) << "ms";
+   std::cout.write("\nChaves inexistentes:\n", 22);
+   std::cout << "   Tempo médio: " << mean_out << " microsegundos\n";
+   std::cout << "   Desvio padrão: " << sd_out << " microsegundos\n";
 
-   std::cout.put('\n');
+   Stack::release(sample_keys);
+   return exit_t::SUCCESS;
 }
 
 void JAST::cmd_chfocus(uint64_t argc, char* prompt) {
@@ -402,20 +504,19 @@ void JAST::cmd_chfocus(uint64_t argc, char* prompt) {
          return;
       }
 
+      Record* record;
+      std::cout << '$' << state.focused->id << " - ";
+
       if (state.focused->kind == kind_t::LINKED_LIST) {
          std::cout.write(LL_IDENTIFIER, sizeof(LL_IDENTIFIER) - 1);
-         std::cout.put('\n');
-
-         LinkedList::print(state.focused->node.linked_list);
-
+         record = safe_access(state.focused->node.linked_list, content, nullptr);
       } else {
          if (state.focused->kind == kind_t::TREE) std::cout.write(TREE_IDENTIFIER, sizeof(TREE_IDENTIFIER) - 1);
          else std::cout.write(AVL_TREE_IDENTIFIER, sizeof(AVL_TREE_IDENTIFIER) - 1);
-         std::cout.put('\n');
-
-         Tree::print(state.focused->node.tree);
+         record = safe_access(state.focused->node.tree, content, nullptr);
       }
 
+      print_record(record, "{$0: $1, $2\n");
       return;
    }
 
@@ -917,6 +1018,9 @@ uint64_t JAST::print_in_column(const char* text, word start, word width) {
 
                length = 0;
                index = 0;
+            } else {
+               std::cout.put('\n');
+               text++;
             }
 
             esc::move_to(start);

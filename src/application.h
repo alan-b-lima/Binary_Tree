@@ -149,10 +149,10 @@ namespace JAST {
    exit_t cmd_load(uint64_t, char*);
    exit_t cmd_new(uint64_t, char*);
    exit_t cmd_save(uint64_t, char*);
+   exit_t cmd_test(uint64_t, char*);
    
    void cmd_chfocus(uint64_t, char*);
    void cmd_print(uint64_t, char*);
-   void cmd_test(uint64_t, char*);
 
    // The interpreter
    exit_t interpreter(char* prompt);
