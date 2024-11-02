@@ -133,8 +133,10 @@ namespace JAST {
 
    template <uint64_t str_size>
    byte access_map(Map<str_size>*, uint64_t, char*&);
-   bool match_consume_word(const char*, char*&);
-   uint64_t string_to_int_consume(char*&);
+   
+   // __aut for finite automaton, they will consume the prompt
+   bool __aut_match_word(const char*, char*&);
+   uint64_t __aut_str_to_int(char*&);
 
    uint64_t print_in_column(const char*, word, word);
 

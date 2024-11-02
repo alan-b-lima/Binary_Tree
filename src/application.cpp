@@ -2,6 +2,8 @@
 
 void JAST::cmd_help(uint64_t argc, char* prompt) {
 
+   get_terminal_dimensions(state.width, state.height);
+
    byte command = command_t::_help;
    if (argc) command = access_map(COMMANDS, COMMAND_LIST_SIZE, prompt);
 
@@ -23,7 +25,8 @@ void JAST::cmd_help(uint64_t argc, char* prompt) {
             "   test    Realisa testes de busca na estrutura em foco\n\n"
             "Digite `help <comando>` para obter mais informações sobre um comando\n"
             , 560);
-      } break;
+         break;
+      }
 
       case command_t::_chfocus: {
          std::cout.write(
@@ -72,14 +75,13 @@ void JAST::cmd_help(uint64_t argc, char* prompt) {
       }
 
       case command_t::_print: {
-         std::cout.write(
-            "print               - Imprime a estrutura em foco, se nenhuma estrutura em foco,\n"
-            "                      imprime o primeiro registro de todas estruturas e seus id's\n"
+         print_in_column(
+            "print               - Imprime a estrutura em foco, se nenhuma estrutura em foco, imprime o primeiro registro de todas estruturas e seus id's\n"
             "print <limit>       - Imprime a estrutura em foco, se existir, limitando a profundidade em <limit>\n"
             "print $<id>         - Imprime a estrutura de id <id>, se existir\n"
             "print $<id> <limit> - Imprime a estrutura de id <id>, se existir, limitando a profundidade em <limit>\n"
-            "print all           - imprime o primeiro registro de todas estruturas e seus id's\n\n"
-            , 512);
+            "print all           - imprime o primeiro registro de todas estruturas e seus id's\n"
+            , 0, state.width);
          break;
       }
 
@@ -100,18 +102,19 @@ void JAST::cmd_help(uint64_t argc, char* prompt) {
       }
 
       case command_t::_test: {
-         std::cout.write(
-            "test $<id> <sample_size> - Realiza testes <sample_size> de busca na estrutura de id <id>\n"
-            "test <sample_size>       - Realiza testes <sample_size> de busca na estrutura em foco\n"
-            , 0);
+         uint64_t width = 25;
+
+         print_in_column("test $<id> <sample_size>", 0, state.width);
+         print_in_column("Realiza testes <sample_size> de busca na estrutura de id <id>\n", width, state.width);
+
+         print_in_column("test $<id> <sample_size>", 0, state.width);
+         print_in_column("test $<id> <sample_size> - Realiza testes <sample_size> de busca na estrutura em foco\n", width, state.width);
+         
          break;
       }
 
       default: {
-         esc::color(esc::YELLOW, esc::FOREGROUND);
          std::cout.write(COMMAND_NOT_FOUND, sizeof(COMMAND_NOT_FOUND) - 1);
-         esc::reset();
-
          break;
       }
    }
@@ -192,9 +195,7 @@ exit_t JAST::interpreter(char* prompt) {
       case command_t::_test: cmd_test(argc - 1, prompt); break;
 
       case NOT_FOUND:
-         esc::color(esc::YELLOW, esc::FOREGROUND);
          std::cout.write(COMMAND_NOT_FOUND, sizeof(COMMAND_NOT_FOUND) - 1);
-         esc::reset();
          break;
    }
 
@@ -205,10 +206,7 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
 
    // Identifies whether the supplied args are enough
    if (!argc || (prompt[0] == '$' && argc == 1)) {
-      esc::color(esc::YELLOW, esc::FOREGROUND);
       std::cout.write(NOT_ENOUGH_ARGS, sizeof(NOT_ENOUGH_ARGS) - 1);
-      esc::reset();
-
       return;
    }
 
@@ -217,17 +215,14 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
    if (prompt[0] == '$') {
 
       // Tries to load an id and find its structure
-      structure = find_structure(string_to_int_consume(++prompt));
-      
+      structure = find_structure(__aut_str_to_int(++prompt));
+
       // If not found, quits
       if (!structure) {
-         esc::color(esc::BLUE, esc::FOREGROUND);
          std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
-         esc::reset();
-
          return;
       }
-      
+
    // If an id was not supplies verifies whether there's a focused structure
    } else if (!state.focused) {
 
@@ -237,7 +232,7 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
    } else structure = state.focused;
 
    // Load the sample size
-   uint64_t sample_size = string_to_int_consume(prompt);
+   uint64_t sample_size = __aut_str_to_int(prompt);
 
    struct {
       struct {
@@ -287,10 +282,7 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
             iteration_limit--) {
 
             if (iteration_limit <= 0) {
-               esc::color(esc::BLUE, esc::FOREGROUND);
                std::cout.write("Não foram encontradas chaves de teste suficientes!\n", 53);
-               esc::reset();
-
                return;
             }
 
@@ -354,10 +346,7 @@ void JAST::cmd_test(uint64_t argc, char* prompt) {
             iteration_limit--) {
 
             if (iteration_limit <= 0) {
-               esc::color(esc::BLUE, esc::FOREGROUND);
                std::cout.write("Não foram encontradas chaves de teste suficientes!\n", 53);
-               esc::reset();
-
                return;
             }
 
@@ -431,24 +420,20 @@ void JAST::cmd_chfocus(uint64_t argc, char* prompt) {
    }
 
    if (prompt[0] == '$') {
-      state.focused = find_structure(string_to_int_consume(++prompt));
+      state.focused = find_structure(__aut_str_to_int(++prompt));
       if (!state.focused) {
-         esc::color(esc::BLUE, esc::FOREGROUND);
          std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
-         esc::reset();
       }
 
       return;
    }
 
-   if (match_consume_word("remove", prompt)) {
+   if (__aut_match_word("remove", prompt)) {
       state.focused = nullptr;
       return;
    }
 
-   esc::color(esc::RED, esc::FOREGROUND);
    std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
-   esc::reset();
 }
 
 exit_t JAST::cmd_create(uint64_t argc, char* prompt) {
@@ -458,14 +443,11 @@ exit_t JAST::cmd_create(uint64_t argc, char* prompt) {
       StructStack* structure;
 
       if (prompt[0] == '$') {
-         structure = find_structure(string_to_int_consume(++prompt));
+         structure = find_structure(__aut_str_to_int(++prompt));
          argc--;
 
          if (!structure) {
-            esc::color(esc::BLUE, esc::FOREGROUND);
             std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
-            esc::reset();
-
             return exit_t::SUCCESS;
          }
 
@@ -480,12 +462,12 @@ exit_t JAST::cmd_create(uint64_t argc, char* prompt) {
       if (!record) return exit_t::BAD_ALLOCATION;
 
       // Check whether the record should be random
-      if (!match_consume_word("random", prompt)) {
+      if (!__aut_match_word("random", prompt)) {
 
          if (argc < 3) goto invalid_input;
 
-         record->key = string_to_int_consume(prompt);
-         int data = string_to_int_consume(prompt);
+         record->key = __aut_str_to_int(prompt);
+         int data = __aut_str_to_int(prompt);
          write_record(record, data, prompt);
 
          exit_t response = exit_t::SUCCESS;
@@ -546,10 +528,7 @@ exit_t JAST::cmd_create(uint64_t argc, char* prompt) {
    }
 
 invalid_input:
-   esc::color(esc::RED, esc::FOREGROUND);
    std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
-   esc::reset();
-
    return exit_t::SUCCESS;
 }
 
@@ -565,10 +544,7 @@ exit_t JAST::cmd_load(uint64_t argc, char* prompt) {
       RecordFile::exit_t response = RecordFile::open(prompt, &rc_file, RecordFile::READ);
 
       if (response == RecordFile::BAD) {
-         esc::color(esc::RED, esc::FOREGROUND);
          std::cout.write(FILE_OPENING_ERROR, sizeof(FILE_OPENING_ERROR) - 1);
-         esc::reset();
-
          return exit_t::SUCCESS;
       }
 
@@ -622,10 +598,7 @@ exit_t JAST::cmd_load(uint64_t argc, char* prompt) {
    }
 
 invalid_input:
-   esc::color(esc::RED, esc::FOREGROUND);
    std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
-   esc::reset();
-
    return exit_t::SUCCESS;
 }
 
@@ -634,7 +607,7 @@ exit_t JAST::cmd_new(uint64_t argc, char* prompt) {
    if (argc) {
 
       kind_t structure = (kind_t)access_map(STRUCTURES, STRUCTURE_LIST_SIZE, prompt);
-      if (structure == NOT_FOUND) goto invalid_input;
+      if (structure == NOT_FOUND) goto not_enough_args;
 
       id_t next_id = state.stack ? state.stack->id + 1 : 0;
 
@@ -644,12 +617,12 @@ exit_t JAST::cmd_new(uint64_t argc, char* prompt) {
 
       if (argc < 3) return exit_t::SUCCESS;
 
-      uint64_t n_of_records = string_to_int_consume(prompt);
+      uint64_t n_of_records = __aut_str_to_int(prompt);
       if (!n_of_records) return exit_t::SUCCESS;
 
       rule_t rule = (rule_t)access_map(RULES, RULE_LIST_SIZE, prompt);
 
-      uint64_t order = (argc >= 4) ? string_to_int_consume(prompt) : 1;
+      uint64_t order = (argc >= 4) ? __aut_str_to_int(prompt) : 1;
       if (order < 1) order = 1;
 
       uint64_t max_key = order * n_of_records;
@@ -712,11 +685,8 @@ exit_t JAST::cmd_new(uint64_t argc, char* prompt) {
       return exit_t::SUCCESS;
    }
 
-invalid_input:
-   esc::color(esc::RED, esc::FOREGROUND);
-   std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
-   esc::reset();
-
+not_enough_args:
+   std::cout.write(NOT_ENOUGH_ARGS, sizeof(NOT_ENOUGH_ARGS) - 1);
    return exit_t::SUCCESS;
 }
 
@@ -735,27 +705,22 @@ void JAST::cmd_print(uint64_t argc, char* prompt) {
    } else switch (prompt[0]) {
 
       case '$':
-         structure = find_structure(string_to_int_consume(++prompt));
+         structure = find_structure(__aut_str_to_int(++prompt));
          if (!structure) {
-            esc::color(esc::BRIGHT_RED, esc::FOREGROUND);
             std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
-            esc::reset();
-
             return;
          } else {
-            if (argc > 1) level = string_to_int_consume(prompt);
+            if (argc > 1) level = __aut_str_to_int(prompt);
             goto print_specific;
          }
 
       case 'a':
-         if (match_consume_word("all", prompt)) goto print_all;
+         if (__aut_match_word("all", prompt)) goto print_all;
 
       default:
-         level = string_to_int_consume(prompt);
+         level = __aut_str_to_int(prompt);
          if (!state.focused) {
-            esc::color(esc::RED, esc::FOREGROUND);
             std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
-            esc::reset();
             return;
          }
 
@@ -801,7 +766,7 @@ print_all:
 
 exit_t JAST::cmd_save(uint64_t argc, char* prompt) {
 
-   if (!argc && argc > 2) goto invalid_input;
+   if (!argc && argc > 2) goto not_enough_args;
 
    RecordFile::File rc_file;
    StructStack* structure;
@@ -820,20 +785,17 @@ exit_t JAST::cmd_save(uint64_t argc, char* prompt) {
    // Has two args, first one must be an id, second a filename
    } else if (prompt[0] == '$') {
 
-      structure = find_structure(string_to_int_consume(++prompt));
+      structure = find_structure(__aut_str_to_int(++prompt));
       if (!structure) {
          std::cout.write(STRUCT_NOT_FOUND, sizeof(STRUCT_NOT_FOUND) - 1);
          return exit_t::SUCCESS;
       }
 
-   } else goto invalid_input;
+   } else goto not_enough_args;
 
    // Try to load the file
    if (RecordFile::open(prompt, &rc_file, RecordFile::WRITE) == RecordFile::BAD) {
-      esc::color(esc::RED, esc::FOREGROUND);
       std::cout.write(FILE_OPENING_ERROR, sizeof(FILE_OPENING_ERROR) - 1);
-      esc::reset();
-
       return exit_t::SUCCESS;
    }
 
@@ -883,16 +845,13 @@ exit_t JAST::cmd_save(uint64_t argc, char* prompt) {
    RecordFile::close(&rc_file);
    return exit_t::SUCCESS;
 
-invalid_input:
-   esc::color(esc::RED, esc::FOREGROUND);
-   std::cout.write(INVALID_INPUT, sizeof(INVALID_INPUT) - 1);
-   esc::reset();
-
+not_enough_args:
+   std::cout.write(NOT_ENOUGH_ARGS, sizeof(NOT_ENOUGH_ARGS) - 1);
    return exit_t::SUCCESS;
 }
 
 // match two strings (case sensitevely) and consume the second word if it matches
-bool JAST::match_consume_word(const char* compare, char*& consume) {
+bool JAST::__aut_match_word(const char* compare, char*& consume) {
 
    for (uint64_t i = 0; compare[i] == consume[i]; i++) {
       if (compare[i]) continue;
@@ -905,7 +864,7 @@ bool JAST::match_consume_word(const char* compare, char*& consume) {
 }
 
 // parse a string containing a decimal integer representation while consuming the word
-uint64_t JAST::string_to_int_consume(char*& consume) {
+uint64_t JAST::__aut_str_to_int(char*& consume) {
    uint64_t num = 0;
    bool sign = false;
 
@@ -931,7 +890,7 @@ byte JAST::access_map(Map<str_size>* map, uint64_t length, char*& prompt) {
    uint64_t index;
 
    for (index = 0; index < length && map[index].alias[0] <= prompt[0]; index++)
-      if (match_consume_word(map[index].alias, prompt)) return map[index].command;
+      if (__aut_match_word(map[index].alias, prompt)) return map[index].command;
 
    return NOT_FOUND;
 }
@@ -942,32 +901,32 @@ uint64_t JAST::print_in_column(const char* text, word start, word width) {
    uint64_t lines = 0, index = 0, length = 0;
    while (true) {
 
-      if (text[index] == '\0') {
-         if (index > 0) {
-            std::cout.write(text, index);
+      switch (text[index]) {
+         case '\0':
+            if (index > 0) {
+               std::cout.write(text, index);
+               lines++;
+            }
+
+            return lines;
+
+         case '\n':
+            if (index > 0) {
+               std::cout.write(text, ++index);
+               text += index;
+
+               length = 0;
+               index = 0;
+            }
+
+            esc::move_to(start);
             lines++;
-         }
 
-         return lines;
-      }
+            continue;
 
-      if (text[index] == '\n') {
-         if (index > 0) {
-            std::cout.write(text, ++index);
-            text += index;
-
-            length = 0;
-            index = 0;
-         }
-
-         esc::move_to(start);
-         lines++;
-
-         continue;
-      }
-
-      if (text[index] == ' ') {
-         length = index;
+         case ' ':
+            length = index;
+            break;
       }
 
       if (index >= width) {

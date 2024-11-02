@@ -2,7 +2,7 @@
 
 const char FATAL_ERROR_ENTRY[] = "Um erro fatal ocorreu ao configurar o terminal, usuário de Windows\n";
 
-const char COMMAND_NOT_FOUND[] = "Comando não encontrado! Digite `help` para mostrar os comandos disponíveis\n";
+const char COMMAND_NOT_FOUND[] = "\e[93mComando não encontrado! Digite `help` para mostrar os comandos disponíveis\e[0m\n";
 const char ABOUT[]             = "Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITMOS E ESTRUTURAS DE DADOS III, do Curso de Graduação em Sistemas de Informação da Universidade Federal dos Vales do Jequitinhonha e Mucuri, sob comando da Professora Luciana de Assis.\n";
 const char AUTHORS[]           = "Autores\n";
 const char AUTHORS_NAMES[]     = "   Alan Barbosa Lima\n   Breno Augusto Braga Oliveira\n   Juan Pablo Ferreira Costa\n   Luiz Felipe Melo Oliveira\n   Otávio Gomes Calazans\n";
@@ -12,14 +12,14 @@ const char LL_IDENTIFIER[]       = "Lista encadeada: ";
 const char TREE_IDENTIFIER[]     = "Árvore binária: ";
 const char AVL_TREE_IDENTIFIER[] = "Árvore AVL: ";
 
-const char FILE_OPENING_ERROR[] = "Não foi possível abrir o arquivo!\n"; 
+const char FILE_OPENING_ERROR[] = "\e[31mNão foi possível abrir o arquivo!\e[0m\n";
 const char NO_STRUCT_FOUND[]    = "Nenhuma estrutura encontrada!\n"; 
-const char STRUCT_NOT_FOUND[]   = "Estrutura não encontrada!\n"; 
-const char FAIL_PRINT_TREE[]    = "Falha ao imprimir a árvore\n";
+const char STRUCT_NOT_FOUND[]   = "\e[34mEstrutura não encontrada!\e[0m\n";
+const char FAIL_PRINT_TREE[]    = "\e[31mFalha ao imprimir a árvore\e[0m\n";
 const char CONFIRM_EXIT[]       = "Você quer realmente sair ([s]im ou [n]ão)? ";
-const char NOT_ENOUGH_ARGS[]    = "Argumentos insuficientes\n";
-const char INVALID_INPUT[]      = "Entrada Inválida\n";
-const char NO_STRUCT_FOCUS[]    = "Nenhuma estrutura está em foco!\n";
+const char NOT_ENOUGH_ARGS[]    = "\e[93mArgumentos insuficientes\e[0m\n";
+const char INVALID_INPUT[]      = "\e[31mEntrada Inválida\e[0m\n";
+const char NO_STRUCT_FOCUS[]    = "\e[34mNenhuma estrutura está em foco!\e[0m\n";
 
 const char BRANCH_ROOT[]      = "\u003A\u2500\u2500\u2500";
 const char BRANCH_DOWN[]      = "\u2502\u0020\u0020\u0020";
