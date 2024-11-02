@@ -320,7 +320,7 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
       { 0, 0, 0 }
    };
 
-   Record::key_t min_key, max_key;
+   Record::key_t min_key = 0, max_key = 0; // No need for initalization, compiler's being mean
    Record::key_t* sample_keys = Stack::allocate<Record::key_t>(2 * sample_size);
    if (!sample_keys) return exit_t::BAD_ALLOCATION;
 
@@ -406,7 +406,7 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
       // Generates a random key in range, doesn't actully check if it
       // hasn't already been generated
       Record::key_t key = Random::rand(min_key, max_key);
-      Record* record;
+      Record* record = nullptr;
 
       // Checks whether the key has already been generated
       uint64_t i = 0;
@@ -733,9 +733,15 @@ exit_t JAST::cmd_new(uint64_t argc, char* prompt) {
          max_key
       );
 
-      uint64_t key = (rule == _inversed) ? max_key : 0;
+      uint64_t key = (rule == _inversed) ? max_key - order : 0;
 
       for (uint64_t i = 0; i < n_of_records; i++) {
+
+         Record* record = new (std::nothrow) Record;
+         if (!record) {
+            Stack::release(helper);
+            return exit_t::BAD_ALLOCATION;
+         }
 
          switch (rule) {
 
@@ -746,16 +752,18 @@ exit_t JAST::cmd_new(uint64_t argc, char* prompt) {
                   if (++key >= n_of_records) key = 0;
 
                BitTools::flipbit(helper, key);
+               record->key = key;
                break;
 
-            case _ordered: key += order; break;
-            case _inversed: key -= order; break;
-         }
-
-         Record* record = new (std::nothrow) Record{ Record::key_t(key) };
-         if (!record) {
-            Stack::release(helper);
-            return exit_t::BAD_ALLOCATION;
+            case _ordered: 
+               record->key = key - uint64_t(Random::rand() % order);
+               key += order;
+               break;
+            
+            case _inversed:
+               record->key = key + uint64_t(Random::rand() % order);
+               key -= order;
+               break;
          }
 
          populate_record_randomly(record);
