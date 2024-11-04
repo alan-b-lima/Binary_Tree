@@ -490,8 +490,8 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
    double mean_out = (double)sample.out.mean / (double)sample_size;
    double mean_in = (double)sample.in.mean / (double)sample_size;
 
-   double sd_out = ((double)sample.out.variance - mean_out * mean_out) / (double)sample_size;
-   double sd_in = ((double)sample.in.variance - mean_in * mean_in) / (double)sample_size;
+   double sd_out = sqrt(((double)sample.out.variance - mean_out * mean_out) / (double)(sample_size - 1));
+   double sd_in = sqrt(((double)sample.in.variance - mean_in * mean_in) / (double)(sample_size - 1));
 
    std::cout << "Teste de " << sample_size << " chaves\n";
 
@@ -503,14 +503,14 @@ exit_t JAST::cmd_test(uint64_t argc, char* prompt) {
    // Present keys
    std::cout.write("\nChaves presentes:\n", 19);
    std::cout << "   Número médio de comparações: " << ((double)sample.in.comparisons / (double)sample_size) << '\n';
-   std::cout << "   Tempo médio: " << mean_in << " microsegundos\n";
-   std::cout << "   Desvio padrão: " << sd_in << " microsegundos\n";
+   std::cout << "   Tempo médio: " << mean_in << " microssegundos\n";
+   std::cout << "   Desvio padrão: " << sd_in << " microssegundos\n";
 
    // Non-existing keys
    std::cout.write("\nChaves inexistentes:\n", 22);
    std::cout << "   Número médio de comparações: " << ((double)sample.out.comparisons / (double)sample_size) << '\n';
-   std::cout << "   Tempo médio: " << mean_out << " microsegundos\n";
-   std::cout << "   Desvio padrão: " << sd_out << " microsegundos\n";
+   std::cout << "   Tempo médio: " << mean_out << " microssegundos\n";
+   std::cout << "   Desvio padrão: " << sd_out << " microssegundos\n";
 
    Stack::release(sample_keys);
    return exit_t::SUCCESS;
@@ -753,6 +753,8 @@ exit_t JAST::cmd_new(uint64_t argc, char* prompt) {
          max_key
       );
 
+      if (!helper) return exit_t::BAD_ALLOCATION;
+
       uint64_t key = (rule == _inversed) ? max_key - order : 0;
 
       for (uint64_t i = 0; i < n_of_records; i++) {
@@ -769,17 +771,17 @@ exit_t JAST::cmd_new(uint64_t argc, char* prompt) {
                key = uint64_t(Random::rand() % max_key);
 
                while (BitTools::getbit(helper, key))
-                  if (++key >= n_of_records) key = 0;
+                  if (++key >= max_key) key = 0;
 
                BitTools::flipbit(helper, key);
                record->key = key;
                break;
 
-            case _ordered: 
+            case _ordered:
                record->key = key - uint64_t(Random::rand() % order);
                key += order;
                break;
-            
+
             case _inversed:
                record->key = key + uint64_t(Random::rand() % order);
                key -= order;

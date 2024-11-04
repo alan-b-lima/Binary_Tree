@@ -14,32 +14,40 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
 
 # Sumário
 
-<strong>[Como Usar](#como-usar-e-disposições-do-trabalho)</strong>
+<strong>[Como Usar](#como-usar)</strong>
 
-<strong>[Estrutura das dependências](#estrutura-das-dependências)</strong>
+- [Como compilar](#como-compilar)
+- [Executando o programa](#executando-o-programa)
+   - [Realizando testes](#realizando-testes)
 
-- [Diagrama da Estrutura de Dependências da Aplicação](#diagrama-da-estrutura-de-dependências-da-aplicação)
+<strong>[Estrutura das Dependências](#estrutura-das-dependências)</strong>
 
-<strong>[Estrutura de Dados](#estruturas-de-dados)</strong>
+- [Diagrama da estrutura de dependências da aplicação](#diagrama-da-estrutura-de-dependências-da-aplicação)
 
-- [1 Definições Básicas](#1-árvores-binárias)
-   - [Definição 1A: Árvore Binária](#definição-1a-árvore-binária)
-   - [Definição 1B: Relações entre nós](#definição-1b-relações-entre-nós)
+<strong>[Estruturas de Dados](#estruturas-de-dados)</strong>
+
+- [1 Registros](#1-registros)
+- [2 Listas Encadeadas](#2-listas-encadeadas)
+   - [Definição 2A: Lista Encadeada](#definição-2a-lista-encadeada)
+   - [Definição e Implementação 2B: Algoritmo de Busca](#definição-e-implementação-2b-algoritmo-de-busca)
+      - [Análise de Complexidade](#análise-de-complexidade)
+   - [Definição e Implementação 2C: Algoritmo de Inserção](#definição-e-implementação-2c-algoritmo-de-inserção)
+      - [Análise de Complexidade](#análise-de-complexidade-1)
+- [3 Árvores Binárias](#3-árvores-binárias)
+   - [Definição 3A: Árvore Binária](#definição-3a-árvore-binária)
+   - [Definição 3B: Relações entre nós](#definição-3b-relações-entre-nós)
       - [i) Nós Filhos](#i-nós-filhos)
       - [ii) Nó Pai](#ii-nó-pai)
       - [iii) Nó Irmão](#iii-nó-irmão)
       - [iv) Nós Folha](#iv-nós-folha)
       - [v) Nó Raiz](#v-nó-raiz)
-   - [Definição 1C: Registro](#definição-1c-registro)
-   - [Definição 1D: Árvore Binária de Busca](#definição-1d-árvore-binária-de-busca)
-   - [Definição 1E: Altura de Árvores Binárias](#definição-1e-altura-de-árvores-binárias)
-   - [Teorema 1F: A computação da altura de uma árvore tem complexidade linear no pior caso](#teorema-1f-a-computação-da-altura-de-uma-árvore-tem-complexidade-linear-no-pior-caso)
-- [2 Implementação de Funcionalidades para os Registros](#2-implementação-de-funcionalidades-para-os-registros)
-- [3 Implementação da Árvore Binária de Busca](#3-implementação-da-árvore-binária-de-busca)
-   - [Implementação 3A: Algoritmo de Busca](#implementação-3a-algoritmo-de-busca)
-      - [Análise de Complexidade](#análise-de-complexidade)
-   - [Implementação 3B: Algoritmo de inserção](#implementação-3b-algoritmo-de-inserção)
-      - [Análise de Complexidade](#análise-de-complexidade-1)
+   - [Definição 3C: Árvore Binária de Busca](#definição-3c-árvore-binária-de-busca)
+   - [Definição 3D: Altura de Árvores Binárias](#definição-3d-altura-de-árvores-binárias)
+   - [Teorema 3E: A computação da altura de uma árvore tem complexidade linear no pior caso](#teorema-3e-a-computação-da-altura-de-uma-árvore-tem-complexidade-linear-no-pior-caso)
+   - [Implementação 3F: Algoritmo de Busca](#implementação-3f-algoritmo-de-busca)
+      - [Análise de Complexidade](#análise-de-complexidade-2)
+   - [Implementação 3G: Algoritmo de inserção](#implementação-3g-algoritmo-de-inserção)
+      - [Análise de Complexidade](#análise-de-complexidade-3)
 - [4 Árvore Binária AVL](#4-árvore-binária-avl)
    - [Definição 4A: Fator de Balanceamento](#definição-4a-fator-de-balanceamento)
    - [Definição 4B: Árvore Binária Balanceada](#definição-4b-árvore-binária-balanceada)
@@ -48,16 +56,18 @@ Esse Trabalho foi desenvolvido como projeto acadêmico da disciplina de ALGORITM
       - [ii) Rotação Simples à Direita](#ii-rotação-simples-à-direita)
       - [iii) Rotação Dupla Direita-Esquerda](#iii-rotação-dupla-direita-esquerda)
       - [iv) Rotação Dupla Esquerda-Direita](#iv-rotação-dupla-esquerda-direita)
-      - [Análise de Complexidade](#análise-de-complexidade-2)
-   - [Teorema 4D: Uma operação de rotação, quando executada propriamente, retorna um nó menor que o nó de entrada](#definição-4b-árvore-binária-balanceada)
+      - [Análise de Complexidade](#análise-de-complexidade-4)
+   - [Teorema 4D: Uma operação de rotação, quando executada propriamente, retorna um nó menor que o nó de entrada](#teorema-4d-uma-operação-de-rotação-quando-executada-propriamente-retorna-um-nó-menor-que-o-nó-de-entrada)
    - [Corolário 4E: Uma operação de rotação sempre é suficiente para restaurar o balanceamento perdido após a inserção de um único nó](#corolário-4e-uma-operação-de-rotação-sempre-é-suficiente-para-restaurar-o-balanceamento-perdido-após-a-inserção-de-um-único-nó)
    - [Implementação 4F: Inserção em Árvore AVL](#implementação-4f-inserção-em-árvore-avl)
-      - [Análise de Complexidade](#análise-de-complexidade-3)
-   - [Exercício 4G: Encontre a Complexidade de Tempo da Busca numa Árvore AVL](#exercício-4g-encontre-a-complexidade-de-tempo-da-busca-numa-árvore-avl)
+      - [Análise de Complexidade](#análise-de-complexidade-5)
+   - [Teorema 4G: Complexidade Logarítmica de Tempo da Busca numa Árvore AVL](#teorema-4g-complexidade-logarítmica-de-tempo-da-busca-numa-árvore-avl)
 
 <strong>[Referências](#referências)</strong>
 
-# Como Usar e Disposições do Trabalho
+<strong>[Notas de Rodapé](#notas-de-rodapé)</strong>
+
+# Como Usar
 
 ## Como compilar
 
@@ -128,10 +138,16 @@ Uma saída da seguite forma é esperada:
 
 ```
 Teste de 15 chaves
+
 Chaves presentes:
-   Tempo médio: 200ms
+   Número médio de comparações: 10.0769
+   Tempo médio: 0.461538 microssegundos
+   Desvio padrão: 0.598999 microssegundos
+
 Chaves inexistentes:
-   Tempo médio: 1400ms
+   Número médio de comparações: 12.3846
+   Tempo médio: 0.0769231 microssegundos
+   Desvio padrão: 0.0764679 microssegundos
 ```
 
 Há um limite de tentativas para gerar as chaves, nomeadamente 64 * `<tamanho da amostra>`, se não forem geradas chaves que atendem os requisitos, a seguinte mensagem é impressa:
@@ -146,19 +162,24 @@ Para gerar uma estrutura com insersão em ordem, o mesmo é dado, se não por:
 > new <struct> 100 ordered <order>
 ```
 
-Os passos a seguir seguem a mesma lógica. Se prefere-se carregar dados de um arquivo, usa-se:
+Os passos a seguir seguem a mesma lógica.
+
+Se for preferível carregar dados de um arquivo, usa-se:
 
 ```
 > load <struct> <filename>
 ```
 
-### Pontos de Melhora e Conclusão
+O projeto terá 6 arquivos de leitura, sendo esses:
 
-O projeto, como se encontra agora, possui uma documentação razoavél, sendo parte do código, como ./lib/terminal.h, consideravelmente documentada, outras partes, como ./src/tree.h, têm sua disposição aqui, até pelo teor matemático, enquanto outras partes podem ser ditas "obscuras", como ./src/application.h, menção especial à função `JAST::process_args`, que se trata de um automato finito que põe os argumentos em um formato ideal, é possível aferir esse comportamento, com certo estudo, mas esse pode não ser simples.
+- `test-100-o.rc`
+- `test-100-r.rc`
+- `test-500-o.rc`
+- `test-500-r.rc`
+- `test-1000-o.rc`
+- `test-1000-r.rc`
 
-Sobre a estruturação do código de ./src/application.cpp, muito código repetido pode ser encontrado, além de corpos gigantes de funções, que apesar de funcional, poderia se tornar desafio para manutenção. Ademais, as funcionalidades são extremamente básicas, questões como deletar estruturas e registros não estão disponíveis.
-
-Concluindo essa pequena dissertação, o projeto foi o maior já desenvolvido pelos autores e resaltou a importância de um bom planejamento para o desenvolvimento de software.
+O nome do arquivo é estruturado `test-<número de registros>-<regra de inserção>.rc`.
 
 # Estrutura das Dependências
 
@@ -302,19 +323,114 @@ O diagrama acima é uma versão visual das clausulas `#include` encontradas por 
 - **Nível 3** foge à regra de independência, sendo seus arquivos puramente arquivos de recursos, names.cpp sendo autoexplicativo (carrega exemplos de nomes) e strings.cpp, que carrega cadeias de caracteres usadas pela aplicação;
 - **Nível 4** está aqui posicianado por ser a estrutura à qual as estruturas do nível acima revolvem;
 - **Nível 5** define as três estruturas de dados requeridas pelo trabalho, sendo árvore de busca binária tradicional e AVL definidas em tree.h e a estrutura sequencial (lista encadeada) em linked_list.h. Ademais, o arquivo file.h define uma estrutura que abstrae o manejamento de arquivos da aplicação principal e o arquivo application.h que lida com interações com o usuário;
-- **Nível 6** compreende a entrada da aplicação assim como os desdobramento **já despostos em [Como Usar](#como-usar-e-disposições-do-trabalho)**.
+- **Nível 6** compreende a entrada da aplicação assim como os desdobramento já despostos em [Como Usar](#como-usar-e-disposições-do-trabalho).
 
 # Estruturas de Dados
 
-## 1 Lista Encadeada
+## 1 Registros
 
-### Definição 1A: Lista Encadeada
+Como requerido pelo trabalho, a estrutura de registro é definida:
 
-## 1 Árvores Binárias
+```C++
+const uint64_t NAME_SIZE = 1000;
 
-### Definição 1A: Árvore Binária
+typedef struct Record {
+   typedef long key_t;
+   
+   key_t key;
+   int   data;
+   char  name[NAME_SIZE + 1];
+} Record;
+```
 
-Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou uma tripla ordenada $`T = \langle v, E, D \rangle`$, onde $`E`$ e $`D`$ são árvores, $`E`$ é chamada _sub-árvore esquerda_ e $`D`$ é chamada _sub-árvore direita_, e $`v`$ uma variável de conjunto totalmente ordenado<sup>[[1]](#user-content-fnote1)</sup>. Formalmente:<br>
+Sendo o maior comprimento do nome para acomodar um `\0` (terminador nulo), caso necessário, mantendo `NAME_SIZE` caracteres úteis.<br>
+
+A ordenação total do conjunto de `Record`'s, denotada $`\lt`$, é dada, para `Record`'s $`R`$ e $`S`$:
+
+```math
+R < S \iff R.key < S.key
+```
+
+Quando $`R \lt S`$, $`R`$ é dito _menor_ que $`S`$, analogamente, se $`R \gt S`$, $`R`$ é dito _maior_ que $`S`$. Para esse trabalho, toda árvore $`T = \langle v, E, D \rangle`$ possuirá $`v`$ do tipo `Record`. Quando diz-se um nó é menor/maior que outro, refere-se aos registros contidos nesses nós.
+
+## 2 Listas Encadeadas
+
+### Definição 2A: Lista Encadeada
+
+Uma lista encadeada é um conjunto vazio, $` \emptyset `$, ou um par ordenado $`L = \langle v, M \rangle`$, onde é $`M`$ é uma lista encadeada. Formalmente:
+
+```math
+Ll(L) = \iff \emptyset \vee ( L = \langle v, M \rangle \wedge Ll(M) )
+```
+
+Em C++, a estrutura de um nó de uma lista encadeada é definida:
+
+```C++
+typedef struct Node {
+   Record* content;
+   Node* next_node;
+} Node;
+```
+
+### Definição e Implementação 2B: Algoritmo de Busca
+
+De forma simples, a busca em listas encadeadas é dada:
+
+```math
+S(L, key) = \begin{cases}
+   S(M, key) & \text{| } T = \langle v, M \rangle \wedge v.key \ne key \\
+   M & \text{| } T = \langle v, M \rangle \wedge v.key = key
+\end{cases}
+```
+
+Em código:
+
+```C++
+Record* LinkedList::search(Node* node, Record::key_t key) {
+   while (node) {
+      if (node->content->key == key)
+         return node->content;
+
+      node = node->next_node;
+   }
+
+   return nullptr;
+}
+```
+
+#### Análise de Complexidade
+
+A complexidade de tempo da busca, no pior caso, é evidentemente $`O(n + 1)`$, que é o mesmo que $`O(n)`$.
+
+### Definição e Implementação 2C: Algoritmo de Inserção
+
+Assim, em listas encadeadas, a função $`+`$ para a inserção de um novo registro $`N`$ numa lista encadeada é dada:
+
+```math
++(L, N) = \langle N, L \rangle
+```
+
+Em C++:
+
+```C++
+exit_t LinkedList::insert(Node** node, Record* record) {
+   Node* new_node = new (std::nothrow) Node{ record, *node };
+   if (!new_node) return BAD_ALLOCATION;
+
+   *node = new_node;
+   return SUCCESS;
+}
+```
+
+#### Análise de Complexidade
+
+A complexidade de tempo da inserção será sempre contante, $`O(1)`$.
+
+## 3 Árvores Binárias
+
+### Definição 3A: Árvore Binária
+
+Uma árvore binária, aqui definida, é um conjunto vazio, $` \emptyset `$, ou uma tripla ordenada $`T = \langle v, E, D \rangle`$, onde $`E`$ e $`D`$ são árvores, $`E`$ é chamada _sub-árvore esquerda_ e $`D`$ é chamada _sub-árvore direita_, e $`v`$ uma variável de conjunto totalmente ordenado<sup>[[1]](#user-content-fnote1)</sup>. Formalmente:
 
 ```math
 Tree(T) \iff T = \emptyset \vee \left(T = \langle v, E, D \rangle \wedge Tree(D) \wedge Tree(E) \right)
@@ -333,7 +449,7 @@ typedef struct Node {
 } Node;
 ```
 
-### Definição 1B: Relações entre nós
+### Definição 3B: Relações entre nós
 
 A relação de descendência $`\lhd`$ entre nós ($`T \lhd S`$ lê-se "$`T`$ é descendente de $`S`$") tem intrepretação verdadeira se, e somente se, para $`T \lhd S`$, $`T`$ é filho de $`S`$, ou é filho de um filho de $`S`$ e assim por diante. Recusivamente, isto é, para $`T`$ e $`S`$ árvore não nulas:
 
@@ -365,33 +481,7 @@ Um nó é denominado _nó folha_ se todos seus nós filhos forem $`\emptyset`$. 
 #### v) Nó Raiz
 Por fim, um _nó raiz_ é aquele nó ascendente a todos os outros nós de uma árvore específica, ou seja, todo nó numa árvore é descendente do nó raiz ou é o próprio nó raiz.
 
-### Definição 1C: Registro
-
-Como requerido pelo trabalho, a estrutura de registro é definida:
-
-```C++
-const uint64_t NAME_SIZE = 1000;
-
-typedef struct Record {
-   typedef long key_t;
-   
-   key_t key;
-   int   data;
-   char  name[NAME_SIZE + 1];
-} Record;
-```
-
-Sendo o maior comprimento do nome para acomodar um `\0` (terminador nulo), caso necessário, mantendo `NAME_SIZE` caracteres úteis.<br>
-
-A ordenação total do conjunto de `Record`'s, denotada $`\lt`$, é dada, para `Record`'s $`R`$ e $`S`$:
-
-```math
-R < S \iff R.key < S.key
-```
-
-Quando $`R \lt S`$, $`R`$ é dito _menor_ que $`S`$, analogamente, se $`R \gt S`$, $`R`$ é dito _maior_ que $`S`$. Para esse trabalho, toda árvore $`T = \langle v, E, D \rangle`$ possuirá $`v`$ do tipo `Record`. Quando diz-se um nó é menor/maior que outro, refere-se aos registros contidos nesses nós.
-
-### Definição 1D: Árvore Binária de Busca
+### Definição 3C: Árvore Binária de Busca
 
 Uma árvore binária de busca é uma árvore binaria que satisfaz a seguinte propriedade, para todo nó $`T = \langle v, E, D \rangle`$, todo nó na sub-árvore esquerda é menor que $`v`$, e todo nó na sub-árvore direita é maior que $`v`$. É entendido que cada nó tenha uma chave única por árvore, isto é, uma chave nunca repete. Recursivamente:
 
@@ -399,7 +489,7 @@ Uma árvore binária de busca é uma árvore binaria que satisfaz a seguinte pro
 STree(T) \iff T = \emptyset \vee \left(( T_E = \emptyset \vee v[T_E] < v[T] ) \wedge (T_D = \emptyset \vee v[T_D] > v[T]) \wedge STree(T_E) \wedge STree(T_D) \right)
 ```
 
-### Definição 1E: Altura de Árvores Binárias
+### Definição 3D: Altura de Árvores Binárias
 
 A altura de uma árvore binária é dada pela quantidade de nós no caminho do raiz até o nó folha mais distante. A altura de uma árvore $`T`$ é denotada $`h(T)`$, definida formalmente:
 
@@ -410,62 +500,11 @@ h(T) = \begin{cases}
 \end{cases}
 ```
 
-### Teorema 1F: A computação da altura de uma árvore tem complexidade linear no pior caso
+### Teorema 3E: A computação da altura de uma árvore tem complexidade linear no pior caso
 
 Pelas instancias recursivas da função $`h`$, é visível que pelo menos todo nó definido é visitado, e aqueles nós que têm um único filho ainda adicionam uma vericação a um nó $`\emptyset`$. No pior caso, todo nó tem um único filho, exceto por um nó (a existência de um nó folha é obrigatória numa árvore com nós finitos), assim, com $`n`$ nós, seriam feitas $`2(n - 1) + 1`$ iterações da função, assim, a complexidade é $`O(n)`$. Esse fato motiva a inclusão do atributo `height` na estrutura `Node`.
 
-## 2 Implementação de Funcionalidades para os Registros
-
-Duas funções para manejamento de instâncias do tipo `Record` serão implementadas:
-* Escrever para um registro, com tratamento para caso o nome fornecido tenha mais de mil caracteres:
-
-```C++
-void write_record(Record* record, int data, const char* name) {
-
-   uint64_t i;
-   for (i = 0; i < NAME_SIZE && name[i]; i++) 
-      record->name[i] = name[i];
-
-   record->name[i] = '\0';
-   record->data = data;
-
-}
-```
-
-* Imprimir um registro seguindo um formato fornecido:
-   * o formato é configurado:
-      * `$0` refere-se ao atributo chave, `key`,
-      * `$1` refere-se ao atributo dado, `data`,
-      * `$2` refere-se ao atributo nome, `name`,
-      * para imprimir o caractere `$`, usa-se a combinação `$$`;
-   * o código é dado:
-
-```C++
-void print_record(Record* record, const char* format = "{$0, $1, $2}") {
-
-   while (*format) {
-
-      if (*format == '$') {
-
-         format++;
-         switch (*format) {
-
-            case '0': std::cout << record->key; break;
-            case '1': std::cout << record->data; break;
-            case '2': std::cout << record->name; break;
-
-            default: std::cout.put(*format); break;
-         }
-
-      } else std::cout.put(*format);
-      format++;
-   }
-}
-```
-
-## 3 Implementação da Árvore Binária de Busca
-
-### Implementação 3A: Algoritmo de Busca
+### Implementação 3F: Algoritmo de Busca
 
 Grande parte das operações sobre uma árvore vão se basear em alguma forma de algoritmo de busca, para isso, assume-se que entradas fornecidas são árvores binárias de busca. Como uma árvore de buscar porta a propriedade que todo nó à esquerda é menor e à direita é maior, similar à busca binária, o espaço de busca é reduzido em blocos, continuando a busca apenas na sub-árvore que pode conter o dado nó.
 
@@ -480,7 +519,7 @@ S(T, key) = \begin{cases}
 Em C++ algo similar é dado:
 
 ```C++
-Record* Tree::search(Tree::Node* node, key_t key) {
+Record* Tree::search(Tree::Node* node, Record::key_t key) {
 
    while (node) {
 
@@ -512,7 +551,7 @@ T = \langle v_0, \emptyset, \langle v_1, \emptyset, \langle  v_2, \emptyset, \la
 
 tem 4 nós sempre arranjandos à sub-árvore direita, a busca de nó ausente maior que $`v_3`$ tomaria ao menos 4 interações do laço. Assim a complexidade de `Tree::search` é $`O(n)`$. A complexidade de espaço é contante, $`O(1)`$, pois a quantidade de variáveis usadas não muda com base na entrada.
 
-### Implementação 3B: Algoritmo de inserção
+### Implementação 3G: Algoritmo de inserção
 
 Para inserir um novo nó numa árvore binária de busca, é realizada uma busca tradicional e, quando se encotrar um nó nulo, esse nó é posto nessa posição. Seja $`+`$ a função de inserção, $`T`$ uma árvore e $`N`$ o novo registro:
 
@@ -602,7 +641,7 @@ Analogo ao constatado na [Análise de Complexidade do Algoritmo de Busca](#anál
 
 ## 4 Árvore Binária AVL
 
-Nomeada por seus criadores Georgy Maximovich **A**delson-**V**elsky e Evgenii Mikhailovich **L**andis **_[Breno, elabore!]_**.
+Nomeada por seus criadores Georgy Maximovich **A**delson-**V**elsky e Evgenii Mikhailovich **L**andis.
 
 ### Definição 4A: Fator de Balanceamento
 
@@ -917,17 +956,78 @@ Um último detalhe a ressaltar, se a árvore precisa de balanceamento, ou seja, 
 
 A complexidade de tempo é $`O(\log n)`$, que será discutido a frente, já a complexidade de espaço é constante, $`O(1)`$.
 
-### Exercício 4G: Encontre a Complexidade de Tempo da Busca numa Árvore AVL
+### Teorema 4G: Complexidade Logarítmica de Tempo da Busca numa Árvore AVL
 
 O [algoritmo de busca](#implementação-3a-algoritmo-de-busca) definido para árvores de busca é o mesmo para árvores AVL, entretanto, pela estruturação da árvore AVL, a complexidade de tempo é diferente daquela da árvore de busca arbitrária.
 
-É evidente que a complexidade de tempo da função de busca é $`O(h + 1)`$, para um nó inexistente que seque pelo caminho mais longo, sendo $`h`$ a da altura da árvore, logo, para classificar a complexidade para AVL's, é preciso estabelecer limites para sua altura.
+É evidente que a complexidade de tempo da função de busca é $`O(h + 1)`$, para um nó inexistente que seque pelo caminho mais longo, sendo $`h`$ a da altura da árvore, logo, para classificar a complexidade para AVL's, é preciso estabelecer limites para sua altura. Seja $`n`$ a quantidade de nós daqui em diante.
+
+O limite inferior é obtido agrupando perfeitamente, cada nível $`V`$ (sendo o nível da raiz $`0`$) possui $`2^V`$ nós, assim, ao todo, uma árvore completa (todo nó possui dois filhos até um nível $`U`$ onde todo nó é folha) de altura $`h`$ possui a seguinte quantidade de nós:
+
+```math
+\sum_{i = 0}^{h}{2^i} = 2^{h + 1} - 1
+```
+
+Assim, $`n = 2^{h + 1} - 1 \implies \log_2(n + 1) = h + 1 \implies h = \log_2(n + 1) - 1`$, entretanto, como $`h`$ e $`n`$ são natural, tem-se $`h = \lceil \log_2(n + 1) - 1 \rceil = \lceil \log_2 n \rceil`$. Assim, tem-se o $`h`$ mínimo. Para o $`h`$ máximo, seja a sequência $`(H_h)`$, cujo $`h`$-ésimo termo diz o mínimo de nós que, mantendo a árvore balanceada, deixam a árvore daquela altura. Tem-se $`H_0 = 1`$ e $`H_1 = 2`$ como base, seguindo, para que o fator de balanceamento seja sempre $`-1`$ ou $`1`$, $`H_h = 1 + H_{h - 1} + H_{h - 2}`$, sendo $`1`$ referente à raiz que conecta os dois ramos e $`H_{h - 1}`$ e $`H_{h - 2}`$ têm um diferença de magnitude $`1`$. Assim:
+
+* $`H_0 = 1`$
+* $`H_1 = 2`$
+* $`H_{h} = 1 + H_{h - 1} + H_{h + 1} `$
+
+É evidente que a sequência $`(H_n)`$ é próxima à sequência de Fibonacci, $`(F_n)`$, definida $`F_0 = F_1 = 1`$ e $`F_n = F_{n - 1} + F_{n - 2}`$. Seja $`(G_n)`$ uma sequência definida a partir da sequência $`(H_n)`$, dado $`G_n - 1 = H_n`$. Assim, no passo recursivo:
+
+```math
+\begin{align*}
+   H_{n} = 1 + H_{n - 1} + H_{n - 2} 
+      &\implies G_{n} - 1 = 1 + (G_{n - 1} - 1) + (G_{n - 2} - 1) \\
+      &\implies G_{n} - 1 = G_{n - 1} + G_{n - 2} - 1 \\
+      &\implies G_{n} = G_{n - 1} + G_{n - 2}
+\end{align*}
+```
+
+Já nos passos base, $`G_0 = H_0 + 1 = 1 + 1 = 2`$ e $`G_1 = H_1 + 1 = 2 + 1 = 3`$, assim, tem-se que $`G_n = F_{n + 2}`$. Portanto $`H_n = F_{n + 2} - 1`$. O $`n`$-ésimo termo da sequência de Fibonacci é dado por:
+
+```math
+F_{n + 1} = \frac{\phi^n - (-\phi)^{-n}}{\sqrt{5}}
+```
+
+Sendo $`\phi = \frac{1 + \sqrt{5}}{2}`$. Assim, tem-se:
+
+```math
+\begin{align*}
+   H_{h - 1} &= \frac{\phi^h - (-\phi)^{-h}}{\sqrt{5}} - 1 \\
+   H_h &= \frac{\phi^{h + 1} - (-\phi)^{-(h + 1)}}{\sqrt{5}} - 1 \\
+   (H_h + 1) \sqrt{5} &= \phi^{h + 1} - (-\phi)^{-(h + 1)} \\
+   \phi^{h + 1} (H_h + 1) \sqrt{5} &= \phi^{2(h + 1)} - (-1)^{-(h + 1)} \\
+   0 &= \phi^{2(h + 1)} - \phi^{h + 1} (H_h + 1) \sqrt{5} + (-1)^{h} \\
+   \phi^{h + 1} &= \frac{(H_h + 1) \sqrt{5} + \sqrt{ ((H_h + 1) \sqrt{5})^2 - 4 (-1)^{h} }}{2} \\
+   \phi^{h + 1} &= \frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} \\
+   h + 1 &= \log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} \\
+   h &= \log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\\
+\end{align*}
+```
+
+$`h`$ não está verdadeiramente isolado, entretanto, naquela forma, esse contribui apenas como um sinal, logo, o limite máximo é dado, novamente, por um termo da ordem logaritmica, logo, pelo _Teorema do confronto_:
+
+```math
+\begin{align*}
+   O(\lceil \log_2(n) \rceil) \subset O&(h) \subset O\left(\log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\right) \\
+   O(\log_2 n) \subset O&(h) \subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h}} \right) \right) \\
+   O(\log n) \subset O&(h) \subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 } \right) \right) \\
+   O(\log n) \subset O&(h) \subset O(\log_\phi (H_h + 1)) \\
+   O(\log n) \subset O&(h) \subset O(\log_\phi H_h) \\
+   O(\log n) \subset O&(h) \subset O(\log_\phi n) \\
+   O(\log n) \subset O&(h) \subset O(\log n) \\
+\end{align*}
+```
+
+Assim, a complexidade de busca (e inserção) em Árvores AVL's é $`O(\log n)`$.
 
 # Referências
 
-https://pages.cs.wisc.edu/~ealexand/cs367/NOTES/AVL-Trees/index.html
-https://docs.ufpr.br/~hoefel/ensino/CM304_CompleMat_PE3/livros/Enderton_Elements%20of%20set%20theory_%281977%29.pdf
+- https://pages.cs.wisc.edu/~ealexand/cs367/NOTES/AVL-Trees/index.html
+- https://docs.ufpr.br/~hoefel/ensino/CM304_CompleMat_PE3/livros/Enderton_Elements%20of%20set%20theory_%281977%29.pdf
 
 # Notas de Rodapé
 
-1. <span id="fnote1">Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ na reta real $`\text{ℝ}`$.</span> [↩︎](#definição-1a-árvore-binária)
+1. <span id="fnote1">Um conjunto $`S`$ é dito totalmente ordenado por um relação $`\prec \space \subset S \times S`$ se, e somente se, para quaisquer $`x, y, z \in S `$: [1] $`\prec`$ é uma relação transitiva, isto é, se $`x \prec y`$ e $`y \prec z`$, então $`x \prec z`$; e [2] satisfaz tricotomia, isto é, ou $`x \prec y`$ ou $`y \prec x`$ ou $`x = y`$. Um exemplo de ordenação total é dada pela relação $`\lt`$ na reta real $`\text{ℝ}`$.</span> [↩︎](#definição-3a-árvore-binária)
