@@ -1010,15 +1010,13 @@ Sendo $`\phi = \frac{1 + \sqrt{5}}{2}`$. Assim, tem-se:
 $`h`$ não está verdadeiramente isolado, entretanto, naquela forma, esse contribui apenas como um sinal, logo, o limite máximo é dado, novamente, por um termo da ordem logaritmica, logo, pelo _Teorema do confronto_:
 
 ```math
-\begin{align*}
-   O(\lceil \log_2(n) \rceil) \subset O&(h) \subset O\left(\log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\right) \\
-   O(\log_2 n) \subset O&(h) \subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h}} \right) \right) \\
-   O(\log n) \subset O&(h) \subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 } \right) \right) \\
-   O(\log n) \subset O&(h) \subset O(\log_\phi (H_h + 1)) \\
-   O(\log n) \subset O&(h) \subset O(\log_\phi H_h) \\
-   O(\log n) \subset O&(h) \subset O(\log_\phi n) \\
-   O(\log n) \subset O&(h) \subset O(\log n) \\
-\end{align*}
+O(\lceil \log_2(n) \rceil) \subset O(h) \subset O\left(\log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\right) \\
+O(\log_2 n) \subset O(h) \subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h}} \right) \right) \\
+O(\log n) \subset O(h) \subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 } \right) \right) \\
+O(\log n) \subset O(h) \subset O(\log_\phi (H_h + 1)) \\
+O(\log n) \subset O(h) \subset O(\log_\phi H_h) \\
+O(\log n) \subset O(h) \subset O(\log_\phi n) \\
+O(\log n) \subset O(h) \subset O(\log n) \\
 ```
 
 Assim, a complexidade de busca (e inserção) em Árvores AVL's é $`O(\log n)`$.
