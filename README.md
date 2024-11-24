@@ -994,7 +994,7 @@ F_{n + 1} = \frac{\phi^n - (-\phi)^{-n}}{\sqrt{5}}
 Sendo $`\phi = \frac{1 + \sqrt{5}}{2}`$. Assim, tem-se:
 
 ```math
-\begin{align*}
+\begin{aligned}
    H_{h - 1} &= \frac{\phi^h - (-\phi)^{-h}}{\sqrt{5}} - 1 \\
    H_h &= \frac{\phi^{h + 1} - (-\phi)^{-(h + 1)}}{\sqrt{5}} - 1 \\
    (H_h + 1) \sqrt{5} &= \phi^{h + 1} - (-\phi)^{-(h + 1)} \\
@@ -1004,31 +1004,21 @@ Sendo $`\phi = \frac{1 + \sqrt{5}}{2}`$. Assim, tem-se:
    \phi^{h + 1} &= \frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} \\
    h + 1 &= \log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} \\
    h &= \log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\\
-\end{align*}
+\end{aligned}
 ```
 
 $`h`$ não está verdadeiramente isolado, entretanto, naquela forma, esse contribui apenas como um sinal, logo, o limite máximo é dado, novamente, por um termo da ordem logaritmica, logo, pelo _Teorema do confronto_:
 
 ```math
-O(\lceil \log_2(n) \rceil) \subset O(h) \subset O\left(\log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\right)
-```
-```math
-O(\log_2 n) \subset O(h) \subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h}} \right) \right)
-```
-```math
-O(\log n) \subset O(h) \subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 } \right) \right)
-```
-```math
-O(\log n) \subset O(h) \subset O(\log_\phi (H_h + 1))
-```
-```math
-O(\log n) \subset O(h) \subset O(\log_\phi H_h)
-```
-```math
-O(\log n) \subset O(h) \subset O(\log_\phi n)
-```
-```math
-O(\log n) \subset O(h) \subset O(\log n)
+\begin{aligned}
+   O(\lceil \log_2(n) \rceil) \subset O(h) &\subset O\left(\log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\right) \\
+   O(\log_2 n) \subset O(h) &\subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h}} \right) \right) \\
+   O(\log n) \subset O(h) &\subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 } \right) \right) \\
+   O(\log n) \subset O(h) &\subset O(\log_\phi (H_h + 1)) \\
+   O(\log n) \subset O(h) &\subset O(\log_\phi H_h) \\
+   O(\log n) \subset O(h) &\subset O(\log_\phi n) \\
+   O(\log n) \subset O(h) &\subset O(\log n)
+\end{aligned}
 ```
 
 Assim, a complexidade de busca (e inserção) em Árvores AVL's é $`O(\log n)`$.
