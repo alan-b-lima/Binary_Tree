@@ -11,7 +11,7 @@ int64_t height(Tree::Node* node) {
 
 exit_t Tree::insert(Node** node, Record* record) {
 
-   Node* new_node = new Node{ record, nullptr, nullptr, 0 };
+   Node* new_node = new (std::nothrow) Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return BAD_ALLOCATION;
 
    Node* increment_path = *node;
@@ -361,7 +361,7 @@ bool is_balanced(Tree::Node* node) {
 
 exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
 
-   Node* new_node = new Node{ record, nullptr, nullptr, 0 };
+   Node* new_node = new (std::nothrow) Node{ record, nullptr, nullptr, 0 };
    if (!new_node) return BAD_ALLOCATION;
 
    Node** balance_node = node;

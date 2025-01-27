@@ -1023,14 +1023,14 @@ Por fim, para o limite superior:
 
 ```math
 \begin{aligned}
-   O\left(\log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\right) \superset \\
-   &\superset O(h) &\subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h}} \right) \right) \\
-   &\superset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 } \right) \right) \\
-   &\superset O(\log_\phi (H_h + 1)) \\
-   &\superset O(\log_\phi H_h) \\
-   &\superset O(\log_\phi n) \\
-   &\superset O(\log n) \\
-   &\superset O(h) \\
+   O\left(\log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\right)
+      &\supset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h}} \right) \right) \\
+      &\supset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 } \right) \right) \\
+      &\supset O(\log_\phi (H_h + 1)) \\
+      &\supset O(\log_\phi H_h) \\
+      &\supset O(\log_\phi n) \\
+      &\supset O(\log n) \\
+      &\supset O(h) \\
 \end{aligned}
 ```
 
