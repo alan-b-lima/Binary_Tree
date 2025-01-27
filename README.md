@@ -1009,15 +1009,28 @@ Sendo $`\phi = \frac{1 + \sqrt{5}}{2}`$. Assim, tem-se:
 
 $`h`$ não está verdadeiramente isolado, entretanto, naquela forma, esse contribui apenas como um sinal, logo, o limite máximo é dado, novamente, por um termo da ordem logaritmica, logo, pelo _Teorema do confronto_:
 
+Primeiramente, para o limite inferior:
+
 ```math
 \begin{aligned}
-   O(\lceil \log_2(n) \rceil) \subset O(h) &\subset O\left(\log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\right) \\
-   O(\log_2 n) \subset O(h) &\subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h}} \right) \right) \\
-   O(\log n) \subset O(h) &\subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 } \right) \right) \\
-   O(\log n) \subset O(h) &\subset O(\log_\phi (H_h + 1)) \\
-   O(\log n) \subset O(h) &\subset O(\log_\phi H_h) \\
-   O(\log n) \subset O(h) &\subset O(\log_\phi n) \\
-   O(\log n) \subset O(h) &\subset O(\log n)
+   O(\lceil \log_2(n) \rceil) &\subset O(\log_2(n)) \\
+                              &\subset O(\log(n)) \\
+                              &\subset O(h) \\
+\end{aligned}
+```
+
+Por fim, para o limite superior:
+
+```math
+\begin{aligned}
+   O\left(\log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\right) \superset \\
+   &\superset O(h) &\subset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h}} \right) \right) \\
+   &\superset O\left(\log_\phi \left( (H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 } \right) \right) \\
+   &\superset O(\log_\phi (H_h + 1)) \\
+   &\superset O(\log_\phi H_h) \\
+   &\superset O(\log_\phi n) \\
+   &\superset O(\log n) \\
+   &\superset O(h) \\
 \end{aligned}
 ```
 
