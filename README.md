@@ -996,14 +996,14 @@ Sendo $`\phi = \frac{1 + \sqrt{5}}{2}`$. Assim, tem-se:
 ```math
 \begin{aligned}
    H_{h - 1} &= \frac{\phi^h - (-\phi)^{-h}}{\sqrt{5}} - 1 \\
-   H_h &= \frac{\phi^{h + 1} - (-\phi)^{-(h + 1)}}{\sqrt{5}} - 1 \\
-   (H_h + 1) \sqrt{5} &= \phi^{h + 1} - (-\phi)^{-(h + 1)} \\
-   \phi^{h + 1} (H_h + 1) \sqrt{5} &= \phi^{2(h + 1)} - (-1)^{-(h + 1)} \\
-   0 &= \phi^{2(h + 1)} - \phi^{h + 1} (H_h + 1) \sqrt{5} + (-1)^{h} \\
-   \phi^{h + 1} &= \frac{(H_h + 1) \sqrt{5} + \sqrt{ ((H_h + 1) \sqrt{5})^2 - 4 (-1)^{h} }}{2} \\
-   \phi^{h + 1} &= \frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} \\
-   h + 1 &= \log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} \\
-   h &= \log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\\
+      &\implies H_h = \frac{\phi^{h + 1} - (-\phi)^{-(h + 1)}}{\sqrt{5}} - 1 \\
+      &\implies (H_h + 1) \sqrt{5} = \phi^{h + 1} - (-\phi)^{-(h + 1)} \\
+      &\implies \phi^{h + 1} (H_h + 1) \sqrt{5} = \phi^{2(h + 1)} - (-1)^{-(h + 1)} \\
+      &\implies 0 = \phi^{2(h + 1)} - \phi^{h + 1} (H_h + 1) \sqrt{5} + (-1)^{h} \\
+      &\implies \phi^{h + 1} = \frac{(H_h + 1) \sqrt{5} + \sqrt{ ((H_h + 1) \sqrt{5})^2 - 4 (-1)^{h} }}{2} \\
+      &\implies \phi^{h + 1} = \frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} \\
+      &\implies h + 1 = \log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} \\
+      &\implies h = \log_\phi\frac{(H_h + 1) \sqrt{5} + \sqrt{ 5 (H_h + 1)^2 - 4 (-1)^{h} }}{2} - 1\\
 \end{aligned}
 ```
 
@@ -1013,9 +1013,10 @@ Primeiramente, para o limite inferior:
 
 ```math
 \begin{aligned}
-   O(\lceil \log_2(n) \rceil) &\subset O(\log_2(n)) \\
-                              &\subset O(\log(n)) \\
-                              &\subset O(h) \\
+   O(\lceil \log_2(n) \rceil)
+      &\subset O(\log_2(n)) \\
+      &\subset O(\log(n)) \\
+      &\subset O(h) \\
 \end{aligned}
 ```
 
