@@ -10,10 +10,6 @@ int64_t height(Tree::Node* node) {
 }
 
 exit_t Tree::insert(Node** node, Record* record) {
-
-   Node* new_node = new (std::nothrow) Node{ record, nullptr, nullptr, 0 };
-   if (!new_node) return BAD_ALLOCATION;
-
    Node* increment_path = *node;
    int64_t parent_height = safe_access(increment_path, height, -1);
 
@@ -42,6 +38,9 @@ exit_t Tree::insert(Node** node, Record* record) {
       increment_path = record->key < increment_path->content->key ?
          increment_path->left_child : increment_path->rght_child;
    }
+   
+   Node* new_node = new (std::nothrow) Node{ record, nullptr, nullptr, 0 };
+   if (!new_node) return BAD_ALLOCATION;
 
    *node = new_node;
    return SUCCESS;
@@ -361,9 +360,6 @@ bool is_balanced(Tree::Node* node) {
 
 exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
 
-   Node* new_node = new (std::nothrow) Node{ record, nullptr, nullptr, 0 };
-   if (!new_node) return BAD_ALLOCATION;
-
    Node** balance_node = node;
    Node** increment_path = node;
 
@@ -416,6 +412,9 @@ exit_t Tree::AVL::insert(Tree::Node** node, Record* record) {
          return KEY_ALREADY_EXISTS;
       }
    }
+
+   Node* new_node = new (std::nothrow) Node{ record, nullptr, nullptr, 0 };
+   if (!new_node) return BAD_ALLOCATION;
 
    if (parent_height) {
       *node = new_node;
