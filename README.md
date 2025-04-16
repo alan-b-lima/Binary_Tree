@@ -2,10 +2,10 @@
 
 ## Autores
 
-@Alan Barbosa Lima [AlanLima287](https://github.com/AlanLima287)             <br>
-@Breno Augusto Braga Oliveira [bragabreno](https://github.com/bragabreno)    <br>
-@Juan Pablo Ferreira Costa [juanzinhobs18](https://github.com/juanzinhobs18) <br>
-@Luiz Felipe Melo Oliveira                                                   <br>
+@Alan Barbosa Lima [AlanLima287](https://github.com/AlanLima287)               <br>
+@Breno Augusto Braga Oliveira [bragabreno](https://github.com/bragabreno)      <br>
+@Juan Pablo Ferreira Costa [juan-ferreirax](https://github.com/juan-ferreirax) <br>
+@Luiz Felipe Melo Oliveira                                                     <br>
 @Otávio Gomes Calazans
 
 # Do Trabalho
