@@ -2,7 +2,7 @@
 
 ## Autores
 
-@Alan Barbosa Lima [AlanLima287](https://github.com/AlanLima287)               <br>
+@Alan Barbosa Lima [alan-b-lima](https://github.com/alan-b-lima)               <br>
 @Breno Augusto Braga Oliveira [bragabreno](https://github.com/bragabreno)      <br>
 @Juan Pablo Ferreira Costa [juan-ferreirax](https://github.com/juan-ferreirax) <br>
 @Luiz Felipe Melo Oliveira                                                     <br>
